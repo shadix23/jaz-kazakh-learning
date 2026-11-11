@@ -1,17 +1,19 @@
 # Jaz! — Data-Driven Curriculum
 
 Vercel: **https://jaz-kazakh-learning.vercel.app** — сайт и API развёрнуты из `main`.
-Хранилище — Upstash Redis (бесплатный тариф, автоматическое повышение тарифа отключено). Проверка опубликованного сайта прошла: `/api/status` возвращает `store: redis`, ученик получает задание, методист получает сохранённый ответ. ИИ опционален и сейчас отключён.
+Хранилище — Upstash Redis (бесплатный тариф, автоматическое повышение тарифа отключено). Проверка опубликованного сайта прошла: `/api/status` возвращает `store: redis`, ученик получает задание, методист получает сохранённый ответ. ИИ-наставник в чате включён (`/api/status` → `ai: true`); без ключа всё работает на правилах. Питч: **https://jaz-kazakh-learning.vercel.app/pitch.html** (после слияния ветки в `main`).
 
 Рабочее место методиста: анализирует результаты тестирования школьников и помогает принимать обоснованные решения об учебниках и учебных часах.
 
 ```bash
 npm install                # единственная зависимость — @anthropic-ai/sdk (ИИ на сервере)
 npm start                  # сайт + бэкенд API: http://127.0.0.1:4174
-npm test                   # 58+ тестов: аналитика, интерфейс, сквозной сценарий API
+npm test                   # 63 теста: аналитика, интерфейс, сквозной сценарий API
 ```
 
 Деплой на Vercel (сайт + API + Redis) — [DEPLOY.md](DEPLOY.md). Продолжение работы для Codex — [docs/CODEX-HANDOFF.md](docs/CODEX-HANDOFF.md) и [CODEX_PROMPT.md](CODEX_PROMPT.md).
+
+**Питч для жюри (қазақ тілінде):** `/pitch.html` — 10 слайдов: мәселе → дәлелдер (со ссылками на источники) → құны → шешім со скриншотами → геймификация → масштабтау → команда, листается стрелкой →. Скачать: [PDF](dist/downloads/Jaz-pitch.pdf) · [PPTX](dist/downloads/Jaz-pitch.pptx). Сценарий и источники — [docs/PITCH.md](docs/PITCH.md). Основа — шаблон [scroll-story-3d](https://github.com/DannerAly/scroll-story-3d) (MIT, © Aly Danner); персонажи — собственный барс Jaz!.
 
 Без сборки: чистые HTML/CSS/JS в `dist/`. Анализ кейса — [docs/CASE-ANALYSIS.md](docs/CASE-ANALYSIS.md), работа методиста и решаемая проблема — [docs/METHODIST-RESEARCH.md](docs/METHODIST-RESEARCH.md). Для ИИ-агентов (Codex и др.) — [AGENTS.md](AGENTS.md).
 

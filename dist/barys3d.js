@@ -113,9 +113,7 @@ function create(canvas) {
 
   // state: { x, y, size, t, mode: run|jump|idle|celebrate|hit, jump 0..1, rate, lean, reduced }
   function render(s) {
-    const t = s.t || 0, mode = s.mode || 'run', rate = s.rate || 2.6;
-    const p = t * rate * Math.PI * 2;
-    const reduced = !!s.reduced;
+    const mode = s.mode || 'run';
     // Facing: away from camera while running, towards it when idle/celebrating.
     const targetYaw = mode === 'idle' ? 0.35 : mode === 'celebrate' ? Math.PI * 2 : Math.PI + 0.62;
     yaw += (targetYaw - yaw) * 0.12;
@@ -125,7 +123,20 @@ function create(canvas) {
     L.root.scale.setScalar(scale);
     L.root.position.set(s.x, -s.y, 0);
     L.root.rotation.set(0.38, yaw, tilt);
+    pose(L, s);
+    renderer.render(scene, camera);
+  }
+  function clear() { renderer.clear(); }
+  function dispose() { renderer.dispose(); }
+  return { resize, render, clear, dispose };
+}
 
+// Limb/tail animation only (no placement), shared with the pitch page.
+// s: { t, mode: run|jump|idle|celebrate|hit, jump 0..1, rate, reduced }
+function pose(L, s) {
+    const t = s.t || 0, mode = s.mode || 'run', rate = s.rate || 2.6;
+    const p = t * rate * Math.PI * 2;
+    const reduced = !!s.reduced;
     const gallop = mode === 'run' || mode === 'celebrate' || mode === 'hit';
     const amp = reduced ? 0.45 : 1;
     for (const leg of L.legs) {
@@ -154,12 +165,8 @@ function create(canvas) {
     });
     L.flapPivot.rotation.y = 0.4 + Math.sin(t * 14) * (gallop ? 0.35 : 0.12);
     L.flapPivot.rotation.x = -0.3 + Math.sin(t * 9) * 0.15;
-    renderer.render(scene, camera);
-  }
-  function clear() { renderer.clear(); }
-  function dispose() { renderer.dispose(); }
-  return { resize, render, clear, dispose };
 }
 
-window.JazBarys3D = { create };
+export { buildLeopard, pose };
+window.JazBarys3D = { create, buildLeopard, pose };
 window.dispatchEvent(new Event('jaz:barys3d'));
