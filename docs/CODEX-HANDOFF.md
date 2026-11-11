@@ -13,10 +13,12 @@ Hackathon jury criteria we optimise for: fit to the case, validity of analytics,
 
 ## 2. Current state
 
-- Branch with all work: `learner-game-and-kazakh-checker` (PR into `main` may still be open — see task P0-1).
+- Current source: `main`. Learner/backend work was merged in PR #5; the handoff, smoke script and CI were merged in PR #6.
+- Production: https://jaz-kazakh-learning.vercel.app — Vercel project `reforest2/jaz-kazakh-learning`, linked to GitHub `main`. Upstash Redis is connected on the free plan with automatic plan upgrades disabled. The deployed smoke test passes, including `store: redis`. AI is currently disabled (`ai: false`).
 - Stack: vanilla HTML/CSS/JS in `dist/` (no build), Node ≥ 20 backend in `server/` (no framework), Vercel config ready (`vercel.json`, `api/index.js`), only dependency `@anthropic-ai/sdk`.
 - Tests: `npm test` → 58 passing (analytics, UI harness, API end-to-end over HTTP, Vercel entry).
-- Not done yet: real deployment, real school data, roles/accounts, ГОСО objective codes, Kundelik/BilimClass import, summative before/after comparison.
+- P0-1 and P0-2 are complete. Next: P0-3 real-device verification, then the remaining tasks in order.
+- Not done yet: real-device verification, real school data, roles/accounts, ГОСО objective codes, Kundelik/BilimClass import, summative before/after comparison.
 
 ## 3. Rules you must keep (do not weaken)
 
