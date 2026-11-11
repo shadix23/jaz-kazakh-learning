@@ -157,6 +157,7 @@ const routes = {
 
   // Optional AI (needs ANTHROPIC_API_KEY on the server).
   'POST /api/correct': async (req) => { if (!ai.aiReady()) fail(503, 'ai unavailable'); try { return await ai.correct(await readBody(req)); } catch (e) { ai.aiFailed(e); fail(502, 'ai failed'); } },
+  'POST /api/hint': async (req) => { if (!ai.aiReady()) fail(503, 'ai unavailable'); try { return await ai.hint(await readBody(req)); } catch (e) { ai.aiFailed(e); fail(502, 'ai failed'); } },
   'POST /api/summary': async (req) => { if (!ai.aiReady()) fail(503, 'ai unavailable'); try { return await ai.summarize(await readBody(req)); } catch (e) { ai.aiFailed(e); fail(502, 'ai failed'); } }
 };
 

@@ -21,6 +21,8 @@ test('status, static files and unknown routes', async () => {
   const page = await fetch(base + '/');
   assert.match(await page.text(), /Jaz!/);
   assert.equal((await call('GET', '/api/nope')).status, 404);
+  if (!s.data.ai) assert.equal((await call('POST', '/api/hint', { kind: 'rule', topic: 'Модуль числа' })).status, 503, 'hint endpoint exists and is off without AI');
+  assert.equal((await fetch(base + '/assistant.js')).status, 200);
 });
 
 test('school workflow: workspace → join → answers → assignment → tasks → methodist pull', async () => {

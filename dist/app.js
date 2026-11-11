@@ -45,8 +45,18 @@
   let theme = readStorage('jaz.theme.v1', 'light') === 'dark' ? 'dark' : 'light';
   let subject = readStorage('jaz.subject.v1', P.KAZ) === P.MATH ? P.MATH : P.KAZ;
   let aiAvailable = false;
+  let lastTopicId = '';
+  // «Барыс-көмекші»: the chibi helper reads the current lesson context (never the answer index).
+  function assistantContext() {
+    const run = lessonRun && !lessonRun.done ? lessonRun : null;
+    const topics = P.topicsFor(subject);
+    const t = P.TOPICS.find((x) => x.id === (run ? run.lesson.id : lastTopicId)) || topics.find((x) => !progress.completedLessons.includes(x.id)) || topics[0];
+    const q = run ? run.lesson.questions[run.index] : null;
+    return { subjectKk: (P.SUBJECTS.find((x) => x.id === t.subject) || {}).kk || '', topicId: t.id, topic: t.topic, topicKk: t.kk, desc: t.desc,
+      task: q ? q.prompt : '', lastExplanation: run && q && run.checked && run.selected !== q.answerIndex ? q.explanation : '' };
+  }
   let serverOn = false;
-  fetch('./api/status').then((r) => r.ok ? r.json() : null).then((d) => { aiAvailable = !!(d && d.ai); serverOn = !!(d && d.api); if (appMode === 'student') { renderAccount(); loadTasks(); } }).catch(() => { serverOn = false; });
+  fetch('./api/status').then((r) => r.ok ? r.json() : null).then((d) => { aiAvailable = !!(d && d.ai); window.__jazAiAvailable = aiAvailable; serverOn = !!(d && d.api); if (appMode === 'student') { renderAccount(); loadTasks(); } }).catch(() => { serverOn = false; });
   function applyTheme() {
     document.documentElement.dataset.theme = theme;
     const label = theme === 'dark' ? 'Светлая тема' : 'Тёмная тема';
@@ -336,11 +346,11 @@
     try {
       const response = await fetch('./api/correct', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctrl.signal,
         body: JSON.stringify({ text, scenario: { title: s.title, persona: s.persona, task: s.task }, history: current.messages.filter((m) => m.role !== 'correction').slice(-6).map((m) => ({ role: m.role, text: m.text })) }) });
-      if (!response.ok) { if (response.status === 503) aiAvailable = false; return null; }
+      if (!response.ok) { if (response.status === 503) aiAvailable = window.__jazAiAvailable = false; return null; }
       const data = await response.json();
-      const issues = (data.issues || []).filter((i) => i && i.from !== i.to);
-      if (!data.ok && issues.length && L.normalizeText(data.corrected) !== L.normalizeText(text)) return { kind: 'correction', corrected: data.corrected, issues, reply: data.reply, source: 'ai' };
-      return { kind: 'recognized', reply: data.reply || 'Жақсы! Әңгімені жалғастырайық.', source: 'ai', verified: true };
+      // The rules engine double-checks the model's answer (models can miss suffix rules).
+      const merged = L.mergeAiCorrection(text, data);
+      return merged.kind === 'correction' ? { ...merged, source: 'ai' } : merged;
     } catch { return null; } finally { clearTimeout(timer); }
   }
   async function sendMessage() {
@@ -386,13 +396,17 @@
     if (!lesson) return;
     const questions = P.set(id, assignment ? assignment.size || 8 : lesson.size).map((item) => ({ id: item.id, prompt: item.prompt, passage: item.passage, options: item.options, answerIndex: item.answer, explanation: item.explanation }));
     lessonRun = { assignment: assignment || null, lesson: { ...lesson, questions }, index: 0, selected: null, checked: false, done: false, attempts: 0, wasComplete: progress.completedLessons.includes(id) };
-    renderLesson(); $('#lesson-dialog').showModal();
+    lastTopicId = id;
+    renderLesson(); $('#lesson-dialog').showModal(); window.JazAssistant?.raise();
   }
   function renderLesson() {
     if (!lessonRun) return;
     const run = lessonRun;
     const question = run.lesson.questions[run.index];
-    $('#lesson-dialog').innerHTML = `<div class="dialog-top">${icon('book')}<h2 id="lesson-title">${esc(run.lesson.title)}</h2><button class="icon-button" data-action="close-lesson" aria-label="Сабақты жабу">${icon('close')}</button></div><div class="dialog-content">${run.done ? `<div class="lesson-complete"><img class="barys-mini" src="./assets/mascot-kit/05-celebrate.png" alt="Барыс сені құттықтайды" width="180" height="165"><h3>Жарайсың, орындадың!</h3><p>Барлық тапсырманы дұрыс аяқтадың.<br>Енді Барыс жолында бекітіп көр.</p><div class="xp-award">${run.wasComplete ? 'Қайталау аяқталды' : '+20 XP'}</div>${run.wasComplete ? '<p>Бұл сабақ үшін ұпай бұрын берілген.</p>' : ''}<button class="btn btn-primary" data-action="lesson-to-game" data-id="${esc(run.lesson.id)}">Барыс жолында бекіту ${icon('arrow')}</button></div>` : `<div class="lesson-topline"><span>${run.index + 1} / ${run.lesson.questions.length} тапсырма</span><span>Алғаш аяқтағанда +20 XP</span></div><div class="meter"><span style="width:${run.index / run.lesson.questions.length * 100}%"></span></div>${question.passage ? `<blockquote class="lesson-passage">${esc(question.passage)}</blockquote>` : ''}<h3 class="lesson-question">${esc(question.prompt)}</h3><div class="answer-list" role="group" aria-label="Жауап нұсқалары">${question.options.map((option, index) => `<button class="answer-option ${run.selected === index ? 'selected' : ''} ${run.checked && index === run.selected ? (index === question.answerIndex ? 'correct' : 'wrong') : ''}" data-action="answer" data-index="${index}" aria-pressed="${run.selected === index}" ${run.checked ? 'disabled' : ''}><span class="answer-number">${index + 1}</span>${esc(option)}</button>`).join('')}</div>${run.checked ? `<div class="answer-feedback ${run.selected !== question.answerIndex ? 'wrong' : ''}" role="status"><strong>${run.selected === question.answerIndex ? 'Дұрыс таңдадың!' : 'Тағы бір рет байқап көр.'}</strong><br>${esc(question.explanation)}</div>` : ''}<div class="dialog-actions"><button class="btn btn-primary" data-action="check-answer" ${run.selected === null ? 'disabled' : ''}>${run.checked ? (run.selected === question.answerIndex ? (run.index === run.lesson.questions.length - 1 ? 'Сабақты аяқтау' : 'Келесі тапсырма') : 'Қайта байқап көру') : 'Тексеру'} ${icon('arrow')}</button></div>`}</div>`;
+    // Render into an inner wrapper so the helper panel inside the dialog survives re-renders.
+    const dlg = $('#lesson-dialog'); let lessonBody = dlg.querySelector(':scope > .lesson-body');
+    if (!lessonBody) { lessonBody = document.createElement('div'); lessonBody.className = 'lesson-body'; dlg.replaceChildren(lessonBody); }
+    lessonBody.innerHTML = `<div class="dialog-top">${icon('book')}<h2 id="lesson-title">${esc(run.lesson.title)}</h2><button class="lesson-ask" type="button" data-action="ask-barys" aria-label="Барыстан кеңес сұрау"><img src="./assets/assistant/06-thinking.png" alt="" width="30" height="30">Кеңес</button><button class="icon-button" data-action="close-lesson" aria-label="Сабақты жабу">${icon('close')}</button></div><div class="dialog-content">${run.done ? `<div class="lesson-complete"><img class="barys-mini" src="./assets/mascot-kit/05-celebrate.png" alt="Барыс сені құттықтайды" width="180" height="165"><h3>Жарайсың, орындадың!</h3><p>Барлық тапсырманы дұрыс аяқтадың.<br>Енді Барыс жолында бекітіп көр.</p><div class="xp-award">${run.wasComplete ? 'Қайталау аяқталды' : '+20 XP'}</div>${run.wasComplete ? '<p>Бұл сабақ үшін ұпай бұрын берілген.</p>' : ''}<button class="btn btn-primary" data-action="lesson-to-game" data-id="${esc(run.lesson.id)}">Барыс жолында бекіту ${icon('arrow')}</button></div>` : `<div class="lesson-topline"><span>${run.index + 1} / ${run.lesson.questions.length} тапсырма</span><span>Алғаш аяқтағанда +20 XP</span></div><div class="meter"><span style="width:${run.index / run.lesson.questions.length * 100}%"></span></div>${question.passage ? `<blockquote class="lesson-passage">${esc(question.passage)}</blockquote>` : ''}<h3 class="lesson-question">${esc(question.prompt)}</h3><div class="answer-list" role="group" aria-label="Жауап нұсқалары">${question.options.map((option, index) => `<button class="answer-option ${run.selected === index ? 'selected' : ''} ${run.checked && index === run.selected ? (index === question.answerIndex ? 'correct' : 'wrong') : ''}" data-action="answer" data-index="${index}" aria-pressed="${run.selected === index}" ${run.checked ? 'disabled' : ''}><span class="answer-number">${index + 1}</span>${esc(option)}</button>`).join('')}</div>${run.checked ? `<div class="answer-feedback ${run.selected !== question.answerIndex ? 'wrong' : ''}" role="status"><strong>${run.selected === question.answerIndex ? 'Дұрыс таңдадың!' : 'Тағы бір рет байқап көр.'}</strong><br>${esc(question.explanation)}</div>` : ''}<div class="dialog-actions"><button class="btn btn-primary" data-action="check-answer" ${run.selected === null ? 'disabled' : ''}>${run.checked ? (run.selected === question.answerIndex ? (run.index === run.lesson.questions.length - 1 ? 'Сабақты аяқтау' : 'Келесі тапсырма') : 'Қайта байқап көру') : 'Тексеру'} ${icon('arrow')}</button></div>`}</div>`;
   }
   function checkAnswer() {
     if (!lessonRun || lessonRun.selected === null || lessonRun.done) return;
@@ -453,6 +467,7 @@
       lessonRun.selected = Number(control.dataset.index); renderLesson();
     } else if (action === 'check-answer') checkAnswer();
     else if (action === 'close-lesson') { $('#lesson-dialog').close(); lessonRun = null; }
+    else if (action === 'ask-barys') { window.JazAssistant?.open(); window.JazAssistant?.raise(); }
     else if (action === 'lesson-to-chat') { $('#lesson-dialog').close(); lessonRun = null; startChat('cinema'); }
     else if (action === 'close-info') $('#info-dialog').close();
     else if (action === 'help') showHelp();
@@ -485,5 +500,6 @@
   for (const placeholder of document.querySelectorAll('[data-icon]')) placeholder.innerHTML = icon(placeholder.dataset.icon);
   route = nav.some((item) => item.id === location.hash.slice(1)) ? location.hash.slice(1) : 'home';
   applyTheme();
+  window.JazAssistant?.mount(); window.JazAssistant?.setContext(assistantContext);
   render();
 })();
