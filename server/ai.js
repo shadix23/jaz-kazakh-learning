@@ -2,19 +2,30 @@
 'use strict';
 /* ------------------------------------------------------------- AI mentor */
 let client = null, aiDisabledUntil = 0;
+let AnthropicClient = null;
 const fs = require('node:fs');
 const path = require('node:path');
 try {
   const mod = require('@anthropic-ai/sdk');
   const Anthropic = mod.default || mod;
+  AnthropicClient = Anthropic;
   // Only advertise the mentor when credentials exist: an env key/token or an `ant auth login` profile.
   const os = require('node:os');
   const hasProfile = fs.existsSync(path.join(process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'), 'anthropic'));
   const hasCreds = !!(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN || process.env.ANTHROPIC_PROFILE || hasProfile);
-  if (process.env.JAZ_AI !== 'off' && hasCreds) client = new Anthropic();
+  if (process.env.JAZ_AI !== 'off') {
+    if (hasCreds) client = new Anthropic({ timeout: 25000, maxRetries: 0 });
+  }
 } catch (_) { client = null; }
 
-const MODEL = 'claude-opus-5-5';
+function gatewayToken(req) {
+  return process.env.AI_GATEWAY_API_KEY || (process.env.VERCEL === '1' && req?.headers?.['x-vercel-oidc-token']) || process.env.VERCEL_OIDC_TOKEN;
+}
+function connection(req) {
+  if (!aiReady(req)) throw new Error('ai unavailable');
+  if (client) return { client, model: process.env.ANTHROPIC_MODEL || 'claude-opus-5-5' };
+  return { client: new AnthropicClient({ baseURL: 'https://ai-gateway.vercel.sh', apiKey: null, authToken: gatewayToken(req), timeout: 25000, maxRetries: 0 }), model: process.env.AI_GATEWAY_MODEL };
+}
 const SYSTEM = `You are "Барыс", a friendly Kazakh writing mentor inside a school practice app for Russian-speaking 6th-grade students (level A2) who learn Kazakh as a second language.
 The student writes a chat message inside a role-play scenario. Your job:
 1. Find every real mistake in the message: Kazakh letters typed as Russian ones (а/ә, к/қ, г/ғ, н/ң, о/ө, у/ұ/ү, и/і, х/һ), vowel harmony, case and plural suffixes, possessive endings, verb person endings, the question particle (ма/ме/ба/бе/па/пе, written separately), word order, capital letters and punctuation.
@@ -36,7 +47,8 @@ const SCHEMA = {
   }
 };
 
-async function correct(body) {
+async function correct(body, req) {
+  const { client, model } = connection(req);
   const text = String(body.text || '').slice(0, 500);
   const scenario = body.scenario && typeof body.scenario === 'object' ? body.scenario : {};
   const history = Array.isArray(body.history) ? body.history.slice(-6) : [];
@@ -46,12 +58,10 @@ ${history.map(m => `${m.role === 'you' ? 'Student' : 'Mentor'}: ${String(m.text 
 
 Student's new message to check:
 <message>${text}</message>`;
-  const response = await client.beta.messages.create({
-    model: MODEL,
-    max_tokens: 4000,
-    betas: ['server-side-fallback-2026-07-01'],
-    fallbacks: 'default',
-    output_config: { effort: 'low', format: { type: 'json_schema', schema: SCHEMA } },
+  const response = await client.messages.create({
+    model,
+    max_tokens: 1536,
+    output_config: { format: { type: 'json_schema', schema: SCHEMA } },
     system: SYSTEM,
     messages: [{ role: 'user', content: context }]
   });
@@ -69,13 +79,12 @@ const SUMMARY_SYSTEM = `Ты — помощник школьного метод�
 - "caveats": 1–3 ограничения данных (мало данных, сравнение учебников — связь, а не причина, синтетические данные если очевидно).
 Опирайся только на переданные цифры, ничего не выдумывай. Если сравнение учебников заблокировано или разница не подтверждена — так и скажи.`;
 const SUMMARY_SCHEMA = { type: 'object', additionalProperties: false, required: ['summary', 'actions', 'caveats'], properties: { summary: { type: 'string' }, actions: { type: 'array', items: { type: 'string' } }, caveats: { type: 'array', items: { type: 'string' } } } };
-async function summarize(body) {
-  const response = await client.beta.messages.create({
-    model: MODEL,
-    max_tokens: 6000,
-    betas: ['server-side-fallback-2026-07-01'],
-    fallbacks: 'default',
-    output_config: { effort: 'medium', format: { type: 'json_schema', schema: SUMMARY_SCHEMA } },
+async function summarize(body, req) {
+  const { client, model } = connection(req);
+  const response = await client.messages.create({
+    model,
+    max_tokens: 2500,
+    output_config: { format: { type: 'json_schema', schema: SUMMARY_SCHEMA } },
     system: SUMMARY_SYSTEM,
     messages: [{ role: 'user', content: 'Сводные данные (JSON):\n' + JSON.stringify(body).slice(0, 15000) }]
   });
@@ -87,12 +96,12 @@ async function summarize(body) {
 }
 
 
-function aiReady() { return !!client && Date.now() > aiDisabledUntil; }
+function aiReady(req) { return process.env.JAZ_AI !== 'off' && Date.now() > aiDisabledUntil && !!(client || (AnthropicClient && process.env.AI_GATEWAY_MODEL && gatewayToken(req))); }
 function aiFailed(error) {
   try {
     const mod = require('@anthropic-ai/sdk'); const A = mod.default || mod;
     if (error instanceof A.AuthenticationError || error instanceof A.PermissionDeniedError || /credentials|api key|apiKey/i.test(String(error && error.message))) aiDisabledUntil = Date.now() + 5 * 60 * 1000;
   } catch (_) {}
-  console.warn('[ai]', error && (error.status || ''), error && error.message);
+  console.warn('[ai] request failed', error && error.status || 'unknown');
 }
 module.exports = { correct, summarize, aiReady, aiFailed, hasClient: () => !!client };
