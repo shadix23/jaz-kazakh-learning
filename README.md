@@ -1,13 +1,48 @@
-# Jaz!
+# Jaz! — Data-Driven Curriculum
 
-Kazakh literacy practice website, with local Comfortaa, lessons, messenger-style scenarios, manual corrections, XP and real browser-local progress.
+Рабочее место методиста: анализирует результаты тестирования школьников и помогает принимать обоснованные решения об учебниках и учебных часах.
 
-Run `node dev-server.cjs`, then visit http://127.0.0.1:4174 . Tests: `node --test tests/*.test.cjs`.
+```bash
+node dev-server.cjs        # http://127.0.0.1:4174
+node --test tests/*.test.cjs
+```
 
-The practice mentor is a finite offline exercise engine, not a connected LLM. Known word corrections and prewritten scenarios are explicitly distinguished from unrestricted, unverified messages. No external AI service or API key is included. There are no real peer chats, subscriptions, leaderboards or invented educational measurements. Conversations and progress stay in this browser; reload preserves them, clearing browser data removes them. Comfortaa is included under SIL OFL in dist/fonts/Comfortaa-OFL.txt.
+Без сборки и зависимостей: чистые HTML/CSS/JS в `dist/`. Анализ кейса и методика — в [docs/CASE-ANALYSIS.md](docs/CASE-ANALYSIS.md).
 
-The header switches between the existing Kazakh learner experience and a Russian methodologist workspace. It includes deterministic 98-student datasets for mathematics and Kazakh, clean/confounded textbook scenarios, validated CSV import/export, topic-by-class diagnostics, teacher-stratified textbook comparisons with 1000 seeded student bootstrap samples, and integer lesson allocation by largest remainders. Synthetic datasets are labelled throughout. Imported student codes, test records and live learner answers remain in browser-local storage; there is no server database or cross-device synchronization.
+## Что умеет
 
-`dist/curriculum.js` transplants the supplied `jaz-metodist.html` generator and core analytics into an isolated engine with flat CSV adapters. Comparison uses observed teacher/textbook overlap, selected topic and filters, and reports association rather than a causal effect. Input scores are never invented for imported learner records. Periods use the latest date for the selected subject. The source reference's zero-priority allocation edge case is handled explicitly: if topics exist but every priority is zero, the reserve is shared equally and the UI identifies this fallback. With no rows, no recommendation is made.
+| Требование кейса | Где в продукте |
+|---|---|
+| Анализ результатов по темам | **Темы**: тепловая карта «тема × класс», разбор каждой темы: результат, доля не освоивших, прирост, сравнение классов |
+| Выявление сложных разделов | Статус темы (зона риска ≥ 40% не освоивших), анализ заданий: трудность, различающая способность, типичные неверные ответы |
+| Сравнение учебников | **Учебники**: матрица «учитель × учебник», разница прироста с учётом учителя и 95% интервалом, общая и по каждой теме; блокировка вывода, если учитель и учебник смешаны, с подсказкой, какой класс перевести |
+| Рекомендации по часам | **Часы**: программа (редактируется) + резерв + перенос с освоенных тем → «было → стало» с обоснованием по каждой теме, экспорт CSV |
+| Решение для руководства | **Обзор** (KPI и решения для педсовета) и **Отчёт** на одну страницу для печати/PDF |
 
-Use «Скачать шаблон CSV» to export the active dataset with the required header. Reimporting it preserves the observations and calculations. Only pseudonymous student codes are required. Enter no names, photos or private identifiers into CSV files.
+## Методика кратко
+
+* Тема освоена учеником при ≥ 70% верных (порог 60/70/80 меняется). «Мало данных»: меньше 10 учеников или 30 ответов.
+* Сравнение учебников: прирост = результат − входная диагностика; модель `прирост ~ учебник + учитель (+ тема)`; 95% ДИ — бутстрэп учеников внутри классов. «Больше/меньше прирост» — только если ДИ не включает 0 и разница ≥ 5 п.п. Формулировка — связь, а не причина.
+* Часы: потребность = доля не освоивших × часы темы × важность (1–3); распределяются резерв и до 20% часов тем, которые освоили ≥ 85% учеников; не больше +50% к теме; целые часы методом наибольших остатков. Сумма часов сохраняется.
+
+## Дизайн-система
+
+Собрана по четырём скиллам: Impeccable (P. Bakaus), animation skills (E. Kowalski), UI UX Pro Max, Taste Skill.
+
+* **Тип поверхности — рабочий инструмент (Operate):** привычные паттерны, плотность данных, без декоративных эффектов, без надписей над заголовками, без вложенных карточек и цветных полос-акцентов.
+* **Палитра «Analytics Dashboard»:** синий для данных и действий, янтарный, зелёный и красный только как статусы; светлая и тёмная темы на одних токенах (`--mx-*` в `dist/metodist.css`).
+* **Типографика:** одно семейство (системный sans), фиксированная шкала 12/13/15/18/22/26, табличные цифры.
+* **Движение:** единственный «авторский» момент — плавное перетекание цифр и полос при смене фильтров (520 мс, `cubic-bezier(.77,0,.175,1)`, через `clip-path`). Остальные переходы — до 300 мс, `cubic-bezier(.23,1,.32,1)`; боковая панель — `cubic-bezier(.32,.72,0,1)`. Анимируются только transform, opacity и clip-path; hover — только для мыши; при `prefers-reduced-motion` движение убирается, плавные затухания остаются.
+* **Адаптив:** проверено на 1440, 1024, 768, 390 и 320 px без горизонтальной прокрутки; на тачскрине элементы управления от 44 px.
+
+## Данные
+
+* Демо-школа (синтетика, подписано в интерфейсе): 6 классов (6А–6Е), 147 учеников, по 3 учителя и 3 учебника на предмет, математика и казахский язык 6 класса — по 6 тем, 5 заданий в теме, контрольная по каждой теме в свою неделю. Два сценария: перекрёстное распределение учебников и «у каждого учителя один учебник» (сравнение блокируется).
+* Импорт CSV: `student_id, class, teacher, subject, textbook, topic, question_id, correct, pretest, date` + необязательные `question_text, answer, correct_answer`. Разделитель `,` или `;`, ошибки — на русском с номером строки. Только псевдонимные коды учеников.
+* Данные хранятся в браузере (localStorage); сервера и синхронизации нет.
+
+## Тренажёр ученика
+
+Переключатель «Ученик» открывает казахский тренажёр (уроки, чат-сценарии, XP). Если выбрать класс и код ученика, ответы на уроках попадают в аналитику методиста как живые данные по казахскому языку.
+
+Шрифт Comfortaa — под SIL OFL (`dist/fonts/Comfortaa-OFL.txt`).
