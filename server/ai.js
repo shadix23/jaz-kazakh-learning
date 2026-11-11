@@ -98,6 +98,7 @@ async function summarize(body, req) {
 
 function aiReady(req) { return process.env.JAZ_AI !== 'off' && Date.now() > aiDisabledUntil && !!(client || (AnthropicClient && process.env.AI_GATEWAY_MODEL && gatewayToken(req))); }
 function aiFailed(error) {
+  if ([401, 402, 403].includes(error?.status)) aiDisabledUntil = Date.now() + 5 * 60 * 1000;
   try {
     const mod = require('@anthropic-ai/sdk'); const A = mod.default || mod;
     if (error instanceof A.AuthenticationError || error instanceof A.PermissionDeniedError || /credentials|api key|apiKey/i.test(String(error && error.message))) aiDisabledUntil = Date.now() + 5 * 60 * 1000;

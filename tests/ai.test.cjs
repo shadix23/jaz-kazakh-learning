@@ -10,7 +10,7 @@ function load(env = {}) {
     constructor(options) { clients.push(options); this.messages = { create: async body => { calls.push(body); return { content: [{ type: 'text', text: JSON.stringify({ ok: false, corrected: 'Сәлем!', issues: [{ from: 'Салем', to: 'Сәлем', reason: 'Ә әрпі жазылады.' }], reply: 'Сәлем! Қалың қалай?', summary: 'Сводка', actions: ['Повторить тему'], caveats: ['Связь не доказывает причину'] }) }] }; } }; }
   }
   const module = { exports: {} };
-  vm.runInNewContext(source, { module, process: { env }, Date, console, require: name => name === '@anthropic-ai/sdk' ? MockAnthropic : name === 'node:fs' ? { existsSync: () => false } : require(name) });
+  vm.runInNewContext(source, { module, process: { env }, Date, console: { warn() {} }, require: name => name === '@anthropic-ai/sdk' ? MockAnthropic : name === 'node:fs' ? { existsSync: () => false } : require(name) });
   return { api: module.exports, clients, calls };
 }
 test('AI stays off without credentials and explicit off overrides gateway', () => {
@@ -42,4 +42,12 @@ test('untrusted local headers cannot enable AI; direct provider credentials stil
   await h.api.correct({ text: 'Сәлем!' });
   assert.equal(h.calls[0].model, 'configured-model');
   assert.equal(h.clients[0].authToken, undefined);
+});
+test('gateway authentication and billing failures disable advertised readiness temporarily', () => {
+  for (const status of [401, 402, 403]) {
+    const h = load({ AI_GATEWAY_API_KEY: 'test', AI_GATEWAY_MODEL: 'test/model' });
+    assert.equal(h.api.aiReady(), true);
+    h.api.aiFailed({ status });
+    assert.equal(h.api.aiReady(), false);
+  }
 });
