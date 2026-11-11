@@ -10,8 +10,9 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  const REQUIRED_COLUMNS = Object.freeze(['student_id', 'class', 'teacher', 'subject', 'textbook', 'topic', 'question_id', 'correct', 'pretest', 'date']);
-  const OPTIONAL_COLUMNS = Object.freeze(['question_text', 'answer', 'correct_answer']);
+  const REQUIRED_COLUMNS = Object.freeze(['student_id', 'class', 'teacher', 'subject', 'textbook', 'topic', 'question_id', 'correct', 'date']);
+  // pretest (entrance diagnostic, 0–100) is optional: real schools rarely have it per topic.
+  const OPTIONAL_COLUMNS = Object.freeze(['pretest', 'question_text', 'answer', 'correct_answer']);
   const THRESHOLDS = Object.freeze([
     Object.freeze({ min: 80, key: 'good', label: '≥ 80% — освоено' }),
     Object.freeze({ min: 60, key: 'mid', label: '60–80% — повторить' }),
@@ -48,7 +49,7 @@
       if (char === '"') {
         if (quoted && text[i + 1] === '"') i++;
         else quoted = !quoted;
-      } else if (!quoted && (char === ',' || char === ';')) return char;
+      } else if (!quoted && (char === ',' || char === ';' || char === '\t')) return char;
       else if (!quoted && (char === '\n' || char === '\r')) break;
     }
     return ',';
@@ -120,10 +121,10 @@
         if (row[key].length > 200 || /[\u0000-\u001f\u007f]/u.test(row[key])) fail(record.line, 'недопустимый код или название в поле «' + key + '».');
       }
       if (!/^[01]$/u.test(row.correct)) fail(record.line, 'correct должен быть 0 или 1.');
-      if (!/^(?:\d+(?:\.\d+)?|\.\d+)$/u.test(row.pretest) || Number(row.pretest) > 100) fail(record.line, 'pretest должен быть числом от 0 до 100.');
+      if (row.pretest != null && row.pretest !== '' && (!/^(?:\d+(?:[.,]\d+)?|\.\d+)$/u.test(row.pretest) || Number(row.pretest.replace(',', '.')) > 100)) fail(record.line, 'pretest должен быть числом от 0 до 100 или пустым.');
       if (!validDate(row.date)) fail(record.line, 'date должна быть реальной датой YYYY-MM-DD.');
       row.correct = Number(row.correct);
-      row.pretest = Number(row.pretest);
+      row.pretest = row.pretest == null || row.pretest === '' ? null : Number(String(row.pretest).replace(',', '.'));
       const studentClass = students.get(row.student_id);
       if (studentClass !== undefined && studentClass !== row.class) fail(record.line, 'код ученика относится к разным классам.');
       students.set(row.student_id, row.class);
@@ -157,7 +158,7 @@
   function subjects(rows) { return unique(rows, 'subject'); }
   function classes(rows, subject) { return unique(subject ? rows.filter(row => row.subject === subject) : rows, 'class'); }
   function topics(rows, subject) { return unique(subject ? rows.filter(row => row.subject === subject) : rows, 'topic'); }
-  function mean(values) { let s = 0; for (const v of values) s += v; return values.length ? s / values.length : null; }
+  function mean(values) { let s = 0, n = 0; for (const v of values) if (v != null && Number.isFinite(v)) { s += v; n++; } return n ? s / n : null; }
   function sd(values) {
     if (values.length < 2) return 0;
     const m = mean(values); let s = 0;
@@ -256,47 +257,68 @@
       teachers: ['Г. Нұрланова', 'Е. Жұмабек', 'С. Омарова'], teacherEffect: [-0.05, 0.15, -0.08],
       clean: [1, 0, 2, 1, 2, 0], confounded: [1, 1, 2, 2, 0, 0],
       topics: [
-        { name: 'Особые буквы: Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, І', hours: 5, base: 2.3, pre: 1.3, books: {}, lesson: 'letters', questions: [
+        { name: 'Особые буквы: Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, І', hours: 3, base: 2.3, pre: 1.3, books: {}, lesson: 'letters', questions: [
           ['Как правильно: «привет»?', ['Сәлем', 'Салем', 'Сэлем', 'Сєлем'], 1],
           ['Как правильно: «хорошо»?', ['жақсы', 'жаксы', 'жахсы', 'жақсі'], 1],
           ['Как правильно: «знание»?', ['білім', 'билим', 'былым', 'бүлім'], 1],
           ['Как правильно: «учитель»?', ['мұғалім', 'мугалим', 'мұғалим', 'муғалім'], 1],
           ['Как правильно: «город»?', ['қала', 'кала', 'хала', 'ғала'], 1]
         ] },
-        { name: 'Звуки Н и Ң', hours: 4, base: 0.3, pre: -0.6, books: { 2: 0.45 }, lesson: 'ng', questions: [
+        { name: 'Звуки Н и Ң', hours: 3, base: 0.3, pre: -0.6, books: { 2: 0.45 }, lesson: 'ng', questions: [
           ['«Новый»: жа_а', ['жаңа', 'жана', 'жанға', 'жәна'], 1],
           ['Сен қайда бара_?', ['барасың', 'барасын', 'барасыз ба', 'барамын'], 1],
           ['«Мой»: ме_і_', ['менің', 'менін', 'меңің', 'мениң'], 1],
           ['«Утро»', ['таң', 'тан', 'тәң', 'таңғ'], 1],
           ['«Ты пришёл»: сен келді_', ['келдің', 'келдін', 'келдин', 'келдиң'], 1]
         ] },
-        { name: 'Вопросительные частицы ма/ме, ба/бе, па/пе', hours: 4, base: 1.2, pre: 0.3, books: {}, lesson: 'questions', questions: [
+        { name: 'Вопросительные частицы ма/ме, ба/бе, па/пе', hours: 3, base: 1.2, pre: 0.3, books: {}, lesson: 'questions', questions: [
           ['Сен ертең келесің ___?', ['бе', 'ба', 'ме', 'па'], 1],
           ['Бұл кітап ___?', ['па', 'ба', 'ма', 'пе'], 1],
           ['Ол қазір үйде ___?', ['ме', 'ма', 'бе', 'пе'], 1],
           ['Как пишется частица?', ['Бүгін кездесеміз бе?', 'Бүгін кездесемізбе?', 'Бүгін кездесеміз-бе?', 'Бүгін кездесеміз бе.'], 1],
           ['Сабақ бітті ___?', ['ме', 'ма', 'бе', 'па'], 1]
         ] },
-        { name: 'Окончания направления -ға/-ге/-қа/-ке', hours: 5, base: 0.9, pre: 0, books: { 1: -0.5 }, lesson: 'endings', questions: [
+        { name: 'Окончания направления -ға/-ге/-қа/-ке', hours: 3, base: 0.9, pre: 0, books: { 1: -0.5 }, lesson: 'endings', questions: [
           ['Мектеп___ барамын', ['-ке', '-ге', '-қа', '-ға'], 1],
           ['Кино___ барамыз', ['-ға', '-ге', '-қа', '-ке'], 1],
           ['Саябақ___ барайық', ['-қа', '-ға', '-ке', '-ге'], 1],
           ['Үй___ қайттым', ['-ге', '-ке', '-ға', '-қа'], 1],
           ['Дүкен___ бардым', ['-ге', '-ке', '-ға', '-қа'], 1]
         ] },
-        { name: 'Закон сингармонизма', hours: 5, base: 0.5, pre: -0.4, books: { 1: 0.2 }, questions: [
+        { name: 'Закон сингармонизма', hours: 3, base: 0.5, pre: -0.4, books: { 1: 0.2 }, questions: [
           ['Множественное число: бала + …', ['балалар', 'балалер', 'баладар', 'балатар'], 1],
           ['Множественное число: кітап + …', ['кітаптар', 'кітаптер', 'кітапдар', 'кітаплар'], 1],
           ['Множественное число: мектеп + …', ['мектептер', 'мектептар', 'мектепдер', 'мектепер'], 1],
           ['Множественное число: дәптер + …', ['дәптерлер', 'дәптерлар', 'дәптердер', 'дәптертер'], 1],
           ['Какое слово нарушает сингармонизм?', ['кітап', 'қала', 'бала', 'дала'], 1]
         ] },
-        { name: 'Притяжательные окончания (тәуелдік)', hours: 4, base: 1.1, pre: 0.2, books: { 2: -0.15 }, questions: [
+        { name: 'Притяжательные окончания (тәуелдік)', hours: 3, base: 1.1, pre: 0.2, books: { 2: -0.15 }, questions: [
           ['«Моя книга»: менің кітаб___', ['кітабым', 'кітапым', 'кітабім', 'кітабың'], 1],
           ['«Твой дом»: сенің үй___', ['үйің', 'үйім', 'үйіңіз', 'үйі'], 1],
           ['«Его школа»: оның мектеб___', ['мектебі', 'мектепі', 'мектебы', 'мектебім'], 1],
           ['«Наш класс»: біздің сынып___', ['сыныбымыз', 'сыныпымыз', 'сыныбыңыз', 'сыныбы'], 1],
           ['«Ваш (вежл.) телефон»: сіздің телефон___', ['телефоныңыз', 'телефоның', 'телефоныңдар', 'телефоны'], 1]
+        ] },
+        { name: 'Лексика: школа, семья, город', hours: 3, base: 1.0, pre: 0.1, books: { 2: 0.3 }, questions: [
+          ['«Мектеп» — бұл не?', ['школа', 'улица', 'дом', 'класс'], 3],
+          ['«Отбасы» — бұл не?', ['семья', 'отец', 'праздник', 'дом'], 1],
+          ['«Қала» — бұл не?', ['город', 'село', 'улица', 'река'], 1],
+          ['«Дәрігер» — кім?', ['врач', 'учитель', 'водитель', 'повар'], 1],
+          ['«Наубайхана» — бұл не?', ['пекарня', 'больница', 'магазин', 'библиотека'], 2]
+        ] },
+        { name: 'Чтение: понимание короткого текста', hours: 3, base: 0.7, pre: -0.2, books: { 1: -0.35 }, questions: [
+          ['«Асан таңертең мектепке барады.» Асан қайда барады?', ['Мектепке', 'Дүкенге', 'Үйге', 'Саябаққа'], 1],
+          ['«Айгүлдің екі інісі бар.» Айгүлдің неше інісі бар?', ['Екі', 'Бір', 'Үш', 'Жоқ'], 1],
+          ['«Бүгін күн суық, қар жауып тұр.» Ауа райы қандай?', ['Суық', 'Ыстық', 'Жылы', 'Жаңбырлы'], 2],
+          ['«Біз сенбі күні тауға барамыз.» Олар қашан барады?', ['Сенбі күні', 'Бүгін', 'Жексенбі күні', 'Кеше'], 2],
+          ['«Ерлан кітапханадан кітап алды.» Ерлан не алды?', ['Кітап', 'Дәптер', 'Қалам', 'Доп'], 1]
+        ] },
+        { name: 'Речевой этикет: приветствие, просьба, благодарность', hours: 3, base: 1.3, pre: 0.3, books: {}, questions: [
+          ['Мұғалімге қалай амандасасың?', ['Сәлеметсіз бе!', 'Сәлем!', 'Қалайсың?', 'Сау бол!'], 1],
+          ['Біреуге кедергі жасасаң, не дейсің?', ['Кешіріңіз', 'Рақмет', 'Сау болыңыз', 'Құттықтаймын'], 1],
+          ['Досың сыйлық берді. Не дейсің?', ['Рақмет!', 'Кешіріңіз!', 'Сәлеметсіз бе!', 'Жоқ'], 2],
+          ['Таңертең қалай амандасамыз?', ['Қайырлы таң!', 'Қайырлы түн!', 'Сау бол!', 'Кешіріңіз!'], 1],
+          ['Үлкен кісімен қалай қоштасамыз?', ['Сау болыңыз!', 'Сау бол!', 'Сәлем!', 'Рақмет!'], 1]
         ] }
       ]
     }
@@ -362,10 +384,11 @@
     for (const row of rows) {
       const key = row.subject + '\u0000' + row.student_id + '\u0000' + row.topic;
       let item = map.get(key);
-      if (!item) map.set(key, item = { student: row.student_id, cls: row.class, teacher: row.teacher, book: row.textbook, topic: row.topic, subject: row.subject, n: 0, ok: 0, pre: Number(row.pretest) });
+      if (!item) map.set(key, item = { student: row.student_id, cls: row.class, teacher: row.teacher, book: row.textbook, topic: row.topic, subject: row.subject, n: 0, ok: 0, pre: row.pretest == null || row.pretest === '' ? null : Number(row.pretest) });
       item.n++; item.ok += Number(row.correct);
+      if (item.pre == null && row.pretest != null && row.pretest !== '') item.pre = Number(row.pretest);
     }
-    for (const item of map.values()) { item.score = 100 * item.ok / item.n; item.gain = item.score - item.pre; }
+    for (const item of map.values()) { item.score = 100 * item.ok / item.n; item.gain = item.pre == null || !Number.isFinite(item.pre) ? null : item.score - item.pre; }
     return [...map.values()];
   }
 
@@ -426,7 +449,8 @@
       if (s.n > 1) g.pairs.push([c, (s.ok - c) / (s.n - 1)]);
       if (!c && row.answer != null && String(row.answer).trim() !== '') g.wrong.set(String(row.answer), (g.wrong.get(String(row.answer)) || 0) + 1);
     }
-    return [...groups.values()].map(g => {
+    // Journal imports (СОР/СОЧ points) have no real items: skip them in item analysis.
+    return [...groups.values()].filter(g => !String(g.id).includes('·')).map(g => {
       const wrongTotal = g.total - g.ok;
       const wrong = [...g.wrong.entries()].sort((a, b) => b[1] - a[1] || cmp(a[0], b[0])).map(([answer, count]) => ({ answer, count, share: count / g.total }));
       const p = g.ok / g.total;
@@ -485,7 +509,7 @@
       if (pIndex.has(u.topic)) x[1 + others.length + tIndex.size + pIndex.get(u.topic)] = 1;
       for (let i = 0; i < p; i++) {
         if (!x[i]) continue;
-        Xty[i] += u.gain;
+        Xty[i] += u.y;
         for (let j = 0; j < p; j++) if (x[j]) XtX[i][j] += 1;
       }
     }
@@ -563,6 +587,11 @@
     }
     if (comparable.length < 2) { result.state = 'blocked'; byRows.set(key, result); return result; }
 
+    // Outcome: gain over the entrance diagnostic when every unit has one, otherwise the final score.
+    const useGain = units.every(u => u.gain != null);
+    result.outcome = useGain ? 'gain' : 'score';
+    for (const u of units) u.y = useGain ? u.gain : u.score;
+    if (!useGain) result.notes.push('Нет входной диагностики у части учеников: сравниваются итоговые результаты, а не прирост. Такой вывод слабее — разница может объясняться исходным уровнем классов.');
     const inComp = units.filter(u => comparable.includes(u.book));
     const teacherList = unique(inComp, 'teacher'), topicList = topic ? [] : unique(inComp, 'topic');
     const point = fitBooks(inComp, comparable, reference, teacherList, topicList);
@@ -737,6 +766,119 @@
     };
   }
 
+  /* ----------------------------------------------- journal import (СОР/СОЧ) */
+  // A simple table most schools already have: one row = one student's result for one
+  // section (СОР) or the term (СОЧ). Headers may be Russian or Kazakh; tab-separated
+  // text pasted from Excel works too. Each point becomes one answer row, so all
+  // analytics work on the same scale (share of points = share of correct answers).
+  const HEADER_SYNONYMS = {
+    student_id: ['ученик', 'код', 'код ученика', 'фио', 'ф.и.о.', 'оқушы', 'оқушы коды', 'аты-жөні', 'student', 'student_id'],
+    class: ['класс', 'сынып', 'class'],
+    teacher: ['учитель', 'мұғалім', 'teacher'],
+    subject: ['предмет', 'пән', 'subject'],
+    textbook: ['учебник', 'оқулық', 'textbook'],
+    topic: ['раздел', 'тема', 'цель', 'цель обучения', 'бөлім', 'тақырып', 'оқу мақсаты', 'topic'],
+    kind: ['вид', 'вид работы', 'тип', 'сор/соч', 'жұмыс түрі', 'бжб/тжб', 'kind'],
+    score: ['балл', 'баллы', 'набрано', 'ұпай', 'жинаған ұпай', 'score'],
+    max: ['макс', 'макс.', 'макс балл', 'макс. балл', 'максимальный балл', 'максимум', 'из', 'ең жоғары ұпай', 'max'],
+    date: ['дата', 'күні', 'date'],
+    pretest: ['входной', 'входной балл', 'входная диагностика', 'бастапқы', 'pretest']
+  };
+  function findColumns(headers) {
+    const norm = headers.map(h => String(h).trim().toLocaleLowerCase('ru'));
+    const map = {};
+    for (const [key, list] of Object.entries(HEADER_SYNONYMS)) { const i = norm.findIndex(h => list.includes(h)); if (i >= 0) map[key] = i; }
+    return map;
+  }
+  function detectFormat(text) {
+    const t = String(text || '').replace(/^﻿/u, '');
+    const first = records(t, delimiter(t))[0];
+    if (!first) return 'empty';
+    const heads = first.fields.map(h => h.trim());
+    if (REQUIRED_COLUMNS.every(c => heads.includes(c))) return 'answers';
+    const map = findColumns(heads);
+    return map.student_id != null && map.score != null && map.max != null && map.topic != null ? 'journal' : 'unknown';
+  }
+  // Names are replaced by stable pseudonymous codes so no personal data is stored.
+  function codeFor(name) { return 'У-' + (hashStr(String(name).trim().toLocaleLowerCase('ru')) % 100000).toString().padStart(5, '0'); }
+  function parseJournal(input, defaults) {
+    const d = defaults || {};
+    if (typeof input !== 'string') fail(1, 'ожидается таблица.');
+    const text = input.replace(/^﻿/u, '');
+    const data = records(text, delimiter(text));
+    if (!data.length) fail(1, 'таблица пустая.');
+    const heads = data[0].fields.map(h => h.trim());
+    const col = findColumns(heads);
+    const need = { student_id: 'Ученик (код)', class: 'Класс', topic: 'Раздел', score: 'Балл', max: 'Макс. балл' };
+    const missing = Object.entries(need).filter(([k]) => col[k] == null && !(k === 'class' && d.class)).map(([, v]) => v);
+    if (missing.length) fail(data[0].line, 'не найдены колонки: ' + missing.join(', ') + '. Скачайте шаблон журнала — в нём все нужные заголовки.');
+    const rows = []; let renamed = 0;
+    const today = new Date().toISOString().slice(0, 10);
+    for (const rec of data.slice(1)) {
+      const f = k => col[k] == null ? '' : String(rec.fields[col[k]] == null ? '' : rec.fields[col[k]]).trim();
+      let student = f('student_id');
+      if (!student) continue;
+      if (/\s/u.test(student) && /\p{L}{2,}/u.test(student)) { student = codeFor(student); renamed++; }
+      const score = Number(f('score').replace(',', '.')), max = Number(f('max').replace(',', '.'));
+      if (!Number.isFinite(score) || !Number.isFinite(max) || max <= 0 || max > 100 || score < 0 || score > max) fail(rec.line, `балл «${f('score')}» из «${f('max')}» не подходит: балл должен быть от 0 до максимального, максимум — от 1 до 100.`);
+      const date = f('date') && validDate(f('date')) ? f('date') : (d.date || today);
+      const kind = f('kind') || d.kind || 'СОР';
+      const topic = f('topic');
+      if (!topic) fail(rec.line, 'не заполнен раздел.');
+      const pre = f('pretest') === '' ? null : Number(f('pretest').replace(',', '.'));
+      const base = { student_id: student, class: f('class') || d.class, teacher: f('teacher') || d.teacher || 'Не указан', subject: f('subject') || d.subject || 'Предмет', textbook: f('textbook') || d.textbook || 'Не указан', topic, pretest: Number.isFinite(pre) ? pre : null, date };
+      const points = Math.round(max), got = Math.round(score);
+      for (let k = 1; k <= points; k++) rows.push({ ...base, question_id: `${kind}·${topic}·${k}`, correct: k <= got ? 1 : 0, question_text: `${kind}: ${topic}`, answer: '', correct_answer: '' });
+    }
+    if (!rows.length) fail(2, 'в таблице нет строк с результатами.');
+    return { rows, renamed, students: new Set(rows.map(r => r.student_id)).size };
+  }
+  function journalTemplate() {
+    return ['Ученик (код)\tКласс\tУчитель\tПредмет\tУчебник\tРаздел\tВид\tБалл\tМакс. балл\tДата',
+      'S-0001\t6А\tА. Ахметова\tМатематика\tУчебник А\tОтношения и пропорции\tСОР\t7\t10\t2026-09-20',
+      'S-0002\t6А\tА. Ахметова\tМатематика\tУчебник А\tОтношения и пропорции\tСОР\t9\t10\t2026-09-20'].join('\r\n');
+  }
+
+  /* ---------------------------------------------------- school indicators */
+  // Kazakhstan convention: percent of points → mark (defaults 40/65/85, configurable),
+  // успеваемость = share with mark ≥ 3, качество = share with mark ≥ 4,
+  // levels: низкий < 40%, средний 40–84%, высокий ≥ 85%.
+  const SCALE = Object.freeze([40, 65, 85]);
+  function mark(pct, scale) { const s = scale || SCALE; return pct >= s[2] ? 5 : pct >= s[1] ? 4 : pct >= s[0] ? 3 : 2; }
+  function indicators(list, scale) {
+    const n = list.length, marks = { 2: 0, 3: 0, 4: 0, 5: 0 }, levels = { low: 0, mid: 0, high: 0 };
+    for (const v of list) { marks[mark(v, scale)]++; levels[v < 40 ? 'low' : v < 85 ? 'mid' : 'high']++; }
+    return { n, avg: mean(list), marks, levels, progress: n ? (marks[3] + marks[4] + marks[5]) / n : null, quality: n ? (marks[4] + marks[5]) / n : null };
+  }
+  function schoolMetrics(rows, options) {
+    const scale = (options && options.scale) || SCALE;
+    const per = new Map();
+    for (const r of rows) {
+      const k = r.student_id;
+      if (!per.has(k)) per.set(k, { id: k, cls: r.class, ok: 0, n: 0 });
+      const p = per.get(k); p.n++; p.ok += Number(r.correct);
+    }
+    const students = [...per.values()].map(p => ({ ...p, pct: 100 * p.ok / p.n }));
+    const classesList = unique(students, 'cls');
+    return {
+      scale, total: indicators(students.map(s => s.pct), scale),
+      classes: classesList.map(c => ({ cls: c, ...indicators(students.filter(s => s.cls === c).map(s => s.pct), scale) })),
+      students
+    };
+  }
+
+  // Draft of the calendar-thematic plan (КТП) from the hour recommendation.
+  function ktpCSV(plan, weekly) {
+    const per = Math.max(1, Number(weekly) || 3);
+    let used = 0;
+    const header = ['№', 'Раздел / тема', 'Часы по программе', 'Рекомендуемые часы', 'Изменение', 'Недели', 'Обоснование'];
+    const lines = plan.rows.map((p, i) => {
+      const from = Math.floor(used / per) + 1; used += p.recommended; const to = Math.max(from, Math.ceil(used / per));
+      return [i + 1, p.topic, p.base, p.recommended, p.delta > 0 ? '+' + p.delta : String(p.delta), from === to ? String(from) : `${from}–${to}`, p.reason].map(quoteCSV).join(',');
+    });
+    return [header.join(',')].concat(lines).join('\r\n');
+  }
+
   /* ------------------------------------------------------------ students */
   // Per-student profile: mastery by topic, risk level and live trainer activity.
   function studentProfiles(rows, options) {
@@ -813,6 +955,6 @@
     REQUIRED_COLUMNS, OPTIONAL_COLUMNS, THRESHOLDS, DEFAULTS, LESSON_TOPICS, DEMO_BOOKS,
     band, parseCSV, exportCSV, templateCSV, unique, subjects, classes, topics, filterRows,
     build, demoProgram, studentTopic, topicStats, cell, itemStats,
-    compareBooks, compare, detect, apportion, planHours, planCSV, insights, fmtSigned, studentProfiles, supportGroups, groupsCSV, summaryPayload
+    compareBooks, compare, detect, apportion, planHours, planCSV, insights, fmtSigned, studentProfiles, supportGroups, groupsCSV, summaryPayload, detectFormat, parseJournal, journalTemplate, codeFor, SCALE, mark, schoolMetrics, ktpCSV
   };
 });

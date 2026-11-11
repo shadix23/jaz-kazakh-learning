@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const C = require('../dist/curriculum.js');
 
-const header = C.REQUIRED_COLUMNS.join(',');
+const header = ['student_id', 'class', 'teacher', 'subject', 'textbook', 'topic', 'question_id', 'correct', 'pretest', 'date'].join(',');
 const row = (over = {}) => ({ student_id: 'S1', class: '6А', teacher: 'T1', subject: 'Математика', textbook: 'A', topic: 'Дроби', question_id: 'q1', correct: 1, pretest: 50, date: '2026-10-01', ...over });
 
 test('CSV roundtrip preserves optional text, quotes, delimiters and multiline fields', () => {
@@ -15,7 +15,7 @@ test('CSV roundtrip preserves optional text, quotes, delimiters and multiline fi
 });
 
 test('semicolon CSV with BOM and CRLF is accepted', () => {
-  const text = '﻿' + C.REQUIRED_COLUMNS.join(';') + '\r\nX-1;6Б;T;Математика;B;Тема;q;0;12.5;2026-10-02\r\n';
+  const text = '﻿' + header.replace(/,/g, ';') + '\r\nX-1;6Б;T;Математика;B;Тема;q;0;12.5;2026-10-02\r\n';
   const parsed = C.parseCSV(text);
   assert.equal(parsed[0].student_id, 'X-1');
   assert.equal(parsed[0].pretest, 12.5);
@@ -171,4 +171,44 @@ test('a single live answer cannot become the typical error of a topic', () => {
   const live = { ...math.find((r) => r.topic === 'Модуль числа'), question_id: 'live-x', question_text: 'Редкое задание', answer: 'X', correct: 0 };
   const ins = C.insights(math.concat([live]), C.demoProgram()['Математика'], {});
   assert.ok(ins.problems.every((p) => !p.item || p.item.text !== 'Редкое задание'));
+});
+
+test('pretest is optional: without it textbooks are compared on final scores with a caveat', () => {
+  const parsed = C.parseCSV(C.REQUIRED_COLUMNS.join(',') + '\nS1,6А,T,Математика,A,Тема,q1,1,2026-10-01');
+  assert.equal(parsed[0].pretest, null);
+  const math = C.build('clean', 'Математика').map((r) => ({ ...r, pretest: null }));
+  const res = C.compareBooks(math, { reps: 50 });
+  assert.equal(res.outcome, 'score');
+  assert.ok(res.notes.some((n) => /входной диагностики/.test(n)));
+});
+
+test('journal import (СОР/СОЧ) from Excel paste: Russian or Kazakh headers, names become codes', () => {
+  const text = 'ФИО\tКласс\tРаздел\tВид\tБалл\tМакс. балл\nИванов Иван\t6А\tДроби\tСОР\t7\t10\nS-2\t6А\tДроби\tСОР\t3\t10';
+  assert.equal(C.detectFormat(text), 'journal');
+  const r = C.parseJournal(text, { subject: 'Математика' });
+  assert.equal(r.renamed, 1);
+  assert.match(r.rows[0].student_id, /^У-\d{5}$/);
+  assert.equal(C.topicStats(r.rows)[0].score, 50);
+  const kz = C.parseJournal('Оқушы\tСынып\tБөлім\tҰпай\tЕң жоғары ұпай\nA1\t6Б\tТақырып\t9\t10', {});
+  assert.equal(kz.rows.length, 10);
+  assert.throws(() => C.parseJournal('Ученик\tКласс\tРаздел\tБалл\tМакс. балл\nA\t6А\tТ\t12\t10', {}), /Строка 2/);
+});
+
+test('school indicators follow the 40/65/85 convention', () => {
+  assert.equal(C.mark(39.9), 2); assert.equal(C.mark(40), 3); assert.equal(C.mark(65), 4); assert.equal(C.mark(85), 5);
+  const rows = [];
+  [[10, 10], [7, 10], [5, 10], [2, 10]].forEach(([ok, n], i) => { for (let k = 0; k < n; k++) rows.push({ student_id: 'S' + i, class: '6А', correct: k < ok ? 1 : 0 }); });
+  const m = C.schoolMetrics(rows);
+  assert.deepEqual(m.total.marks, { 2: 1, 3: 1, 4: 1, 5: 1 });
+  assert.equal(m.total.progress, 0.75);
+  assert.equal(m.total.quality, 0.5);
+  assert.deepEqual(m.total.levels, { low: 1, mid: 2, high: 1 });
+});
+
+test('KTP draft keeps the order and assigns weeks', () => {
+  const math = C.build('clean', 'Математика');
+  const plan = C.planHours(math, C.demoProgram()['Математика'], { reserve: 4 });
+  const csv = C.ktpCSV(plan, 5).split('\r\n');
+  assert.equal(csv.length, 7);
+  assert.match(csv[1], /^1,Отношения и пропорции,8,/);
 });
