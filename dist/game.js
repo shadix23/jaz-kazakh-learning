@@ -1,5 +1,5 @@
 /*
- * «Барыс жолы» — a three-lane answer runner (original Jaz! game).
+ * «Барыс жолы» - a three-lane answer runner (original Jaz! game).
  * The snow leopard runs across the steppe; each gate holds three answers to a
  * curriculum question. Run through the right one, jump hurdles, collect тиын.
  * Every answer is recorded for the methodist analytics.
@@ -287,7 +287,7 @@
   }
   function hit(it) {
     const g = game; it.hit = true; g.hearts--; g.combo = 0; g.invuln = 1.1; g.shake = 0.6; g.flash = 0.5; g.flashColor = '#e5484d'; g.pose = '12-rest'; g.poseT = 0.8; beep('hit');
-    say('Кедергі! Секіру — ↑ не сырғыт', 'bad');
+    say('Кедергі! Секіру - ↑ не сырғыт', 'bad');
     if (g.hearts <= 0) finish();
   }
   function resolveGate() {
@@ -302,7 +302,7 @@
       const mult = 1 + Math.min(4, Math.floor(g.combo / 3));
       g.score += 25 * mult; g.pose = '05-celebrate'; g.poseT = 0.7; g.flash = 0.25; g.flashColor = '#22a35a';
       burst(p.x, p.y, 28, ['#2f6fde', '#f2c14e', '#22a35a', '#e5484d', '#00afca']); beep('ok');
-      say(`${q.options[q.answer]} — дұрыс!${mult > 1 ? ` Комбо ×${mult}` : ''}`, 'ok');
+      say(`${q.options[q.answer]} - дұрыс!${mult > 1 ? ` Комбо ×${mult}` : ''}`, 'ok');
       const best = stats().bestBy[g.cfg.difficulty] || 0;
       if (!g.record && best > 0 && g.score > best) { g.record = true; beep('record'); say('Жаңа рекорд!', 'record'); }
     } else {
@@ -368,7 +368,7 @@
     host.querySelector('.g-overlay').innerHTML = `<div class="g-panel g-start">
       <div class="g-start-head"><img src="./assets/mascot-kit/04-wave.png" alt="" width="120" height="110"><div><h1>Барыс жолы</h1><p>Дұрыс жауаптың жолымен жүгір, кедергіден секір, тиын жина.</p></div></div>
       <div class="g-chips"><span>${svg('trophy')}Рекорд <b>${st.best}</b></span><span>${svg('coin')}Тиын <b>${st.coins}</b></span><span>Жүгіріс <b>${st.runs}</b></span></div>
-      <div class="g-howto"><strong>Қалай ойнаймыз</strong><div><span class="g-keys"><kbd>${svg('arrowL')}</kbd><kbd>${svg('arrowR')}</kbd><kbd>${svg('arrowU')}</kbd></span>Жолды ауыстыр, ↑ немесе бос орын — секіру.</div><div><span class="g-keys"><kbd>${svg('swipe')}</kbd></span>Телефонда: солға/оңға сырғыт, жоғары — секіру. Жауапты басып та таңдауға болады.</div></div>
+      <div class="g-howto"><strong>Қалай ойнаймыз</strong><div><span class="g-keys"><kbd>${svg('arrowL')}</kbd><kbd>${svg('arrowR')}</kbd><kbd>${svg('arrowU')}</kbd></span>Жолды ауыстыр, ↑ немесе бос орын - секіру.</div><div><span class="g-keys"><kbd>${svg('swipe')}</kbd></span>Телефонда: солға/оңға сырғыт, жоғары - секіру. Жауапты басып та таңдауға болады.</div></div>
       <fieldset class="g-field"><legend>Пән</legend><div class="g-seg">${[[P.KAZ, 'Қазақ тілі'], [P.MATH, 'Математика'], ['mixed', 'Аралас']].map(([v, l]) => `<button type="button" data-g-subject="${esc(v)}" aria-pressed="${v === subject}">${l}</button>`).join('')}</div></fieldset>
       <label class="g-field g-topic">Тақырып<select data-g-topic>${['<option value="">Барлық тақырып</option>'].concat(topics.map(t => `<option value="${esc(t.id)}"${t.id === topic ? ' selected' : ''}>${esc(t.kk)}</option>`)).join('')}</select></label>
       <fieldset class="g-field"><legend>Қиындық</legend><div class="g-diff">${Object.entries(DIFF).map(([k, d]) => `<button type="button" data-g-diff="${k}" aria-pressed="${k === st.difficulty}"><strong>${d.label}</strong><span>${d.desc}</span>${st.bestBy[k] ? `<em>Рекорд ${st.bestBy[k]}</em>` : ''}</button>`).join('')}</div></fieldset>
@@ -420,7 +420,7 @@
       <div class="g-score-card${record && prevBest ? ' record' : ''}"><span>Барыс жолы · ${DIFF[g.cfg.difficulty].label}</span><b>${score}</b><small>ұпай</small><div class="g-score-meta"><span>${correct} / ${total} дұрыс</span><span>Рекорд ${Math.max(score, prevBest)}</span><span>+${g.coins} тиын</span>${xp ? `<span>+${xp} XP</span>` : ''}</div></div>
       ${unlocked.length ? `<div class="g-badges">${unlocked.map(b => `<div class="g-badge">${svg('trophy')}<span><strong>${esc(b.title)}</strong><small>${esc(b.desc)}</small></span></div>`).join('')}</div>` : ''}
       <div class="g-end-actions"><button type="button" class="g-play" data-g-action="again">${svg('retry')}Қайта жүгіру</button><button type="button" class="g-ghost" data-g-action="menu">Баптаулар</button><a class="g-ghost" href="#home">${svg('home')}Басты бет</a></div>
-      ${mistakes.length ? `<h3>Қай жерде қателестің</h3><ul class="g-review">${mistakes.map(a => reviewRow(a)).join('')}</ul>` : total ? '<p class="g-perfect">Бірде-бір қате жоқ — керемет!</p>' : ''}
+      ${mistakes.length ? `<h3>Қай жерде қателестің</h3><ul class="g-review">${mistakes.map(a => reviewRow(a)).join('')}</ul>` : total ? '<p class="g-perfect">Бірде-бір қате жоқ - керемет!</p>' : ''}
       ${rights.length ? `<details class="g-rights"><summary>Дұрыс жауаптарың (${rights.length})</summary><ul class="g-review">${rights.map(a => reviewRow(a)).join('')}</ul></details>` : ''}
     </div>`;
     o.classList.add('show');

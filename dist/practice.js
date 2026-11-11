@@ -41,15 +41,15 @@
       rand => { const q = int(rand, 5, 30) * 10, n = int(rand, 2, 6); let m = int(rand, 2, 9); if (m === n) m++; const p = n * q;
         return item(rand, { prompt: `${n} дәптер ${p} теңге тұрады. ${m} дәптер қанша тұрады?`, explanation: `Алдымен бір дәптердің бағасы: ${p} : ${n} = ${q} тг. Тура пропорция: ${m} · ${q} = ${m * q} тг.` }, `${m * q} тг`, [`${Math.round(p * n / m)} тг`, `${p + m} тг`, `${m * q + q} тг`]); },
       rand => { const w = choice(rand, [2, 3, 4, 6]), d = choice(rand, [4, 6, 8, 12]), total = w * d; const w2 = choice(rand, [2, 3, 4, 6, 8, 12].filter(v => v !== w && total % v === 0));
-        return item(rand, { prompt: `${w} жұмысшы жұмысты ${d} күнде бітіреді. ${w2} жұмысшы неше күнде бітіреді?`, explanation: `Жұмысшы көбейсе, уақыт азаяды — бұл кері пропорция: ${w} · ${d} = ${w2} · x, x = ${total} : ${w2} = ${total / w2}.` }, total / w2, [d * w2 / w, d + (w2 - w), d], [d + 1]); }
+        return item(rand, { prompt: `${w} жұмысшы жұмысты ${d} күнде бітіреді. ${w2} жұмысшы неше күнде бітіреді?`, explanation: `Жұмысшы көбейсе, уақыт азаяды - бұл кері пропорция: ${w} · ${d} = ${w2} · x, x = ${total} : ${w2} = ${total / w2}.` }, total / w2, [d * w2 / w, d + (w2 - w), d], [d + 1]); }
     ] },
     { id: 'm-circle', topic: 'Окружность, круг и масштаб', kk: 'Шеңбер, дөңгелек, масштаб', desc: 'Шеңбер ұзындығы, дөңгелек ауданы, масштаб.', gen: [
       rand => { const r = int(rand, 2, 9);
-        return item(rand, { prompt: `Радиусы r = ${r} см шеңбердің ұзындығы (π ≈ 3,14)?`, explanation: `Шеңбер ұзындығы C = 2πr = 2 · 3,14 · ${r} = ${num(2 * 3.14 * r)} см. πr — бұл жарты шеңбер ғана.` }, `${num(2 * 3.14 * r)} см`, [`${num(3.14 * r)} см`, `${num(3.14 * r * r)} см`]); },
+        return item(rand, { prompt: `Радиусы r = ${r} см шеңбердің ұзындығы (π ≈ 3,14)?`, explanation: `Шеңбер ұзындығы C = 2πr = 2 · 3,14 · ${r} = ${num(2 * 3.14 * r)} см. πr - бұл жарты шеңбер ғана.` }, `${num(2 * 3.14 * r)} см`, [`${num(3.14 * r)} см`, `${num(3.14 * r * r)} см`]); },
       rand => { const r = int(rand, 2, 9);
-        return item(rand, { prompt: `Радиусы r = ${r} см дөңгелектің ауданы (π ≈ 3,14)?`, explanation: `Дөңгелек ауданы S = πr² = 3,14 · ${r}² = ${num(3.14 * r * r)} см². 2πr — шеңбердің ұзындығы, аудан емес.` }, `${num(3.14 * r * r)} см²`, [`${num(2 * 3.14 * r)} см²`, `${num(3.14 * 2 * r)} см`, `${num(3.14 * r)} см²`]); },
+        return item(rand, { prompt: `Радиусы r = ${r} см дөңгелектің ауданы (π ≈ 3,14)?`, explanation: `Дөңгелек ауданы S = πr² = 3,14 · ${r}² = ${num(3.14 * r * r)} см². 2πr - шеңбердің ұзындығы, аудан емес.` }, `${num(3.14 * r * r)} см²`, [`${num(2 * 3.14 * r)} см²`, `${num(3.14 * 2 * r)} см`, `${num(3.14 * r)} см²`]); },
       rand => { const r = int(rand, 2, 15), d = 2 * r;
-        return item(rand, { prompt: `Шеңбердің диаметрі ${d} см. Радиусы неше см?`, explanation: `Радиус — диаметрдің жартысы: r = d : 2 = ${d} : 2 = ${r} см.` }, `${r} см`, [`${2 * d} см`, `${d} см`]); },
+        return item(rand, { prompt: `Шеңбердің диаметрі ${d} см. Радиусы неше см?`, explanation: `Радиус - диаметрдің жартысы: r = d : 2 = ${d} : 2 = ${r} см.` }, `${r} см`, [`${2 * d} см`, `${d} см`]); },
       rand => { const k = choice(rand, [100000, 200000, 500000, 1000000]), n = int(rand, 2, 9), km = n * k / 100000;
         return item(rand, { prompt: `Масштаб 1 : ${k.toLocaleString('ru-RU').replace(/ /g, ' ')}. Картадағы ${n} см жерде неше км?`, explanation: `Картадағы 1 см жерде ${k.toLocaleString('ru-RU').replace(/ /g, ' ')} см = ${k / 100000} км. Онда ${n} см → ${n} · ${k / 100000} = ${num(km)} км.` }, `${num(km)} км`, [`${num(km * 10)} км`, `${num(km / 10)} км`]); }
     ] },
@@ -63,7 +63,7 @@
     ] },
     { id: 'm-abs', topic: 'Модуль числа', kk: 'Санның модулі', desc: 'Модуль, |x| = a теңдеуі, қашықтық.', gen: [
       rand => { const a = int(rand, 2, 40);
-        return item(rand, { prompt: `|${num(-a)}| = ?`, explanation: `Модуль — санның нөлге дейінгі қашықтығы, ол теріс болмайды: |${num(-a)}| = ${a}.` }, num(a), [num(-a), '0']); },
+        return item(rand, { prompt: `|${num(-a)}| = ?`, explanation: `Модуль - санның нөлге дейінгі қашықтығы, ол теріс болмайды: |${num(-a)}| = ${a}.` }, num(a), [num(-a), '0']); },
       rand => { const c = int(rand, 2, 20);
         return item(rand, { prompt: `|x| = ${c} теңдеуінің шешімі?`, explanation: `Нөлден ${c} бірлік қашықтықта екі сан бар: ${c} және ${num(-c)}.` }, `${c} және ${num(-c)}`, [`${c}`, `${num(-c)}`]); },
       rand => { const a = int(rand, 2, 15), b = int(rand, 2, 15);
@@ -75,7 +75,7 @@
       rand => { const a = int(rand, 2, 19); let b = int(rand, 1, 19); if (b === a) b++;
         return item(rand, { prompt: `${num(-a)} + ${b} = ?`, explanation: `Таңбалары әртүрлі: модульдері үлкенінен кішісін азайтамыз (${Math.max(a, b)} − ${Math.min(a, b)} = ${Math.abs(b - a)}) және модулі үлкен санның таңбасын қоямыз: ${num(b - a)}.` }, num(b - a), [num(-(a + b)), num(a - b), num(a + b)]); },
       rand => { const a = int(rand, 2, 15); let b = int(rand, 2, 15); if (b === a) b++;
-        return item(rand, { prompt: `${num(-a)} − ${paren(-b)} = ?`, explanation: `Теріс санды азайту — оған қарама-қарсы санды қосу: ${num(-a)} − ${paren(-b)} = ${num(-a)} + ${b} = ${num(b - a)}.` }, num(b - a), [num(-a - b), num(a + b), num(a - b)]); },
+        return item(rand, { prompt: `${num(-a)} − ${paren(-b)} = ?`, explanation: `Теріс санды азайту - оған қарама-қарсы санды қосу: ${num(-a)} − ${paren(-b)} = ${num(-a)} + ${b} = ${num(b - a)}.` }, num(b - a), [num(-a - b), num(a + b), num(a - b)]); },
       rand => { const a = int(rand, 1, 12), b = a + int(rand, 1, 12);
         return item(rand, { prompt: `${a} − ${b} = ?`, explanation: `Кішіден үлкенді азайтсақ, нәтиже теріс: ${a} − ${b} = ${num(a - b)}.` }, num(a - b), [num(b - a), num(a + b)]); },
       rand => { const a = int(rand, 1, 12), b = int(rand, 1, 12);
@@ -89,7 +89,7 @@
       rand => { const a = int(rand, 2, 5), n = choice(rand, [2, 3]); const v = Math.pow(-a, n);
         return item(rand, { prompt: `${paren(-a)}${n === 2 ? '²' : '³'} = ?`, explanation: `Теріс санның ${n === 2 ? 'жұп' : 'тақ'} дәрежесі ${n === 2 ? 'оң' : 'теріс'}: ${paren(-a)}${n === 2 ? '²' : '³'} = ${num(v)}.` }, num(v), [num(-v), num(-a * n)]); },
       rand => { const k = int(rand, 2, 6);
-        return item(rand, { prompt: `${k} теріс санның көбейтіндісінің таңбасы қандай?`, explanation: `Әр жұп теріс көбейткіш оң береді. ${k} — ${k % 2 ? 'тақ' : 'жұп'} сан, сондықтан таңба ${k % 2 ? 'минус' : 'плюс'}.` }, k % 2 ? 'Минус' : 'Плюс', [k % 2 ? 'Плюс' : 'Минус', 'Нөл болады']); }
+        return item(rand, { prompt: `${k} теріс санның көбейтіндісінің таңбасы қандай?`, explanation: `Әр жұп теріс көбейткіш оң береді. ${k} - ${k % 2 ? 'тақ' : 'жұп'} сан, сондықтан таңба ${k % 2 ? 'минус' : 'плюс'}.` }, k % 2 ? 'Минус' : 'Плюс', [k % 2 ? 'Плюс' : 'Минус', 'Нөл болады']); }
     ] }
   ];
 
@@ -109,9 +109,9 @@
     'Табиғат': [['тау', 'гора'], ['өзен', 'река'], ['көл', 'озеро'], ['орман', 'лес'], ['ағаш', 'дерево'], ['гүл', 'цветок'], ['жаңбыр', 'дождь'], ['қар', 'снег'], ['жел', 'ветер'], ['аспан', 'небо']]
   };
   const ALLV = Object.entries(VOCAB).flatMap(([theme, list]) => list.map(([kz, ru]) => ({ theme, kz, ru })));
-  // Short reading texts (A1–A2) with comprehension questions.
+  // Short reading texts (A1-A2) with comprehension questions.
   const TEXTS = [
-    { text: 'Менің атым Дана. Мен алтыншы сыныпта оқимын. Менің сүйікті пәнім — математика. Сабақтан кейін мен кітапханаға барамын.', qs: [['Дана нешінші сыныпта оқиды?', 'Алтыншы', ['Бесінші', 'Жетінші']], ['Дананың сүйікті пәні қандай?', 'Математика', ['Қазақ тілі', 'Сурет']], ['Сабақтан кейін Дана қайда барады?', 'Кітапханаға', ['Үйге', 'Дүкенге']]] },
+    { text: 'Менің атым Дана. Мен алтыншы сыныпта оқимын. Менің сүйікті пәнім - математика. Сабақтан кейін мен кітапханаға барамын.', qs: [['Дана нешінші сыныпта оқиды?', 'Алтыншы', ['Бесінші', 'Жетінші']], ['Дананың сүйікті пәні қандай?', 'Математика', ['Қазақ тілі', 'Сурет']], ['Сабақтан кейін Дана қайда барады?', 'Кітапханаға', ['Үйге', 'Дүкенге']]] },
     { text: 'Бүгін сенбі. Ауа райы жылы, күн ашық. Біз отбасымызбен саябаққа бардық. Әкем маған балмұздақ алып берді.', qs: [['Бүгін қай күн?', 'Сенбі', ['Дүйсенбі', 'Жексенбі']], ['Ауа райы қандай?', 'Жылы, күн ашық', ['Суық, қар жауып тұр', 'Жаңбыр жауып тұр']], ['Әкесі не алып берді?', 'Балмұздақ', ['Кітап', 'Доп']]] },
     { text: 'Асан таңертең сағат жетіде тұрады. Ол таңғы асқа нан мен шай ішеді. Сосын автобуспен мектепке барады.', qs: [['Асан сағат нешеде тұрады?', 'Жетіде', ['Сегізде', 'Алтыда']], ['Асан мектепке немен барады?', 'Автобуспен', ['Жаяу', 'Велосипедпен']], ['Таңғы асқа не ішеді?', 'Шай', ['Сүт', 'Шырын']]] },
     { text: 'Айгүлдің әжесі ауылда тұрады. Жазда Айгүл әжесіне барады. Ауылда өзен мен үлкен орман бар. Айгүл ол жерде көп жүреді.', qs: [['Айгүлдің әжесі қайда тұрады?', 'Ауылда', ['Қалада', 'Тауда']], ['Айгүл әжесіне қашан барады?', 'Жазда', ['Қыста', 'Күзде']], ['Ауылда не бар?', 'Өзен мен орман', ['Теңіз бен тау', 'Үлкен дүкен']]] },
@@ -119,7 +119,7 @@
   ];
   const ETIQUETTE = [
     ['Мұғалімге таңертең амандасасың:', 'Қайырлы таң, апай!', ['Сәлем, апай!', 'Сау болыңыз!'], 'Үлкендерге сыпайы түрде, «Қайырлы таң» немесе «Сәлеметсіз бе» деп амандасамыз.'],
-    ['Үлкен кісіге амандасасың:', 'Сәлеметсіз бе!', ['Сәлем!', 'Не болды?'], '«Сәлеметсіз бе» — сыпайы түрі, үлкендерге айтылады. «Сәлем» — достарға.'],
+    ['Үлкен кісіге амандасасың:', 'Сәлеметсіз бе!', ['Сәлем!', 'Не болды?'], '«Сәлеметсіз бе» - сыпайы түрі, үлкендерге айтылады. «Сәлем» - достарға.'],
     ['Досыңа амандасасың:', 'Сәлем!', ['Сәлеметсіз бе!', 'Қош келдіңіздер!'], 'Құрдасқа, досқа «Сәлем» деп айтамыз.'],
     ['Сыйлық алдың. Не дейсің?', 'Рақмет!', ['Кешіріңіз!', 'Оқасы жоқ!'], 'Алғыс айту үшін «Рақмет» дейміз.'],
     ['Саған «Рақмет» деді. Не деп жауап бересің?', 'Оқасы жоқ!', ['Сәлем!', 'Кешіріңіз!'], '«Рақмет» дегенге «Оқасы жоқ» немесе «Тұрмыс қой» деп жауап береміз.'],
@@ -127,7 +127,7 @@
     ['Досыңның туған күні:', 'Туған күніңмен!', ['Қайырлы түн!', 'Кешірерсің!'], 'Құттықтау: «Туған күніңмен!» немесе «Туған күнің құтты болсын!».'],
     ['Мұғалімнен рұқсат сұрайсың:', 'Кіруге бола ма?', ['Мен кіремін!', 'Кірдім.'], 'Рұқсатты сыпайы сұрақпен сұраймыз: «...бола ма?».'],
     ['Кешке қоштасасың:', 'Қайырлы түн!', ['Қайырлы таң!', 'Сәлеметсіз бе!'], 'Кешке, ұйықтар алдында «Қайырлы түн» дейміз.'],
-    ['Үлкен кісімен қоштасасың:', 'Сау болыңыз!', ['Сау бол!', 'Сәлем!'], '«Сау болыңыз» — сыпайы түрі, «Сау бол» — досқа.']
+    ['Үлкен кісімен қоштасасың:', 'Сау болыңыз!', ['Сау бол!', 'Сәлем!'], '«Сау болыңыз» - сыпайы түрі, «Сау бол» - досқа.']
   ];
   const whyEnd = w => { const c = K.endClass(w); return { vowel: 'дауысты дыбысқа', sonorant: `«${w.slice(-1)}» үнді дыбысына`, nasal: `«${w.slice(-1)}» мұрын жолды дыбысқа`, voiced: `«${w.slice(-1)}» ұяң дыбысқа`, voiceless: `«${w.slice(-1)}» қатаң дыбысқа` }[c]; };
   const harmonyWord = w => K.isBack(w) ? 'жуан' : 'жіңішке';
@@ -141,41 +141,41 @@
     ] },
     { id: 'ng', topic: 'Звуки Н и Ң', kk: 'Н мен Ң', desc: 'Н мен Ң айырмасын байқап, дұрыс жаз.', gen: [
       rand => { const [w, ru] = choice(rand, NG_WORDS);
-        return item(rand, { prompt: `Дұрыс жазылуын таңда: «${ru}»`, explanation: `«${w}» сөзінде мұрын жолды ң дыбысы бар, ол ң әрпімен жазылады. «н» мен «нг» — басқа дыбыстар.` }, w, [w.replace(/ң/g, 'н'), w.replace(/ң/g, 'нг'), russify(w, true)]); }
+        return item(rand, { prompt: `Дұрыс жазылуын таңда: «${ru}»`, explanation: `«${w}» сөзінде мұрын жолды ң дыбысы бар, ол ң әрпімен жазылады. «н» мен «нг» - басқа дыбыстар.` }, w, [w.replace(/ң/g, 'н'), w.replace(/ң/g, 'нг'), russify(w, true)]); }
     ] },
     { id: 'questions', topic: 'Вопросительные частицы ма/ме, ба/бе, па/пе', kk: 'Сұраулық шылау', desc: 'Ма/ме, ба/бе, па/пе: дұрысын таңдап, бөлек жаз.', gen: [
       rand => { const w = choice(rand, PREDICATES); const ok = K.particle(w);
         const others = ['ма', 'ме', 'ба', 'бе', 'па', 'пе'].filter(p => p !== ok);
         const sameHarm = others.filter(p => (p.endsWith('а')) === ok.endsWith('а'));
         const oppHarm = others.filter(p => (p.endsWith('а')) !== ok.endsWith('а') && p[0] === ok[0]);
-        return item(rand, { prompt: `«${w[0].toLocaleUpperCase('kk-KZ') + w.slice(1)} ___?» — қай шылау?`, explanation: `«${w}» сөзі ${whyEnd(w)} аяқталады және ${harmonyWord(w)}, сондықтан «${ok}». Шылау бөлек жазылады: ${w} ${ok}?` }, ok, [choice(rand, sameHarm), oppHarm[0] || others[0]], others); }
+        return item(rand, { prompt: `«${w[0].toLocaleUpperCase('kk-KZ') + w.slice(1)} ___?» - қай шылау?`, explanation: `«${w}» сөзі ${whyEnd(w)} аяқталады және ${harmonyWord(w)}, сондықтан «${ok}». Шылау бөлек жазылады: ${w} ${ok}?` }, ok, [choice(rand, sameHarm), oppHarm[0] || others[0]], others); }
     ] },
     { id: 'endings', topic: 'Окончания направления -ға/-ге/-қа/-ке', kk: 'Барыс септік жалғауы', desc: 'Киноға, мектепке, саябаққа: жалғауды дұрыс таңда.', gen: [
       rand => { const [w, ru] = choice(rand, NOUNS); const ok = K.RULES.dative.get(w);
         const all = ['ға', 'ге', 'қа', 'ке'].filter(x => x !== ok);
-        return item(rand, { prompt: `${w[0].toLocaleUpperCase('kk-KZ') + w.slice(1)}___ барамын (${ru})`, explanation: `«${w}» — ${harmonyWord(w)} сөз, ${whyEnd(w)} аяқталады, сондықтан -${ok}: ${w}${ok}.` }, '-' + ok, shuffle(rand, all).map(x => '-' + x)); }
+        return item(rand, { prompt: `${w[0].toLocaleUpperCase('kk-KZ') + w.slice(1)}___ барамын (${ru})`, explanation: `«${w}» - ${harmonyWord(w)} сөз, ${whyEnd(w)} аяқталады, сондықтан -${ok}: ${w}${ok}.` }, '-' + ok, shuffle(rand, all).map(x => '-' + x)); }
     ] },
     { id: 'harmony', topic: 'Закон сингармонизма', kk: 'Үндестік заңы', desc: 'Жуан сөзге жуан, жіңішке сөзге жіңішке жалғау.', gen: [
       rand => { const [w, ru] = choice(rand, NOUNS); const ok = K.plural(w); const suf = ok.slice(w.length);
         const flipH = suf.replace(/а/, 'Е').replace(/е/, 'а').replace('Е', 'е');
         const flipC = (suf[0] === 'л' ? 'д' : suf[0] === 'д' ? 'т' : 'л') + suf.slice(1);
-        return item(rand, { prompt: `«${w}» (${ru}) көпше түрде:`, explanation: `«${w}» — ${harmonyWord(w)} сөз, ${whyEnd(w)} аяқталады: -${suf}. ${K.RULES.plural.why}` }, ok, [w + flipH, w + flipC, w + flipC.replace(/а/, 'е')]); }
+        return item(rand, { prompt: `«${w}» (${ru}) көпше түрде:`, explanation: `«${w}» - ${harmonyWord(w)} сөз, ${whyEnd(w)} аяқталады: -${suf}. ${K.RULES.plural.why}` }, ok, [w + flipH, w + flipC, w + flipC.replace(/а/, 'е')]); }
     ] },
     { id: 'possessive', topic: 'Притяжательные окончания (тәуелдік)', kk: 'Тәуелдік жалғау', desc: 'Менің кітабым, сенің үйің: тәуелдік жалғау.', gen: [
       rand => { const [w, ru] = choice(rand, NOUNS); const person = int(rand, 1, 2); const pron = person === 1 ? 'менің' : 'сенің';
         const ok = K.possessive(w, person); const other = K.possessive(w, person === 1 ? 2 : 1);
         const noVoice = /[пкқ]$/.test(w) ? w + ok.slice(w.length) : null;
         const flip = ok.replace(/ы([мң])$/, 'і$1').replace(/і([мң])$/, 'ы$1');
-        return item(rand, { prompt: `${pron[0].toLocaleUpperCase('kk-KZ') + pron.slice(1)} ${w}___ (${person === 1 ? 'мой' : 'твой'}: ${ru})`, explanation: `${person === 1 ? 'I жақ: -м/-ым/-ім' : 'II жақ: -ң/-ың/-ің'}. «${w}» — ${harmonyWord(w)} сөз${/[пкқ]$/.test(w) ? `, соңғы ${w.slice(-1)} дауыстының алдында ұяңданады` : ''}: ${ok}.` }, ok, [noVoice, flip, other, w + (person === 1 ? 'ым' : 'ың'), w + (person === 1 ? 'ім' : 'ің')].filter(x => x && x !== ok)); }
+        return item(rand, { prompt: `${pron[0].toLocaleUpperCase('kk-KZ') + pron.slice(1)} ${w}___ (${person === 1 ? 'мой' : 'твой'}: ${ru})`, explanation: `${person === 1 ? 'I жақ: -м/-ым/-ім' : 'II жақ: -ң/-ың/-ің'}. «${w}» - ${harmonyWord(w)} сөз${/[пкқ]$/.test(w) ? `, соңғы ${w.slice(-1)} дауыстының алдында ұяңданады` : ''}: ${ok}.` }, ok, [noVoice, flip, other, w + (person === 1 ? 'ым' : 'ың'), w + (person === 1 ? 'ім' : 'ің')].filter(x => x && x !== ok)); }
     ] }
   ];
 
   KAZ_TOPICS.push(
     { id: 'vocab', topic: 'Лексика: школа, семья, город', kk: 'Сөздік қор', desc: 'Мектеп, отбасы, қала, тағам, табиғат: жаңа сөздер.', gen: [
       rand => { const w = choice(rand, ALLV); const others = shuffle(rand, ALLV.filter(x => x.ru !== w.ru && x.theme === w.theme)).slice(0, 2);
-        return item(rand, { prompt: `«${w.kz}» — орысша қалай?`, explanation: `«${w.kz}» — ${w.ru}. Тақырып: ${w.theme}.` }, w.ru, others.map(x => x.ru)); },
+        return item(rand, { prompt: `«${w.kz}» - орысша қалай?`, explanation: `«${w.kz}» - ${w.ru}. Тақырып: ${w.theme}.` }, w.ru, others.map(x => x.ru)); },
       rand => { const w = choice(rand, ALLV); const others = shuffle(rand, ALLV.filter(x => x.kz !== w.kz && x.theme === w.theme)).slice(0, 2);
-        return item(rand, { prompt: `«${w.ru}» — қазақша қалай?`, explanation: `«${w.ru}» қазақша — «${w.kz}». Тақырып: ${w.theme}.` }, w.kz, others.map(x => x.kz)); }
+        return item(rand, { prompt: `«${w.ru}» - қазақша қалай?`, explanation: `«${w.ru}» қазақша - «${w.kz}». Тақырып: ${w.theme}.` }, w.kz, others.map(x => x.kz)); }
     ] },
     { id: 'reading', topic: 'Чтение: понимание короткого текста', kk: 'Оқылым', desc: 'Шағын мәтінді оқып, сұраққа жауап бер.', noGame: true, gen: [
       rand => { const t = choice(rand, TEXTS); const [q, ok, wrong] = choice(rand, t.qs);

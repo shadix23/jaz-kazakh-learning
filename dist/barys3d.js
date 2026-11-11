@@ -1,5 +1,5 @@
 /*
- * 3D Barys — a procedural low-poly snow leopard for «Барыс жолы».
+ * 3D Barys - a procedural low-poly snow leopard for «Барыс жолы».
  * Built from three.js primitives (no external model files): thick spotted tail,
  * blue scarf and a taqiya with a gold band, the Jaz! mascot look.
  * Rendered on a transparent canvas above the 2D world; the game passes the

@@ -1,4 +1,4 @@
-# AGENTS.md — guide for coding agents (Codex, Claude Code, Cursor)
+# AGENTS.md - guide for coding agents (Codex, Claude Code, Cursor)
 
 Jaz! is a hackathon project for **Case 1 «Data-Driven Curriculum»**: an EdTech platform for school methodists that analyses test results by curriculum topic, finds hard topics, compares textbooks and recommends teaching hours. A learner trainer (Kazakh + Mathematics, 6th grade) produces live answers for the analytics.
 
@@ -35,11 +35,11 @@ Optional AI mentor for the chat: set `ANTHROPIC_API_KEY` (or log in with `ant au
 | `server/api.js`, `server/store.js`, `server/ai.js` | **Backend**: workspaces, class codes, learner join (HMAC token), formative answers, assignments; storage = file / Upstash Redis / memory; AI endpoints. Covered by `tests/api.test.cjs` (real HTTP). |
 | `api/index.js`, `vercel.json` | Vercel serverless entry; `/api/*` is rewritten to `/api/index?route=*`. See `DEPLOY.md`. |
 | `dist/sync.js` | Browser client for the API (`JazSync`): admin/student sessions, offline answer queue. Without a server everything works in one browser. |
-| `dev-server.cjs` | Static server + `GET /api/status`, `POST /api/correct` (chat checking) and `POST /api/summary` (methodist conclusions from aggregates only — never student codes). Claude via `@anthropic-ai/sdk`, structured JSON output, model `claude-opus-5-5`, server-side fallback. |
+| `dev-server.cjs` | Static server + `GET /api/status`, `POST /api/correct` (chat checking) and `POST /api/summary` (methodist conclusions from aggregates only - never student codes). Claude via `@anthropic-ai/sdk`, structured JSON output, model `claude-opus-5-5`, server-side fallback. |
 
 ### Data contract
 
-CSV / row schema (one row = one answer): `student_id, class, teacher, subject, textbook, topic, question_id, correct(0|1), date(YYYY-MM-DD)` + optional `pretest(0–100), question_text, answer, correct_answer`. Without `pretest` textbooks are compared on final scores with a caveat.
+CSV / row schema (one row = one answer): `student_id, class, teacher, subject, textbook, topic, question_id, correct(0|1), date(YYYY-MM-DD)` + optional `pretest(0-100), question_text, answer, correct_answer`. Without `pretest` textbooks are compared on final scores with a caveat.
 
 Journal import (what schools actually have): one row per student × section with `Ученик, Класс, Раздел, Балл, Макс. балл` (+ optional `Учитель, Предмет, Учебник, Вид, Дата`), Russian or Kazakh headers, CSV/TSV or Excel paste → `parseJournal()` turns each point into an answer row; names are replaced by codes `У-xxxxx`. Journal point-items (`question_id` contains `·`) are excluded from item analysis.
 
@@ -54,9 +54,9 @@ They are linked to the student selected in the learner's «Оқу деректе
 ### Methodology (do not weaken)
 
 - Mastery: student's share correct per topic ≥ threshold (60/70/80, default 70). Low data: < 10 students or < 30 answers.
-- Textbook comparison only within teachers; blocked when the teacher–textbook graph is disconnected; wording is association, never causation; "better/worse" needs CI excluding 0 **and** |diff| ≥ 5 pp.
+- Textbook comparison only within teachers; blocked when the teacher-textbook graph is disconnected; wording is association, never causation; "better/worse" needs CI excluding 0 **and** |diff| ≥ 5 pp.
 - Hours: program total is preserved; extra hours = reserve + up to 20% from topics mastered by ≥ 85%; proportional to share not mastered × hours × weight; cap +50% per topic; integer largest remainders.
-- School indicators: mark from percent of points 40/65/85 → 3/4/5; успеваемость = share ≥ «3», качество = share ≥ «4»; levels низкий < 40, средний 40–84, высокий ≥ 85.
+- School indicators: mark from percent of points 40/65/85 → 3/4/5; успеваемость = share ≥ «3», качество = share ≥ «4»; levels низкий < 40, средний 40-84, высокий ≥ 85.
 - **Two data layers, never mixed:** summative (СОР/СОЧ, imported or demo) feeds every school indicator, topic stat, report and hour plan; formative (trainer answers: lessons first attempt only, game, assignments) lives in `liveRows` / `serverRows` / demo `buildTrainer` and is analysed only by `growthCompare`, `studentTrainer`, `assignmentProgress` (early third vs late third of a student's attempts, ≥ 6 attempts, ≥ 5 students, 95% CI).
 - Students: risk high ≥ 2/3 topics not mastered, medium ≥ 1/3; support-group "core" = ≤ 40% correct. Risk is a signal for the methodist, not a grade.
 - Typical errors and "hard" flags need ≥ 10 answers per item, so single live answers never dominate.

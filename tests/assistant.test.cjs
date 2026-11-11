@@ -16,7 +16,7 @@ test('rule, start and example answers come from the topic', () => {
 });
 
 test('mistake advice uses the explanation shown after a wrong answer, or asks to try first', () => {
-  assert.match(A.localHint('mistake', { ...ctx, lastExplanation: 'Модуль — арақашықтық.' }, P).reply, /арақашықтық/);
+  assert.match(A.localHint('mistake', { ...ctx, lastExplanation: 'Модуль - арақашықтық.' }, P).reply, /арақашықтық/);
   assert.match(A.localHint('mistake', ctx, P).reply, /Алдымен жауап беріп көр/);
 });
 

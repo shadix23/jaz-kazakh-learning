@@ -1,7 +1,7 @@
 // Jaz! local server: static files from dist/ + the backend API (server/api.js).
 // Same API runs on Vercel (api/index.js). Data: server/.data/db.json locally,
 // Upstash Redis / Vercel KV when UPSTASH_REDIS_REST_URL + _TOKEN are set.
-// Optional AI: ANTHROPIC_API_KEY (or `ant auth login`) — the key never reaches the browser.
+// Optional AI: ANTHROPIC_API_KEY (or `ant auth login`) - the key never reaches the browser.
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -28,6 +28,6 @@ function createServer() {
 }
 
 if (require.main === module) {
-  createServer().listen(PORT, '127.0.0.1', () => console.log(`Jaz! Local: http://127.0.0.1:${PORT}  ·  API: on  ·  AI mentor: ${ai.hasClient() ? (process.env.GROQ_API_KEY ? 'on (Groq)' : 'on (Claude)') : 'off — set GROQ_API_KEY to enable'}`));
+  createServer().listen(PORT, '127.0.0.1', () => console.log(`Jaz! Local: http://127.0.0.1:${PORT}  ·  API: on  ·  AI mentor: ${ai.hasClient() ? (process.env.GROQ_API_KEY ? 'on (Groq)' : 'on (Claude)') : 'off - set GROQ_API_KEY to enable'}`));
 }
 module.exports = { createServer };

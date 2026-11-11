@@ -11,20 +11,20 @@
   'use strict';
 
   const REQUIRED_COLUMNS = Object.freeze(['student_id', 'class', 'teacher', 'subject', 'textbook', 'topic', 'question_id', 'correct', 'date']);
-  // pretest (entrance diagnostic, 0–100) is optional: real schools rarely have it per topic.
+  // pretest (entrance diagnostic, 0-100) is optional: real schools rarely have it per topic.
   const OPTIONAL_COLUMNS = Object.freeze(['pretest', 'question_text', 'answer', 'correct_answer']);
   const THRESHOLDS = Object.freeze([
-    Object.freeze({ min: 80, key: 'good', label: '≥ 80% — освоено' }),
-    Object.freeze({ min: 60, key: 'mid', label: '60–80% — повторить' }),
-    Object.freeze({ min: 0, key: 'low', label: '< 60% — затруднение' })
+    Object.freeze({ min: 80, key: 'good', label: '≥ 80% - освоено' }),
+    Object.freeze({ min: 60, key: 'mid', label: '60-80% - повторить' }),
+    Object.freeze({ min: 0, key: 'low', label: '< 60% - затруднение' })
   ]);
   const DEFAULTS = Object.freeze({
     mastery: 70,          // ученик освоил тему, если верных ответов ≥ 70%
-    minStudents: 10,      // ниже — «мало данных»
+    minStudents: 10,      // ниже - «мало данных»
     minAnswers: 30,
     meaningful: 5,        // п.п.: практически значимая разница учебников
-    riskShare: 0.4,       // ≥ 40% не освоили — зона риска
-    watchShare: 0.2,      // ≥ 20% — под наблюдением
+    riskShare: 0.4,       // ≥ 40% не освоили - зона риска
+    watchShare: 0.2,      // ≥ 20% - под наблюдением
     donorMastery: 0.85,   // тема может отдать часы, если освоили ≥ 85% учеников
     maxCut: 0.2,          // не больше 20% часов темы
     maxBoost: 0.5,        // не больше +50% к теме
@@ -220,7 +220,7 @@
           ['Площадь круга при r = 3 см (π ≈ 3,14)', ['28,26 см²', '18,84 см²', '9,42 см²', '56,52 см²'], 1],
           ['Диаметр 12 см. Чему равен радиус?', ['6 см', '24 см', '12 см', '3 см'], 1],
           ['Масштаб 1 : 100 000. Сколько км в 3 см на карте?', ['3 км', '30 км', '0,3 км', '300 км'], 1],
-          ['Сектор 90° — какая часть круга?', ['1/4', '1/3', '1/2', '1/90'], 1]
+          ['Сектор 90° - какая часть круга?', ['1/4', '1/3', '1/2', '1/90'], 1]
         ] },
         { name: 'Положительные и отрицательные числа', hours: 6, base: 2.4, pre: 1.4, books: {}, questions: [
           ['Какое число больше: −7 или −3?', ['−3', '−7', 'Они равны', 'Сравнить нельзя'], 1],
@@ -300,11 +300,11 @@
           ['«Ваш (вежл.) телефон»: сіздің телефон___', ['телефоныңыз', 'телефоның', 'телефоныңдар', 'телефоны'], 1]
         ] },
         { name: 'Лексика: школа, семья, город', hours: 3, base: 1.0, pre: 0.1, books: { 2: 0.3 }, questions: [
-          ['«Мектеп» — бұл не?', ['школа', 'улица', 'дом', 'класс'], 3],
-          ['«Отбасы» — бұл не?', ['семья', 'отец', 'праздник', 'дом'], 1],
-          ['«Қала» — бұл не?', ['город', 'село', 'улица', 'река'], 1],
-          ['«Дәрігер» — кім?', ['врач', 'учитель', 'водитель', 'повар'], 1],
-          ['«Наубайхана» — бұл не?', ['пекарня', 'больница', 'магазин', 'библиотека'], 2]
+          ['«Мектеп» - бұл не?', ['школа', 'улица', 'дом', 'класс'], 3],
+          ['«Отбасы» - бұл не?', ['семья', 'отец', 'праздник', 'дом'], 1],
+          ['«Қала» - бұл не?', ['город', 'село', 'улица', 'река'], 1],
+          ['«Дәрігер» - кім?', ['врач', 'учитель', 'водитель', 'повар'], 1],
+          ['«Наубайхана» - бұл не?', ['пекарня', 'больница', 'магазин', 'библиотека'], 2]
         ] },
         { name: 'Чтение: понимание короткого текста', hours: 3, base: 0.7, pre: -0.2, books: { 1: -0.35 }, questions: [
           ['«Асан таңертең мектепке барады.» Асан қайда барады?', ['Мектепке', 'Дүкенге', 'Үйге', 'Саябаққа'], 1],
@@ -567,7 +567,7 @@
 
     if (books.length < 2) {
       result.state = 'single';
-      result.why = books.length ? 'В выбранных данных только один учебник — сравнивать не с чем.' : '';
+      result.why = books.length ? 'В выбранных данных только один учебник - сравнивать не с чем.' : '';
       byRows.set(key, result); return result;
     }
 
@@ -591,7 +591,7 @@
     const useGain = units.every(u => u.gain != null);
     result.outcome = useGain ? 'gain' : 'score';
     for (const u of units) u.y = useGain ? u.gain : u.score;
-    if (!useGain) result.notes.push('Нет входной диагностики у части учеников: сравниваются итоговые результаты, а не прирост. Такой вывод слабее — разница может объясняться исходным уровнем классов.');
+    if (!useGain) result.notes.push('Нет входной диагностики у части учеников: сравниваются итоговые результаты, а не прирост. Такой вывод слабее - разница может объясняться исходным уровнем классов.');
     const inComp = units.filter(u => comparable.includes(u.book));
     const teacherList = unique(inComp, 'teacher'), topicList = topic ? [] : unique(inComp, 'topic');
     const point = fitBooks(inComp, comparable, reference, teacherList, topicList);
@@ -706,12 +706,12 @@
       p.recommended = p.base - p.cut + p.add;
       p.delta = p.recommended - p.base;
       p.status = !p.stats ? 'nodata' : p.delta > 0 ? 'add' : p.delta < 0 ? 'cut' : 'keep';
-      p.reason = !p.stats ? 'Нет результатов по теме — часы оставлены по программе.'
-        : p.stats.lowData ? 'Мало данных (n = ' + p.stats.n + ') — часы не меняются, нужен дополнительный срез.'
+      p.reason = !p.stats ? 'Нет результатов по теме - часы оставлены по программе.'
+        : p.stats.lowData ? 'Мало данных (n = ' + p.stats.n + ') - часы не меняются, нужен дополнительный срез.'
         : p.delta > 0 ? 'Не освоили ' + Math.round(100 * p.stats.notMasteredShare) + '% учеников (' + p.stats.notMastered + ' из ' + p.stats.n + ').'
-        : p.delta < 0 ? 'Освоили ' + Math.round(100 * p.stats.masteredShare) + '% учеников — часть часов можно передать.'
+        : p.delta < 0 ? 'Освоили ' + Math.round(100 * p.stats.masteredShare) + '% учеников - часть часов можно передать.'
         : p.donor ? 'Тема освоена, но часы некуда передавать.'
-        : 'Не освоили ' + Math.round(100 * p.stats.notMasteredShare) + '% — изменений не требуется.';
+        : 'Не освоили ' + Math.round(100 * p.stats.notMasteredShare) + '% - изменений не требуется.';
     });
     const baseTotal = plan.reduce((s, p) => s + p.base, 0);
     const recommendedTotal = plan.reduce((s, p) => s + p.recommended, 0);
@@ -745,7 +745,7 @@
     const decisions = [];
     for (const p of problems) {
       let text = '«' + p.topic + '»: не освоили ' + Math.round(100 * p.notMasteredShare) + '% учеников.';
-      if (p.item && p.item.wrong[0]) text += ' Типичная ошибка — «' + p.item.wrong[0].answer + '» в задании ' + (p.item.text.includes('«') ? '„' + p.item.text + '“' : '«' + p.item.text + '»') + ' (' + Math.round(100 * p.item.wrong[0].share) + '% ответов).';
+      if (p.item && p.item.wrong[0]) text += ' Типичная ошибка - «' + p.item.wrong[0].answer + '» в задании ' + (p.item.text.includes('«') ? '„' + p.item.text + '“' : '«' + p.item.text + '»') + ' (' + Math.round(100 * p.item.wrong[0].share) + '% ответов).';
       decisions.push({ kind: 'topic', tone: p.status, text });
     }
     if (books && (books.state === 'ok' || books.state === 'partial')) {
@@ -811,7 +811,7 @@
     const col = findColumns(heads);
     const need = { student_id: 'Ученик (код)', class: 'Класс', topic: 'Раздел', score: 'Балл', max: 'Макс. балл' };
     const missing = Object.entries(need).filter(([k]) => col[k] == null && !(k === 'class' && d.class)).map(([, v]) => v);
-    if (missing.length) fail(data[0].line, 'не найдены колонки: ' + missing.join(', ') + '. Скачайте шаблон журнала — в нём все нужные заголовки.');
+    if (missing.length) fail(data[0].line, 'не найдены колонки: ' + missing.join(', ') + '. Скачайте шаблон журнала - в нём все нужные заголовки.');
     const rows = []; let renamed = 0;
     const today = new Date().toISOString().slice(0, 10);
     for (const rec of data.slice(1)) {
@@ -820,7 +820,7 @@
       if (!student) continue;
       if (/\s/u.test(student) && /\p{L}{2,}/u.test(student)) { student = codeFor(student); renamed++; }
       const score = Number(f('score').replace(',', '.')), max = Number(f('max').replace(',', '.'));
-      if (!Number.isFinite(score) || !Number.isFinite(max) || max <= 0 || max > 100 || score < 0 || score > max) fail(rec.line, `балл «${f('score')}» из «${f('max')}» не подходит: балл должен быть от 0 до максимального, максимум — от 1 до 100.`);
+      if (!Number.isFinite(score) || !Number.isFinite(max) || max <= 0 || max > 100 || score < 0 || score > max) fail(rec.line, `балл «${f('score')}» из «${f('max')}» не подходит: балл должен быть от 0 до максимального, максимум - от 1 до 100.`);
       const date = f('date') && validDate(f('date')) ? f('date') : (d.date || today);
       const kind = f('kind') || d.kind || 'СОР';
       const topic = f('topic');
@@ -842,7 +842,7 @@
   /* ---------------------------------------------------- school indicators */
   // Kazakhstan convention: percent of points → mark (defaults 40/65/85, configurable),
   // успеваемость = share with mark ≥ 3, качество = share with mark ≥ 4,
-  // levels: низкий < 40%, средний 40–84%, высокий ≥ 85%.
+  // levels: низкий < 40%, средний 40-84%, высокий ≥ 85%.
   const SCALE = Object.freeze([40, 65, 85]);
   function mark(pct, scale) { const s = scale || SCALE; return pct >= s[2] ? 5 : pct >= s[1] ? 4 : pct >= s[0] ? 3 : 2; }
   function indicators(list, scale) {
@@ -874,7 +874,7 @@
     const header = ['№', 'Раздел / тема', 'Часы по программе', 'Рекомендуемые часы', 'Изменение', 'Недели', 'Обоснование'];
     const lines = plan.rows.map((p, i) => {
       const from = Math.floor(used / per) + 1; used += p.recommended; const to = Math.max(from, Math.ceil(used / per));
-      return [i + 1, p.topic, p.base, p.recommended, p.delta > 0 ? '+' + p.delta : String(p.delta), from === to ? String(from) : `${from}–${to}`, p.reason].map(quoteCSV).join(',');
+      return [i + 1, p.topic, p.base, p.recommended, p.delta > 0 ? '+' + p.delta : String(p.delta), from === to ? String(from) : `${from}-${to}`, p.reason].map(quoteCSV).join(',');
     });
     return [header.join(',')].concat(lines).join('\r\n');
   }
@@ -1052,7 +1052,7 @@
   }
 
   function fmtSigned(value) {
-    if (!Number.isFinite(value)) return '—';
+    if (!Number.isFinite(value)) return '-';
     const r = Math.round(value * 10) / 10;
     return (r > 0 ? '+' : r < 0 ? '−' : '') + Math.abs(r).toLocaleString('ru-RU', { maximumFractionDigits: 1 });
   }

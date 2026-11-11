@@ -1,5 +1,5 @@
 /*
- * «Барыс-көмекші» — a small chibi study helper for the learner.
+ * «Барыс-көмекші» - a small chibi study helper for the learner.
  * Floating button (outside lessons) or the «Кеңес» button inside a lesson opens a panel.
  * The learner asks for advice about the current topic: the rule, an example, where to start,
  * why an answer was wrong. Server AI (/api/hint) answers when available; otherwise the
@@ -89,7 +89,7 @@
     place();
     panel.hidden = false;
     el.classList.add('is-open'); el.querySelector('.bx-fab').setAttribute('aria-expanded', 'true');
-    if (!panel.querySelector('.bx-msg')) { face('wave'); addMsg('barys', 'Сәлем! Мен Барыспын. Сабақ бойынша кеңес керек пе? Ережені түсіндіріп, мысал көрсетемін — бірақ жауапты өзің табасың.'); }
+    if (!panel.querySelector('.bx-msg')) { face('wave'); addMsg('barys', 'Сәлем! Мен Барыспын. Сабақ бойынша кеңес керек пе? Ережені түсіндіріп, мысал көрсетемін - бірақ жауапты өзің табасың.'); }
     setTimeout(() => panel.querySelector('.bx-form input').focus({ preventScroll: true }), 50);
   }
   function close() {

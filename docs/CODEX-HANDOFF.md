@@ -1,4 +1,4 @@
-# Handoff for Codex — Jaz! (Case 1 «Data-Driven Curriculum»)
+# Handoff for Codex - Jaz! (Case 1 «Data-Driven Curriculum»)
 
 Read this file fully, then `AGENTS.md`, `docs/CASE-ANALYSIS.md`, `docs/METHODIST-RESEARCH.md`, `DEPLOY.md`.
 
@@ -14,11 +14,10 @@ Hackathon jury criteria we optimise for: fit to the case, validity of analytics,
 ## 2. Current state
 
 - Current source: `main`. Learner/backend work was merged in PR #5; the handoff, smoke script and CI were merged in PR #6.
-- Production: https://jaz-kazakh-learning.vercel.app — Vercel project `reforest2/jaz-kazakh-learning`, linked to GitHub `main`. Upstash Redis is connected on the free plan with automatic plan upgrades disabled. The deployed smoke test passes, including `store: redis`. AI mentor is enabled in production (`ai: true`, checked 2026-11-11).
+- Production: https://jaz-kazakh-learning.vercel.app - Vercel project `reforest2/jaz-kazakh-learning`, linked to GitHub `main`. Upstash Redis is connected on the free plan with automatic plan upgrades disabled. The deployed smoke test passes, including `store: redis`. AI mentor is enabled in production (`ai: true`, checked 2026-11-11).
 - Stack: vanilla HTML/CSS/JS in `dist/` (no build), Node ≥ 20 backend in `server/` (no framework), Vercel config ready (`vercel.json`, `api/index.js`), only dependency `@anthropic-ai/sdk`.
-- Pitch page (Kazakh, 10 slides + PDF/PPTX in `dist/downloads/`): `dist/pitch.html` (scroll-story, 3D Barys cubs + the game's leopard via `export { buildLeopard, pose }` in `dist/barys3d.js`; three.js addons vendored in `dist/vendor/addons/`). Script in `docs/PITCH.md`. Every statistic must cite a source (a test checks this); estimates are labelled «болжам».
+- Pitch (Kazakh, 12 image slides) lives in the repo only: `docs/pitch/Jaz-pitch.pdf` and `.pptx`; source `docs/pitch/pitch.html` with its images. It is not served by the site. To rebuild: copy `docs/pitch/pitch.html` and `docs/pitch/assets/pitch` into `dist/`, vendor three.js addons (RoundedBoxGeometry, RoomEnvironment) into `dist/vendor/addons/`, print to PDF, flatten each page to a 3200 px image (Canva mangles vector text), then remove them from `dist/` again. Every statistic must cite a source; estimates are labelled «болжам».
 - Language: global «Қаз | Рус» switch in the top bar (`dist/i18n.js`: dictionary of [kk, ru] pairs + patterns, translates UI text in the DOM; learning content in SKIP selectors stays Kazakh). The methodist follows it via `JazMetodist.setLang`. Add new UI strings to `PAIRS`/`METHOD`.
-- Pitch PDF is image-based on purpose (Canva mangles vector text): rebuild = print `/pitch.html` to PDF, then flatten each page to a 3200 px image.
 - Tests: `npm test` must stay green (analytics, UI harness, API end-to-end over HTTP, Vercel entry, Groq mentor, pitch).
 - P0-1 and P0-2 are complete. Next: P0-3 real-device verification, then the remaining tasks in order.
 - Not done yet: real-device verification, real school data, roles/accounts, ГОСО objective codes, Kundelik/BilimClass import, summative before/after comparison.
@@ -26,7 +25,7 @@ Hackathon jury criteria we optimise for: fit to the case, validity of analytics,
 ## 3. Rules you must keep (do not weaken)
 
 1. **Two data layers never mix.** Summative (СОР/СОЧ) → indicators, topics, report, hours. Formative (trainer) → only `growthCompare`, `studentTrainer`, `assignmentProgress`. Lessons record only the first attempt per question.
-2. Textbook comparison only **within teachers**; block the conclusion when the teacher–textbook graph is disconnected; wording = association, not causation; "better/worse" needs CI excluding 0 and |diff| ≥ 5 pp.
+2. Textbook comparison only **within teachers**; block the conclusion when the teacher-textbook graph is disconnected; wording = association, not causation; "better/worse" needs CI excluding 0 and |diff| ≥ 5 pp.
 3. Low data must be labelled (< 10 students or < 30 answers; growth needs ≥ 6 attempts per student and ≥ 5 students). Typical errors need ≥ 10 answers per item.
 4. No personal data: pseudonymous codes only; names in imports are replaced by `У-xxxxx`. Never send student codes to the AI (`summaryPayload` holds aggregates only).
 5. Never expose `ANTHROPIC_API_KEY` or storage tokens to the browser. AI is optional; everything works without it.
@@ -35,7 +34,7 @@ Hackathon jury criteria we optimise for: fit to the case, validity of analytics,
 
 ## 4. Tasks (do them in order; open one PR per task group)
 
-### P0 — before the defense
+### P0 - before the defense
 
 **P0-1. Merge to main.** If PR `learner-game-and-kazakh-checker → main` is open, merge it (no conflicts expected). Work on new branches from `main` afterwards.
 *Done when:* `main` contains `server/`, `api/`, `vercel.json`, `DEPLOY.md`.
@@ -56,7 +55,7 @@ Hackathon jury criteria we optimise for: fit to the case, validity of analytics,
 
 **P0-5. Demo data story stays honest.** All synthetic data is labelled «демо (синтетика)». Do not change effect sizes to look better.
 
-### P1 — next iteration (practical applicability)
+### P1 - next iteration (practical applicability)
 
 **P1-1. Summative before/after («срезы»).** Allow importing a second СОР/СОЧ for the same topics; per topic and per assignment show «СОР до → СОР после» for assigned vs not assigned students (difference-in-differences with CI, low-data labels). This is the real proof of the support groups' effect.
 
@@ -66,9 +65,9 @@ Hackathon jury criteria we optimise for: fit to the case, validity of analytics,
 
 **P1-4. Electronic journal import adapters.** Add parsers for exported reports from Kundelik / BilimClass (ask the owner for sample exports; never guess real formats). Map to the journal format; keep name → code replacement.
 
-**P1-5. API hardening.** Rate limiting per IP for `/api/join` and `/api/answers`; size limits already exist — add tests; `DELETE /api/workspaces/me` (delete all school data) for privacy; retention note in README.
+**P1-5. API hardening.** Rate limiting per IP for `/api/join` and `/api/answers`; size limits already exist - add tests; `DELETE /api/workspaces/me` (delete all school data) for privacy; retention note in README.
 
-### P2 — later
+### P2 - later
 
 - Full Kazakh localisation of the methodist UI; native-speaker review of Kazakh explanations in `dist/practice.js` and `dist/kazakh.js`.
 - Teacher dashboard (own classes only).
@@ -88,12 +87,12 @@ Browser checklist: Методист → Главная, Обзор (успева
 
 ## 6. Defense demo script (3 minutes)
 
-0. Open `/pitch.html` full screen, press → through it (~1 min), then «Кабинет методиста».
+0. Show `docs/pitch/Jaz-pitch.pdf` (or the Canva copy), then open the site.
 1. Главная → «Загрузить результаты СОР/СОЧ» → paste a real anonymised table.
 2. Обзор: успеваемость, качество by class.
 3. Темы → the hardest topic → typical error.
 4. Ученики → support group → «Назначить ядру в тренажёре».
 5. Phone: learner joins with the class code, completes the task (20 s).
-6. Тренажёр: «СОР/СОЧ и тренажёр — параллельно» + assignment progress.
+6. Тренажёр: «СОР/СОЧ и тренажёр - параллельно» + assignment progress.
 7. Отчёт → «Скачать справку (Word)» in Kazakh.
 Answer to "where is AI?": AI checks free text in the chat and drafts report conclusions; decisions rely on verifiable statistics with blocked wrong conclusions.
