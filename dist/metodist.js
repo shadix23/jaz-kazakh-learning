@@ -17,6 +17,7 @@
     { id: 'overview', label: 'Обзор', title: 'Сводка для решения', sub: 'Главное о результатах, учебниках и часах на одном экране.', icon: 'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z' },
     { id: 'topics', label: 'Темы', title: 'Где возникают затруднения', sub: 'Освоение тем по классам и разбор заданий с типичными ошибками.', icon: 'M4 4h16v16H4zM4 9.3h16M4 14.6h16M9.3 4v16M14.6 4v16' },
     { id: 'students', label: 'Ученики', title: 'Ученики и группы поддержки', sub: 'Кому и по какой теме нужна помощь — готовые списки для дополнительных занятий.', icon: 'M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM22 19v-1a4 4 0 0 0-3-3.9M16 4.1a3 3 0 0 1 0 5.8' },
+    { id: 'trainer', label: 'Тренажёр', title: 'Тренажёр и задания', sub: 'Рост по тренажёру — отдельно от СОР/СОЧ. Задания группам поддержки и коды классов для учеников.', icon: 'M13 2L4 14h7l-1 8 9-12h-7z' },
     { id: 'books', label: 'Учебники', title: 'Эффективность учебников', sub: 'Сравнение прироста с учётом учителя: вывод только там, где данные позволяют.', icon: 'M5 4h10a4 4 0 0 1 4 4v12H9a4 4 0 0 1-4-4zM5 16a4 4 0 0 1 4-4h10' },
     { id: 'hours', label: 'Часы', title: 'Распределение учебных часов', sub: 'Программа → рекомендация. Сумма часов сохраняется, каждое изменение обосновано.', icon: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2' },
     { id: 'report', label: 'Отчёт', title: 'Отчёт для педсовета', sub: 'Одна страница: печать или сохранение в PDF.', icon: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6' },
@@ -29,6 +30,7 @@
     'tab.overview': ['Қорытынды', 'Шешім қабылдауға арналған жиынтық', 'Үлгерім, білім сапасы, тақырыптар мен сағаттар — бір бетте.'],
     'tab.topics': ['Тақырыптар', 'Қай жерде қиындық бар', 'Тақырыптарды сыныптар бойынша меңгеру және тапсырмалардағы жиі қателер.'],
     'tab.students': ['Оқушылар', 'Оқушылар және қолдау топтары', 'Кімге және қай тақырыптан көмек керек — қосымша сабақтарға дайын тізімдер.'],
+    'tab.trainer': ['Жаттықтырғыш', 'Жаттықтырғыш және тапсырмалар', 'Жаттықтырғыштағы өсім — БЖБ/ТЖБ-дан бөлек. Қолдау топтарына тапсырмалар және оқушыларға сынып кодтары.'],
     'tab.books': ['Оқулықтар', 'Оқулықтардың тиімділігі', 'Мұғалімді ескере отырып салыстыру: қорытынды тек деректер жеткілікті болғанда.'],
     'tab.hours': ['Сағаттар', 'Оқу сағаттарын бөлу', 'Вариативтік және түзету сағаттары: әр өзгерістің негіздемесі бар.'],
     'tab.report': ['Анықтама', 'Педагогикалық кеңеске анықтама', 'Талдау анықтамасы: Word-қа жүктеу немесе басып шығару.'],
@@ -41,7 +43,7 @@
   const tabText = (tab, i) => st.lang === 'kk' && KK['tab.' + tab.id] ? KK['tab.' + tab.id][i] : [tab.label, tab.title, tab.sub][i];
   // Plain-language explanations for the terms methodists meet in the reports.
   const HELP = {
-    progress: ['Успеваемость', 'Доля учеников без «2»: получили 3, 4 или 5. Оценка выставляется по проценту баллов: от 40% — «3», от 65% — «4», от 85% — «5».'],
+    progress: ['Успеваемость', 'Доля учеников без «2»: получили 3, 4 или 5. Оценка выставляется по проценту баллов: от 40% — «3», от 65% — «4», от 85% — «5» (по умолчанию; пороги меняются в разделе «Данные»).'],
     quality: ['Качество знаний', 'Доля учеников, получивших «4» и «5» (65% баллов и выше).'],
     levels: ['Уровни', 'Низкий — меньше 40% баллов, средний — от 40 до 84%, высокий — 85% и выше. Так же считают в справках по СОР и СОЧ.'],
     mastery: ['«Освоено»', 'Ученик освоил тему, если набрал по ней не меньше выбранного порога (обычно 70% баллов).'],
@@ -51,6 +53,8 @@
     core: ['«Ядро» группы', 'Ученики, набравшие по теме 40% и меньше. Им дополнительные занятия нужны в первую очередь.'],
     risk: ['Зона риска', 'Тема, которую не освоили 40% учеников и больше.'],
     lowdata: ['Мало данных', 'Меньше 10 учеников или 30 ответов: выводы ненадёжны, нужен ещё один срез.'],
+    separate: ['Почему тренажёр отдельно', 'Тренажёр — это тренировка: ученик может ошибаться и пробовать снова. Поэтому его ответы не входят в успеваемость, качество и справку по СОР/СОЧ. Рост считается внутри тренажёра: первые попытки ученика по теме против последних. Подтверждает рост следующий СОР/СОЧ.'],
+    growth: ['Рост в тренажёре', 'Средняя разница между точностью последней трети попыток ученика и первой трети, в процентных пунктах. Считается для учеников, сделавших по теме не меньше 6 заданий. «Подтверждён» — если весь 95% интервал выше нуля.'],
     reserve: ['Вариативные и коррекционные часы', 'Часы сверх обязательной сетки, которые школа может направить на повторение трудных тем. Сетка часов программы не меняется.']
   };
   const helpBtn = key => `<button type="button" class="mx-help" data-mx-help="${key}" aria-label="Что это: ${esc(HELP[key][0])}">?</button>`;
@@ -59,7 +63,7 @@
 
   /* ---------------------------------------------------------------- state */
   let rows = [], baseRows = [], liveRows = [], pending = [], version = 0;
-  let st = { zoom: 1, lang: 'ru', tab: 'home', subject: 'Математика', className: '', period: 0, mastery: 70, scenario: 'clean', source: 'demo', reserve: 4, rebalance: false, program: {}, weights: {}, bookTopic: '', reference: '' };
+  let st = { assignments: [], scale: [40, 65, 85], zoom: 1, lang: 'ru', tab: 'home', subject: 'Математика', className: '', period: 0, mastery: 70, scenario: 'clean', source: 'demo', reserve: 4, rebalance: false, program: {}, weights: {}, bookTopic: '', reference: '' };
   let selection = null, drawer = null, error = '', notice = '', storageError = false, riskFilter = 'high', aiAvailable = false, aiBusy = false;
   const aiSummary = {};
   let imp = { text: '', preview: null, error: '', name: '', subject: '' };
@@ -67,8 +71,21 @@
   const memo = new Map();
   const prevBars = new Map(), prevNums = new Map(), prevSeg = new Map();
 
-  function setRows(next) { baseRows = next; rows = baseRows.concat(liveRows); version++; memo.clear(); }
-  function addLive(row) { liveRows.push(row); rows.push(row); version++; memo.clear(); }
+  // Summative layer (СОР/СОЧ, imported or demo) — the only source of school indicators.
+  function setRows(next) { baseRows = next; rows = baseRows; demoTrainer = null; version++; memo.clear(); }
+  // Formative layer (trainer: lessons, game, assignments) — analysed separately.
+  let demoTrainer = null, serverRows = [], serverAssignments = [], syncInfo = { at: null, error: '' };
+  function addLive(row) { if (liveRows.some(r => r.id === row.id)) return; liveRows.push(row); version++; memo.clear(); }
+  function demoLayer() { if (st.source !== 'demo') return { rows: [], assignments: [] }; if (!demoTrainer) demoTrainer = C().buildTrainer(baseRows); return demoTrainer; }
+  function formative() {
+    return cached('form', () => {
+      const seen = new Set(), out = [];
+      for (const r of demoLayer().rows.concat(liveRows, serverRows)) if (!seen.has(r.id)) { seen.add(r.id); out.push(r); }
+      return out;
+    });
+  }
+  function formativeSubject() { return cached('forms|' + st.subject + '|' + st.className, () => formative().filter(r => r.subject === st.subject && (!st.className || r.class === st.className))); }
+  function allAssignments() { return demoLayer().assignments.concat(st.assignments || [], serverAssignments); }
   function cached(key, fn) { const k = version + '|' + key; if (!memo.has(k)) { if (memo.size > 200) memo.clear(); memo.set(k, fn()); } return memo.get(k); }
   function subjectRows() { return cached('s|' + st.subject + '|' + st.period, () => C().filterRows(rows, { subject: st.subject, period: st.period })); }
   function viewRows() { return st.className ? cached('v|' + st.subject + '|' + st.period + '|' + st.className, () => subjectRows().filter(r => r.class === st.className)) : subjectRows(); }
@@ -108,13 +125,15 @@
         if (Number.isSafeInteger(s.reserve) && s.reserve >= 0 && s.reserve <= 100) st.reserve = s.reserve;
         st.rebalance = s.rebalance === true;
         if ([1, 1.15, 1.3].includes(s.zoom)) st.zoom = s.zoom;
+        if (Array.isArray(s.assignments)) st.assignments = s.assignments.filter(a => a && typeof a.id === 'string').slice(-200);
+        if (Array.isArray(s.scale) && s.scale.length === 3 && s.scale.every(Number.isFinite) && s.scale[0] < s.scale[1] && s.scale[1] < s.scale[2]) st.scale = s.scale;
         st.lang = s.lang === 'kk' ? 'kk' : 'ru';
         if (s.program && typeof s.program === 'object') st.program = s.program;
         if (s.weights && typeof s.weights === 'object') st.weights = s.weights;
         if (typeof s.bookTopic === 'string') st.bookTopic = s.bookTopic;
         if (typeof s.reference === 'string') st.reference = s.reference;
       }
-      if (Array.isArray(saved.live)) liveRows = saved.live.filter(r => r && typeof r.student_id === 'string' && typeof r.topic === 'string' && (r.correct === 0 || r.correct === 1));
+      if (Array.isArray(saved.live)) liveRows = saved.live.filter(r => r && typeof r.student_id === 'string' && typeof r.topic === 'string' && (r.correct === 0 || r.correct === 1)).map(r => ({ ...r, id: r.id || `l-${r.student_id}-${r.question_id}-${r.date}` }));
       if (Array.isArray(saved.pending)) pending = saved.pending.filter(p => p && typeof p.questionId === 'string');
       if (saved.selection && typeof saved.selection.class === 'string') selection = saved.selection;
       if (st.source === 'csv') {
@@ -204,7 +223,7 @@
     const students = new Set(rows.map(r => r.student_id)).size;
     const status = {
       data: rows.length ? (st.lang === 'kk' ? `${subjects.length} пән · ${students} оқушы` : `${subjects.length} предм. · ${students} учеников`) : (st.lang === 'kk' ? 'Деректер жоқ' : 'Данных нет'),
-      overview: rows.length ? (() => { const m = C().schoolMetrics(subjectRows()); return (st.lang === 'kk' ? 'Сапа ' : 'Качество ') + fmt.pct0(100 * m.total.quality); })() : '',
+      overview: rows.length ? (() => { const m = C().schoolMetrics(subjectRows(), { scale: st.scale }); return (st.lang === 'kk' ? 'Сапа ' : 'Качество ') + fmt.pct0(100 * m.total.quality); })() : '',
       topics: rows.length ? (() => { const n = C().topicStats(subjectRows(), opts()).filter(x => x.status === 'risk' && !x.lowData).length; return (st.lang === 'kk' ? 'Қауіп аймағында: ' : 'В зоне риска: ') + n; })() : '',
       students: '', report: '', hours: ''
     };
@@ -216,7 +235,7 @@
 
   // Classic school indicators: успеваемость, качество знаний, marks and levels per class.
   function metricsUI(data) {
-    const m = cached('met|' + st.subject + st.period + st.className, () => C().schoolMetrics(data));
+    const m = cached('met|' + st.subject + st.period + st.className, () => C().schoolMetrics(data, { scale: st.scale }));
     const T = m.total;
     const strip = `<div class="mx-kpis">
       <article class="mx-kpi"><span>Успеваемость ${helpBtn('progress')}</span>${num('sm:p', 100 * T.progress, 'pct0')}<small>получили «3», «4» или «5»</small>${bar('sm:p', 100 * T.progress, 'good')}</article>
@@ -238,7 +257,7 @@
     if (!data.length) return emptyUI();
     const ins = insights(), k = ins.kpi;
     const met = metricsUI(data);
-    const kpis = met.strip + card('Итоги по классам', `<p class="mx-lead">Как в справке по СОР/СОЧ: оценка ставится по проценту баллов (40% — «3», 65% — «4», 85% — «5»).</p>${met.table}`, '', 2);
+    const kpis = met.strip + card('Итоги по классам', `<p class="mx-lead">Как в справке по СОР/СОЧ: оценка ставится по проценту баллов (${st.scale[0]}% — «3», ${st.scale[1]}% — «4», ${st.scale[2]}% — «5»; пороги меняются в «Данных»).</p>${met.table}`, '', 2);
     const topicsList = `<ul class="mx-topic-bars">${ins.stats.map((s, i) => `<li class="mx-in" style="--i:${6 + i}"><button type="button" data-mx-topic="${esc(s.topic)}" class="mx-topic-row"><span class="mx-topic-name"><i class="mx-dot tone-${s.status}"></i>${esc(s.topic)}</span>${bar('ov:' + s.topic, 100 * s.masteredShare, s.status === 'risk' ? 'low' : s.status === 'watch' ? 'mid' : 'good')}<span class="mx-topic-val">${num('ovn:' + s.topic, 100 * s.notMasteredShare, 'pct0')}<small>не освоили</small></span></button></li>`).join('')}</ul>`;
     const decisions = ins.decisions.length ? `<ol class="mx-decisions">${ins.decisions.map((d, i) => `<li class="tone-${d.tone}"><span class="mx-dec-icon">${icon(d.kind === 'book' ? I.book : d.kind === 'hours' ? I.clock : I.topic)}</span><p>${esc(d.text)}</p></li>`).join('')}</ol>` : '<p class="mx-muted">Существенных проблем не найдено.</p>';
     const books = ins.books;
@@ -250,7 +269,7 @@
       ${card('Решения для педсовета', decisions, 'accent', 7, `<button type="button" class="mx-link" data-mx-tab="report">Отчёт ${icon(I.arrow)}</button>`)}
       ${card('Учебники · с учётом учителя', booksBody, '', 8, `<button type="button" class="mx-link" data-mx-tab="books">Подробнее ${icon(I.arrow)}</button>`)}
       ${card('Часы · было → стало', hours, '', 9, `<button type="button" class="mx-link" data-mx-tab="hours">План ${icon(I.arrow)}</button>`)}
-      ${card('Живые данные из тренажёра', liveUI(), '', 10, `<button type="button" class="mx-link" data-mx-tab="students">Ученики ${icon(I.arrow)}</button>`)}
+      ${card('Тренажёр: рост учеников', liveUI(), '', 10, `<button type="button" class="mx-link" data-mx-tab="trainer">Подробнее ${icon(I.arrow)}</button>`)}
     </div>`;
   }
 
@@ -276,14 +295,101 @@
   function flagPill(flag) { return ({ hard: pill('low', 'Трудное'), weak: pill('watch', 'Плохо различает'), misconception: pill('info', 'Типичная ошибка') })[flag] || ''; }
 
   function liveUI() {
-    const live = liveRows.filter(r => r.subject === st.subject);
-    if (!live.length) return `<p class="mx-muted">Ответы учеников из тренажёра появятся здесь сразу — из уроков и игры «Барыс жолы». Переключитесь в режим «Ученик», выберите класс и код ученика и пройдите задание.</p>`;
-    const ok = live.filter(r => r.correct).length;
-    const byTopic = new Map();
-    for (const r of live) { const t = byTopic.get(r.topic) || { n: 0, ok: 0 }; t.n++; t.ok += r.correct; byTopic.set(r.topic, t); }
-    return `<div class="mx-live-kpis"><div>${num('lv:n', live.length, 'int')}<span>ответов</span></div><div>${num('lv:acc', 100 * ok / live.length, 'pct0')}<span>верно</span></div><div>${num('lv:s', new Set(live.map(r => r.student_id)).size, 'int')}<span>учеников</span></div></div>
-      <ul class="mx-live-topics">${[...byTopic.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 5).map(([t, v]) => `<li><span>${esc(t)}</span>${bar('lvt:' + t, 100 * v.ok / v.n, toneOfScore(100 * v.ok / v.n))}<b>${v.ok}/${v.n}</b></li>`).join('')}</ul>
-      <p class="mx-foot">${icon(I.info)} Живые ответы сразу учитываются в диагностике тем и в плане часов.</p>`;
+    const form = formativeSubject();
+    if (!form.length) return `<p class="mx-muted">Ответы учеников из тренажёра (уроки, игра «Барыс жолы», задания) появятся здесь. Они не смешиваются с СОР/СОЧ.</p>`;
+    const growth = C().growthCompare(viewRows(), form, opts()).filter(g => g.growth != null && !g.lowData).sort((x, y) => y.growth - x.growth);
+    const ok = form.filter(r => r.correct).length;
+    return `<div class="mx-live-kpis"><div>${num('lv:n', form.length, 'int')}<span>ответов</span></div><div>${num('lv:acc', 100 * ok / form.length, 'pct0')}<span>точность</span></div><div>${num('lv:s', new Set(form.map(r => r.student_id)).size, 'int')}<span>учеников</span></div></div>
+      ${growth.length ? `<ul class="mx-live-topics">${growth.slice(0, 4).map(g => `<li><span>${esc(g.topic)}</span>${dumbbell(g.early, g.late)}<b>${esc(fmt.signed(g.growth))}</b></li>`).join('')}</ul>` : ''}
+      <p class="mx-foot">${icon(I.info)} Тренажёр — формирующие данные: в успеваемость и справку не входят.${st.source === 'demo' ? ' В демо история тренажёра синтетическая.' : ''}</p>`;
+  }
+
+  /* -------------------------------------------------------------- trainer */
+  let apiInfo = { api: false, ai: false, store: '' };
+  const practiceTopic = topic => (global.JazPractice && global.JazPractice.TOPICS.find(x => x.topic === topic)) || null;
+  const GROWTH = { up: ['Рост подтверждён', 'good'], down: ['Снижение', 'risk'], flat: ['Рост не подтверждён', 'neutral'], few: ['Мало данных', 'watch'] };
+  function dumbbell(early, late) {
+    if (early == null || late == null) return '<span class="mx-muted">—</span>';
+    const x = v => 4 + v * 1.92, up = late >= early;
+    return `<svg class="mx-dumb" viewBox="0 0 200 24" role="img" aria-label="Начало ${Math.round(early)}%, сейчас ${Math.round(late)}%"><line x1="4" x2="196" y1="12" y2="12" class="mx-dumb-track"/><line x1="${x(early)}" x2="${x(late)}" y1="12" y2="12" class="mx-dumb-line ${up ? 'up' : 'down'}"/><circle cx="${x(early)}" cy="12" r="5" class="mx-dumb-a"/><circle cx="${x(late)}" cy="12" r="6" class="mx-dumb-b ${up ? 'up' : 'down'}"/></svg><small>${Math.round(early)}% → ${Math.round(late)}%</small>`;
+  }
+  function trainerUI() {
+    const summ = viewRows(), form = formativeSubject();
+    const growth = cached('gr|' + st.subject + st.className + st.mastery, () => C().growthCompare(summ, form, opts()));
+    const asgs = allAssignments().filter(a => a.subject === st.subject && (!st.className || a.cls === st.className));
+    const students = new Set(form.map(r => r.student_id)).size;
+    const acc = form.length ? 100 * form.filter(r => r.correct).length / form.length : null;
+    const demo = st.source === 'demo';
+    const kpis = `<div class="mx-kpis">
+      <article class="mx-kpi"><span>Учеников в тренажёре</span>${num('tr:s', students, 'int')}<small>${demo ? 'демо-история + живые ответы' : 'живые ответы'}</small>${bar('tr:s', summ.length ? 100 * students / new Set(summ.map(r => r.student_id)).size : 0, 'info')}</article>
+      <article class="mx-kpi"><span>Ответов</span>${num('tr:a', form.length, 'int')}<small>уроки, игра, задания</small>${bar('tr:a', Math.min(100, form.length / 40), 'info')}</article>
+      <article class="mx-kpi"><span>Точность в тренажёре</span>${num('tr:acc', acc, 'pct0')}<small>не путать с баллами СОР/СОЧ</small>${bar('tr:acc', acc || 0, toneOfScore(acc))}</article>
+      <article class="mx-kpi"><span>Задания группам</span>${num('tr:g', asgs.length, 'int')}<small>${asgs.reduce((n, a) => n + (a.students.length || 0), 0)} учеников назначено</small>${bar('tr:g', Math.min(100, asgs.length * 20), 'good')}</article>
+    </div>`;
+    const table = `<div class="mx-table-wrap"><table class="mx-table mx-growth"><thead><tr><th>Тема</th><th>СОР/СОЧ, средний %</th><th>Тренажёр: начало → сейчас ${helpBtn('growth')}</th><th>Рост</th><th>Учеников</th><th>Вывод</th></tr></thead><tbody>${growth.map(g => `<tr><th scope="row">${esc(g.topic)}</th><td>${g.sorAll == null ? '—' : `${bar('gs:' + g.topic, g.sorAll, toneOfScore(g.sorAll))}<small>${fmt.pct0(g.sorAll)}${g.sorPracticing != null ? ` · у занимающихся ${fmt.pct0(g.sorPracticing)}` : ''}</small>`}</td><td>${dumbbell(g.early, g.late)}</td><td>${g.growth == null ? '—' : `<b>${esc(fmt.pp(g.growth))}</b><small>${g.lo == null ? '' : `ДИ ${fmt.signed(g.lo)} … ${fmt.signed(g.hi)}`}</small>`}</td><td>${g.measured} / ${g.students}</td><td>${pill(GROWTH[g.verdict][1], GROWTH[g.verdict][0])}</td></tr>`).join('')}</tbody></table></div>`;
+    const classes = C().classes(subjectRows());
+    const topicsWithContent = C().topicStats(subjectRows(), opts()).map(x => x.topic).filter(practiceTopic);
+    const asgList = asgs.length ? `<ul class="mx-asg">${asgs.map(a => {
+      const pr = C().assignmentProgress(a, formative(), subjectRows());
+      const src = a.demo ? 'демо' : a.server ? 'сервер школы' : 'этот браузер';
+      return `<li><div class="mx-asg-head"><div><strong>${esc(a.title || a.topic)}</strong><small>${esc(a.cls)} · ${a.students.length || 'весь класс'} уч. · ${esc(String(a.createdAt).slice(0, 10))} · ${src}</small></div>${a.demo ? '' : `<button type="button" class="mx-icon-btn" data-mx-action="asg-delete" data-id="${esc(a.id)}" aria-label="Удалить задание">${icon(I.close)}</button>`}</div>
+        <div class="mx-asg-grid"><div><span>Начали</span><b>${pr.started} / ${pr.target}</b>${bar('as:' + a.id, pr.target ? 100 * pr.started / pr.target : 0, 'info')}</div><div><span>СОР до задания</span><b>${fmt.pct0(pr.sorBefore)}</b></div><div><span>Тренажёр: начало → сейчас</span>${dumbbell(pr.early, pr.late)}</div><div><span>Рост</span><b>${pr.growth == null || pr.lo == null ? '—' : esc(fmt.pp(pr.growth))}</b><small>${pr.lo == null ? 'мало данных: нужно ≥ 2 учеников с 4+ ответами' : `ДИ ${fmt.signed(pr.lo)} … ${fmt.signed(pr.hi)}`}</small></div></div></li>`;
+    }).join('')}</ul>` : '<p class="mx-muted">Заданий пока нет. Создайте задание ниже или в разделе «Ученики» → группы поддержки.</p>';
+    const form2 = `<div class="mx-asg-form"><h3>Новое задание</h3><div class="mx-controls">
+      <label class="mx-select"><span>Класс</span><select data-mx-asg="cls">${classes.map(c => `<option>${esc(c)}</option>`).join('')}</select></label>
+      <label class="mx-select"><span>Тема</span><select data-mx-asg="topic">${topicsWithContent.map(t => `<option>${esc(t)}</option>`).join('')}</select></label>
+      <label class="mx-select"><span>Кому</span><select data-mx-asg="who"><option value="core">Ядро группы (≤ 40%)</option><option value="weak">Все, кто не освоил</option><option value="all">Весь класс</option></select></label>
+      <label class="mx-select"><span>Заданий</span><select data-mx-asg="size"><option>6</option><option selected>8</option><option>12</option></select></label>
+      <button type="button" class="mx-btn primary big" data-mx-action="asg-create">${icon(I.check)}Назначить</button></div>
+      ${topicsWithContent.length ? '' : '<p class="mx-foot">' + icon(I.info) + ' В тренажёре нет заданий по темам этих данных. Задания можно назначать по 15 темам программы тренажёра.</p>'}</div>`;
+    const adm = global.JazSync && global.JazSync.admin();
+    const connect = !apiInfo.api
+      ? `<div class="mx-callout tone-watch">${icon(I.info)}<div><strong>Сервер недоступен — всё работает в этом браузере</strong><p>Задания и ответы видны, если ученик и методист работают на одном компьютере. Чтобы ученики занимались со своих телефонов, разверните проект на Vercel (инструкция: DEPLOY.md в репозитории).</p></div></div>`
+      : !adm
+        ? `<p class="mx-lead">Создайте пространство школы: система выдаст 6-значный код каждому классу. Ученик вводит код класса и свой код — и его ответы приходят сюда с любого устройства. Фамилии не нужны.</p><div class="mx-controls"><label class="mx-select"><span>Название</span><input type="text" data-mx-wsname value="${esc('Школа')}"></label><button type="button" class="mx-btn primary big" data-mx-action="ws-create">${icon(I.check)}Создать коды классов</button></div>`
+        : `<div class="mx-table-wrap"><table class="mx-table mx-codes"><thead><tr><th>Класс</th><th>Код для учеников</th><th>Учеников в списке</th></tr></thead><tbody>${Object.entries(adm.classes || {}).map(([c, v]) => `<tr><th scope="row">${esc(c)}</th><td><b class="mx-code">${esc(v.code)}</b></td><td>${v.students}</td></tr>`).join('')}</tbody></table></div>
+          <div class="mx-actions"><button type="button" class="mx-btn primary big" data-mx-action="sync">${icon(I.reset)}Получить ответы учеников</button><button type="button" class="mx-btn" data-mx-action="ws-roster">Обновить список учеников</button><button type="button" class="mx-btn" data-mx-action="print">${icon(I.print)}Печать кодов</button><button type="button" class="mx-btn" data-mx-action="ws-disconnect">Отключить</button></div>
+          <p class="mx-foot">${icon(I.info)} ${syncInfo.at ? 'Обновлено: ' + esc(syncInfo.at) + '. ' : ''}${syncInfo.error ? 'Ошибка: ' + esc(syncInfo.error) + '. ' : ''}Пространство: ${esc(adm.name || '')} · хранилище: ${esc(apiInfo.store || '')}.</p>`;
+    return `${kpis}
+      ${card('СОР/СОЧ и тренажёр — параллельно ' + helpBtn('separate'), `<p class="mx-lead">Слева — итоговые результаты СОР/СОЧ (официальные данные). Справа — рост в тренажёре по тем же темам. Тренажёр не влияет на успеваемость и справку; подтверждает рост следующий СОР/СОЧ.${demo ? ' История тренажёра в демо — синтетическая.' : ''}</p>${table}`, '', 2)}
+      ${card('Задания группам поддержки', asgList + form2, '', 3)}
+      ${card('Подключение учеников', connect, '', 4)}`;
+  }
+  function rosterFromData() {
+    const roster = {};
+    for (const r of baseRows) { (roster[r.class] = roster[r.class] || new Set()).add(r.student_id); }
+    return Object.fromEntries(Object.entries(roster).map(([c, set]) => [c, [...set].sort()]));
+  }
+  async function syncNow(quiet) {
+    if (!global.JazSync || !global.JazSync.admin()) return;
+    try {
+      const [answers, asgs] = await Promise.all([global.JazSync.answers(), global.JazSync.assignments()]);
+      serverRows = answers.map(a => ({ id: a.id, student_id: a.studentId, class: a.cls, subject: a.subject, topic: a.topic, question_id: a.questionId, question_text: a.questionText, correct: a.correct, answer: a.answer, correct_answer: a.correctAnswer, date: String(a.ts).slice(0, 10), ts: a.ts, source: a.source, assignmentId: a.assignmentId }));
+      serverAssignments = asgs.map(a => ({ ...a, server: true }));
+      syncInfo = { at: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }), error: '' };
+      version++; memo.clear();
+      if (!quiet) toast(`Получено ответов: ${answers.length}.`);
+    } catch (e) { syncInfo.error = e.message; }
+    render('update');
+  }
+  async function createAssignment(spec) {
+    const pt = practiceTopic(spec.topic);
+    if (!pt) { toast('В тренажёре нет заданий по этой теме.'); return; }
+    const a = { title: 'Группа поддержки: ' + spec.topic, subject: st.subject, topic: spec.topic, topicId: pt.id, cls: spec.cls, students: spec.students, size: spec.size || 8 };
+    try {
+      if (global.JazSync && global.JazSync.admin() && apiInfo.api) { const made = await global.JazSync.createAssignment(a); serverAssignments.push({ ...made, server: true }); }
+      else { st.assignments.push({ ...a, id: 'loc-' + Date.now().toString(36), createdAt: new Date().toISOString() }); save(); }
+      version++; memo.clear();
+      toast(`Задание назначено: ${spec.students.length || 'весь класс'} уч., ${spec.cls}. Ученики увидят его в тренажёре.`);
+    } catch (e) { toast('Не удалось назначить: ' + e.message); }
+    render('update');
+  }
+  function groupStudents(topic, cls, who) {
+    const g = C().supportGroups(subjectRows(), opts()).find(x => x.topic === topic);
+    const c = g && g.groups.find(x => x.cls === cls);
+    if (who === 'all') return [];
+    if (!c) return [];
+    return who === 'core' && c.core.length ? c.core : c.students;
   }
 
   /* ------------------------------------------------------------- students */
@@ -294,7 +400,8 @@
     const profiles = cached('prof|' + st.subject + st.period + st.className + st.mastery, () => C().studentProfiles(data, opts()));
     const groups = cached('grp|' + st.subject + st.period + st.className + st.mastery, () => C().supportGroups(data, opts()));
     const high = profiles.filter(p => p.risk === 'high'), medium = profiles.filter(p => p.risk === 'medium');
-    const active = profiles.filter(p => p.live > 0).length;
+    const formIds = new Set(formativeSubject().map(r => r.student_id));
+    const active = profiles.filter(p => formIds.has(p.id)).length;
     const topics = C().topicStats(data, opts()).map(t => t.topic);
     const list = riskFilter === 'all' ? profiles : profiles.filter(p => p.risk === riskFilter);
     const kpis = `<div class="mx-kpis">
@@ -303,9 +410,9 @@
       <article class="mx-kpi"><span>Учеников</span>${num('st:n', profiles.length, 'int')}<small>${st.className ? 'класс ' + esc(st.className) : 'вся параллель'}</small>${bar('st:n', 100, 'info')}</article>
       <article class="mx-kpi"><span>Занимаются в тренажёре</span>${num('st:a', active, 'int')}<small>есть живые ответы</small>${bar('st:a', profiles.length ? 100 * active / profiles.length : 0, 'good')}</article>
     </div>`;
-    const groupList = groups.length ? `<ul class="mx-groups">${groups.slice(0, 8).map(g => `<li><details><summary><span class="mx-g-topic"><strong>${esc(g.topic)}</strong><small>не освоили ${g.count} из ${g.total} · ядро ${g.core} (≤ 40%)</small></span><span class="mx-g-classes">${g.groups.map(c => `<span class="mx-class-chip">${esc(c.cls)} · ${c.core.length || c.size}</span>`).join('')}</span></summary><div class="mx-g-body">${g.groups.map(c => `<div><b>${esc(c.cls)}</b><span>${c.core.length ? 'ядро: ' + c.core.map(esc).join(', ') : 'ядра нет'}</span><small>все не освоившие (${c.size}): ${c.students.map(esc).join(', ')}</small></div>`).join('')}</div></details></li>`).join('')}</ul>` : '<p class="mx-muted">Все темы освоены.</p>';
+    const groupList = groups.length ? `<ul class="mx-groups">${groups.slice(0, 8).map(g => `<li><details><summary><span class="mx-g-topic"><strong>${esc(g.topic)}</strong><small>не освоили ${g.count} из ${g.total} · ядро ${g.core} (≤ 40%)</small></span><span class="mx-g-classes">${g.groups.map(c => `<span class="mx-class-chip">${esc(c.cls)} · ${c.core.length || c.size}</span>`).join('')}</span></summary><div class="mx-g-body">${g.groups.map(c => `<div><b>${esc(c.cls)}</b><span>${c.core.length ? 'ядро: ' + c.core.map(esc).join(', ') : 'ядра нет'}</span><small>все не освоившие (${c.size}): ${c.students.map(esc).join(', ')}</small>${practiceTopic(g.topic) ? `<button type="button" class="mx-btn mx-assign" data-mx-action="asg-group" data-topic="${esc(g.topic)}" data-cls="${esc(c.cls)}">${icon(I.check)}Назначить ${c.core.length ? 'ядру' : 'группе'} в тренажёре</button>` : ''}</div>`).join('')}</div></details></li>`).join('')}</ul>` : '<p class="mx-muted">Все темы освоены.</p>';
     const table = `<div class="mx-controls">${seg('risk', 'risk', [['high', 'Высокий'], ['medium', 'Средний'], ['all', 'Все']], riskFilter)}<span class="mx-chip">${list.length} учеников</span></div>
-      <div class="mx-table-wrap"><table class="mx-table mx-students"><thead><tr><th>Код</th><th>Класс</th><th>Темы</th><th>Не освоено</th><th>Результат</th><th>Прирост</th><th>Тренажёр</th></tr></thead><tbody>${list.slice(0, 40).map(p => `<tr><th scope="row"><button type="button" class="mx-link" data-mx-student="${esc(p.id)}">${esc(p.id)}</button></th><td>${esc(p.cls)}</td><td><span class="mx-dots">${topics.map(t => { const v = p.topics[t]; return `<i class="tone-${!v ? 'none' : v.mastered ? 'good' : v.score <= 40 ? 'low' : 'mid'}" title="${esc(t)}: ${v ? fmt.pct0(v.score) : '—'}"></i>`; }).join('')}</span></td><td>${p.weak.length} / ${p.covered}</td><td>${fmt.pct0(p.score)}</td><td>${fmt.pp(p.gain)}</td><td>${p.live ? p.live + ' отв.' : '—'}</td></tr>`).join('')}</tbody></table></div>${list.length > 40 ? `<p class="mx-foot">Показаны первые 40. Полный список — в CSV групп.</p>` : ''}`;
+      <div class="mx-table-wrap"><table class="mx-table mx-students"><thead><tr><th>Код</th><th>Класс</th><th>Темы</th><th>Не освоено</th><th>Результат</th><th>Прирост</th><th>Тренажёр</th></tr></thead><tbody>${list.slice(0, 40).map(p => `<tr><th scope="row"><button type="button" class="mx-link" data-mx-student="${esc(p.id)}">${esc(p.id)}</button></th><td>${esc(p.cls)}</td><td><span class="mx-dots">${topics.map(t => { const v = p.topics[t]; return `<i class="tone-${!v ? 'none' : v.mastered ? 'good' : v.score <= 40 ? 'low' : 'mid'}" title="${esc(t)}: ${v ? fmt.pct0(v.score) : '—'}"></i>`; }).join('')}</span></td><td>${p.weak.length} / ${p.covered}</td><td>${fmt.pct0(p.score)}</td><td>${fmt.pp(p.gain)}</td><td>${(() => { const n = formativeSubject().filter(r => r.student_id === p.id).length; return n ? n + ' отв.' : '—'; })()}</td></tr>`).join('')}</tbody></table></div>${list.length > 40 ? `<p class="mx-foot">Показаны первые 40. Полный список — в CSV групп.</p>` : ''}`;
     return `${kpis}
       ${card('Группы поддержки по темам', `<p class="mx-lead">Для каждой трудной темы — кто не освоил её в каждом классе. «Ядро» (≤ 40% верных) — первые кандидаты на дополнительные занятия из резерва часов.</p>${groupList}<div class="mx-actions"><button type="button" class="mx-btn primary" data-mx-action="groups-csv">${icon(I.download)}Скачать списки групп (CSV)</button><button type="button" class="mx-btn" data-mx-tab="hours">${icon(I.clock)}Связать с планом часов</button></div>`, '', 3)}
       ${card('Ученики в зоне риска', `<p class="mx-lead">Квадраты — темы программы: зелёный — освоено, янтарный — повторить, красный — ≤ 40%. Нажмите на код, чтобы открыть профиль.</p>${table}`, '', 4)}
@@ -319,8 +426,8 @@
     const live = liveRows.filter(r => r.student_id === p.id && r.subject === st.subject);
     const body = `<div class="mx-mini-kpis"><div><span>Результат</span>${num('sd:s', p.score, 'pct0')}</div><div><span>Не освоено</span>${num('sd:w', p.weak.length, 'int')}<small>из ${p.covered} тем</small></div><div><span>Прирост</span>${num('sd:g', p.gain, 'pp')}</div></div>
       <h3>Темы</h3><ul class="mx-class-bars mx-topic-mini">${topics.map(t => { const v = p.topics[t]; return `<li><span title="${esc(t)}">${esc(t)}</span>${bar('sdt:' + t, v ? v.score : 0, v ? toneOfScore(v.score) : 'none')}<b>${v ? fmt.pct0(v.score) : '—'}</b></li>`; }).join('')}</ul>
-      <h3>Тренажёр</h3><p class="mx-muted">${live.length ? `${live.length} живых ответов, верно ${live.filter(r => r.correct).length}.` : 'Живых ответов пока нет.'}</p>
-      <h3>Что сделать</h3><ul class="mx-todo">${p.weak.length ? p.weak.slice(0, 3).map(t => `<li>Включить в группу поддержки по теме «${esc(t)}»${p.topics[t].score <= 40 ? ' (ядро группы)' : ''}.</li>`).join('') + `<li>Назначить в тренажёре уроки и «Барыс жолы» по теме «${esc(p.weak[0])}».</li>` : '<li>Все темы освоены — можно давать задания повышенной сложности.</li>'}</ul>`;
+      <h3>СОР/СОЧ и тренажёр</h3>${(() => { const tr = C().studentTrainer(formativeSubject(), p.id); return tr.length ? `<ul class="mx-class-bars mx-topic-mini">${tr.map(x => `<li><span title="${esc(x.topic)}">${esc(x.topic)}</span>${dumbbell(x.early, x.late)}<b>${p.topics[x.topic] ? fmt.pct0(p.topics[x.topic].score) : '—'}</b></li>`).join('')}</ul><p class="mx-foot">${icon(I.info)} Справа — результат СОР/СОЧ по теме, полоса — точность в тренажёре: начало → сейчас.</p>` : '<p class="mx-muted">В тренажёре пока не занимался.</p>'; })()}
+      <h3>Что сделать</h3><ul class="mx-todo">${p.weak.length ? p.weak.slice(0, 3).map(t => `<li>Включить в группу поддержки по теме «${esc(t)}»${p.topics[t].score <= 40 ? ' (ядро группы)' : ''}.</li>`).join('') + `${practiceTopic(p.weak[0]) ? `<li><button type="button" class="mx-btn mx-assign" data-mx-action="asg-group" data-topic="${esc(p.weak[0])}" data-cls="${esc(p.cls)}">${icon(I.check)}Назначить группе «${esc(p.weak[0])}» в тренажёре</button></li>` : ''}` : '<li>Все темы освоены — можно давать задания повышенной сложности.</li>'}</ul>`;
     return `<div class="mx-drawer-backdrop" data-mx-close></div><aside class="mx-drawer" role="dialog" aria-modal="true" aria-labelledby="mx-drawer-title"><header><div><h2 id="mx-drawer-title">${esc(p.id)}</h2><p class="mx-drawer-sub">${esc(p.cls)} · ${esc(p.teacher)} · ${esc(p.book)} · ${RISK[p.risk]}</p></div><button type="button" class="mx-icon-btn" data-mx-close aria-label="Закрыть">${icon(I.close)}</button></header><div class="mx-drawer-body">${body}</div></aside>`;
   }
 
@@ -449,7 +556,7 @@
     const kk = lang === 'kk';
     const L = (ru, k) => kk ? k : ru;
     const data = viewRows();
-    const ins = insights(), m = C().schoolMetrics(data), plan = ins.plan;
+    const ins = insights(), m = C().schoolMetrics(data, { scale: st.scale }), plan = ins.plan;
     const dates = data.map(r => r.date).sort();
     const fmtD = d => d ? d.split('-').reverse().join('.') : '—';
     const subjectKk = { 'Математика': 'Математика', 'Казахский язык': 'Қазақ тілі' }[st.subject] || st.subject;
@@ -576,7 +683,8 @@
       return `<article class="mx-q-card mx-in" style="--i:4"><h3>${esc(s)}</h3><dl><div><dt>Учеников</dt><dd>${new Set(r.map(x => x.student_id)).size}</dd></div><div><dt>Классов</dt><dd>${C().unique(r, 'class').length}</dd></div><div><dt>Учителей</dt><dd>${C().unique(r, 'teacher').length}</dd></div><div><dt>Учебников</dt><dd>${C().unique(r, 'textbook').length}</dd></div><div><dt>Тем</dt><dd>${stats.length}</dd></div><div><dt>Период</dt><dd>${dates[0] || '—'} — ${dates[dates.length - 1] || '—'}</dd></div></dl><ul class="mx-checks">${checks.map(([ok, t]) => `<li class="${ok ? 'ok' : 'warn'}">${icon(ok ? I.check : I.warn)}${esc(t)}</li>`).join('')}</ul></article>`;
     }).join('');
     const cols = [['student_id', 'Код ученика (без ФИО)'], ['class', 'Класс'], ['teacher', 'Учитель (можно код)'], ['subject', 'Предмет'], ['textbook', 'Учебник'], ['topic', 'Тема программы'], ['question_id', 'Код задания'], ['correct', '1 — верно, 0 — неверно'], ['pretest', 'Входная диагностика по теме, 0–100'], ['date', 'Дата, ГГГГ-ММ-ДД'], ['question_text', 'Текст задания (необязательно)'], ['answer', 'Ответ ученика (необязательно)'], ['correct_answer', 'Верный ответ (необязательно)']];
-    return `${card('Загрузить результаты СОР/СОЧ', importUI(), '', 1)}${card('Источник данных', `<p class="mx-lead">${st.source === 'csv' ? `Загружены данные школы: ${fmt.int(baseRows.length)} ответов.` : `Демо-школа: 6 классов, 3 учителя и 3 учебника по каждому предмету. Данные синтетические и подписаны так везде.`}${liveRows.length ? ` Плюс ${liveRows.length} живых ответов из тренажёра ученика.` : ''}</p>
+    const scaleCard = card('Пороги оценок', `<p class="mx-lead">Процент баллов, с которого ставится оценка. По умолчанию 40 / 65 / 85 — сверьте с инструкцией вашего отдела образования.</p><div class="mx-controls">${[['«3» от', 0], ['«4» от', 1], ['«5» от', 2]].map(([l, i]) => `<label class="mx-select"><span>${l}</span><input type="number" min="1" max="99" step="1" value="${st.scale[i]}" data-mx-scale="${i}" class="mx-num-input">%</label>`).join('')}<button type="button" class="mx-btn" data-mx-action="scale-reset">По умолчанию</button></div>`, '', 2);
+    return `${card('Загрузить результаты СОР/СОЧ', importUI(), '', 1)}${scaleCard}${card('Источник данных', `<p class="mx-lead">${st.source === 'csv' ? `Загружены данные школы: ${fmt.int(baseRows.length)} ответов.` : `Демо-школа: 6 классов, 3 учителя и 3 учебника по каждому предмету. Данные синтетические и подписаны так везде.`}${liveRows.length ? ` Плюс ${liveRows.length} живых ответов из тренажёра ученика.` : ''}</p>
       <div class="mx-controls">${select('scenario', [['clean', 'Демо: учителя ведут разные учебники'], ['confounded', 'Демо: у каждого учителя один учебник']], st.source === 'csv' ? '' : st.scenario, 'Демо-сценарий')}</div>
       <div class="mx-actions"><button type="button" class="mx-btn" data-mx-action="export">${icon(I.download)}Экспорт текущих данных</button>${st.source === 'csv' || liveRows.length ? `<button type="button" class="mx-btn" data-mx-action="demo">${icon(I.reset)}Вернуть демо-данные</button>` : ''}</div>
       <p class="mx-foot">${icon(I.info)} Данные хранятся только в этом браузере. Не вводите ФИО — достаточно кодов учеников.${storageError ? ' Браузер не дал сохранить данные: после перезагрузки они пропадут.' : ''}</p>`, '', 2)}
@@ -590,7 +698,7 @@
     if (!host || !C()) return;
     renderNav();
     const tab = TABS.find(t => t.id === st.tab) || TABS[0];
-    const views = { home: homeUI, overview: overviewUI, topics: topicsUI, students: studentsUI, books: booksUI, hours: hoursUI, report: reportUI, data: dataUI };
+    const views = { home: homeUI, overview: overviewUI, topics: topicsUI, students: studentsUI, trainer: trainerUI, books: booksUI, hours: hoursUI, report: reportUI, data: dataUI };
     const focusKey = doc && doc.activeElement && host.contains(doc.activeElement) ? focusId(doc.activeElement) : null;
     const scrollY = global.scrollY;
     host.classList.add('metodist');
@@ -772,16 +880,30 @@
     if (a === 'import-replace' || a === 'import-append') { const si = host.querySelector('[data-mx-import-subject]'); if (si && si.value && si.value !== imp.subject) { imp.subject = si.value; checkImport(); } return applyImport(a === 'import-append' ? 'append' : 'replace'); }
     if (a === 'import-cancel') { imp = { text: '', preview: null, error: '', name: '', subject: '' }; return render('update'); }
     if (a === 'journal-template') { download('jaz-zhurnal-SOR-SOCH.csv', C().journalTemplate().replace(/\t/g, ';')); return toast('Шаблон журнала скачан: откройте его в Excel, заполните и вставьте сюда.'); }
+    if (a === 'asg-create') { const v = k => (host.querySelector(`[data-mx-asg="${k}"]`) || {}).value; const cls = v('cls'), topic = v('topic'); if (!cls || !topic) return; return createAssignment({ cls, topic, students: groupStudents(topic, cls, v('who')), size: Number(v('size')) || 8 }); }
+    if (a === 'asg-group') return createAssignment({ cls: d.cls, topic: d.topic, students: groupStudents(d.topic, d.cls, 'core'), size: 8 });
+    if (a === 'asg-delete') { const id = d.id; if (String(id).startsWith('loc-')) { st.assignments = st.assignments.filter(x => x.id !== id); save(); } else { global.JazSync.deleteAssignment(id).then(() => { serverAssignments = serverAssignments.filter(x => x.id !== id); version++; memo.clear(); render('update'); }).catch(e => toast(e.message)); } version++; memo.clear(); return render('update'); }
+    if (a === 'sync') return syncNow();
+    if (a === 'ws-create') { const name = (host.querySelector('[data-mx-wsname]') || {}).value || 'Школа'; global.JazSync.createWorkspace(name, rosterFromData()).then(() => { toast('Коды классов созданы. Раздайте их ученикам.'); render('update'); }).catch(e => toast('Ошибка: ' + e.message)); return; }
+    if (a === 'ws-roster') { global.JazSync.updateRoster(rosterFromData()).then(() => { toast('Список учеников обновлён.'); render('update'); }).catch(e => toast('Ошибка: ' + e.message)); return; }
+    if (a === 'ws-disconnect') { global.JazSync.disconnectAdmin(); serverRows = []; serverAssignments = []; version++; memo.clear(); return render('update'); }
+    if (a === 'scale-reset') { st.scale = [40, 65, 85]; save(); version++; memo.clear(); return render('update'); }
     if (a === 'groups-csv') { download('jaz-groups-' + st.subject.replace(/\s+/g, '-') + '.csv', C().groupsCSV(C().supportGroups(viewRows(), opts()))); return toast('Списки групп поддержки скачаны.'); }
     if (a === 'ai-summary') return requestSummary();
     if (a === 'template') { download('jaz-template.csv', C().templateCSV(baseRows.slice(0, 30))); return toast('Шаблон скачан: первые строки — пример заполнения.'); }
     if (a === 'export') { download('jaz-data.csv', C().exportCSV(rows)); return toast('Данные выгружены в CSV.'); }
     if (a === 'plan-csv') { download('jaz-plan-' + st.subject.replace(/\s+/g, '-') + '.csv', C().planCSV(insights().plan)); return toast('План часов скачан.'); }
     if (a === 'reset-program') { delete st.program[st.subject]; delete st.weights[st.subject]; memo.clear(); save(); toast('Программа восстановлена.'); return render('update'); }
-    if (a === 'demo') { liveRows = []; pending = []; st.source = 'demo'; st.program = {}; st.weights = {}; setRows(C().build(st.scenario)); notice = 'Загружены демо-данные.'; save(); return render('enter'); }
+    if (a === 'demo') { liveRows = []; pending = []; st.assignments = []; st.source = 'demo'; st.program = {}; st.weights = {}; setRows(C().build(st.scenario)); notice = 'Загружены демо-данные.'; save(); return render('enter'); }
   }
   function onChange(event) {
     const t = event.target;
+    if (t.dataset && t.dataset.mxScale != null) {
+      const next = st.scale.slice(); next[Number(t.dataset.mxScale)] = Math.round(Number(t.value));
+      if (next.every(v => v > 0 && v < 100) && next[0] < next[1] && next[1] < next[2]) { st.scale = next; save(); version++; memo.clear(); notice = ''; }
+      else notice = 'Пороги должны идти по возрастанию: «3» < «4» < «5».';
+      return render('update');
+    }
     if (t.matches && t.matches('[data-mx-file]')) { const f = t.files && t.files[0]; if (f) f.text().then(text => importText(text, f.name)); return; }
     const field = t.dataset && t.dataset.mxField;
     if (!field) return;
@@ -828,19 +950,34 @@
       });
     }
   }
+  // A learner answer from the trainer: stored as FORMATIVE data (never mixed into СОР/СОЧ)
+  // and, when the learner joined with a class code, sent to the school server.
   function recordAnswer(payload) {
     if (!payload || typeof payload.lessonId !== 'string' || typeof payload.questionId !== 'string' || ![true, false, 0, 1].includes(payload.correct)) return;
-    const date = /^\d{4}-\d{2}-\d{2}$/.test(payload.date || '') ? payload.date : new Date().toISOString().slice(0, 10);
+    const now = new Date();
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(payload.date || '') ? payload.date : now.toISOString().slice(0, 10);
     const topic = typeof payload.topic === 'string' && payload.topic ? payload.topic : C().LESSON_TOPICS[payload.lessonId] || String(payload.lessonTitle || payload.lessonId);
     const subjectName = typeof payload.subject === 'string' && payload.subject ? payload.subject : 'Казахский язык';
-    const answer = { lessonId: payload.lessonId, subject: subjectName, topic, questionId: payload.questionId, questionText: String(payload.questionText || ''), correct: Boolean(payload.correct), date, context: selection ? { ...selection } : null, linked: false };
-    const baseline = selection && selection.student_id && studentRows().find(r => r.class === selection.class && r.student_id === selection.student_id && r.subject === subjectName && r.topic === topic);
-    if (baseline) {
-      addLive({ ...baseline, question_id: 'live-' + payload.questionId, question_text: answer.questionText, correct: answer.correct ? 1 : 0, answer: String(payload.answer || ''), correct_answer: String(payload.correctAnswer || ''), date });
-      answer.linked = true;
+    const source = ['lesson', 'game', 'assignment'].includes(payload.source) ? payload.source : 'lesson';
+    const remote = global.JazSync && global.JazSync.student();
+    const who = remote ? { class: remote.cls, student_id: remote.studentId } : selection && selection.student_id ? selection : null;
+    const id = `t-${now.getTime().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+    const answer = { lessonId: payload.lessonId, subject: subjectName, topic, questionId: payload.questionId, questionText: String(payload.questionText || ''), correct: Boolean(payload.correct), date, source, context: who ? { class: who.class, student_id: who.student_id } : null, linked: !!who, remote: !!remote };
+    if (who) {
+      addLive({ id, student_id: who.student_id, class: who.class, subject: subjectName, topic, question_id: payload.questionId, question_text: answer.questionText, correct: answer.correct ? 1 : 0, answer: String(payload.answer || ''), correct_answer: String(payload.correctAnswer || ''), date, ts: now.toISOString(), source, assignmentId: payload.assignmentId || null });
     }
+    if (remote) global.JazSync.queue({ id, subject: subjectName, topic, questionId: payload.questionId, questionText: answer.questionText, correct: answer.correct ? 1 : 0, answer: String(payload.answer || ''), correctAnswer: String(payload.correctAnswer || ''), source, assignmentId: payload.assignmentId || null, ts: now.toISOString() });
     pending.push(answer); save();
     if (doc && doc.body && doc.body.dataset.mode === 'method') render('update');
+  }
+  // Assignments visible to a learner in this browser (demo/local mode).
+  function localTasks(who) {
+    if (!who || !who.student_id) return [];
+    const form = formative();
+    return allAssignments().filter(a => a.cls === who.class && (!a.students.length || a.students.includes(who.student_id))).map(a => {
+      const own = form.filter(r => r.assignmentId === a.id && r.student_id === who.student_id);
+      return { ...a, done: own.length, correct: own.filter(r => r.correct).length };
+    });
   }
 
   function mount(container) {
@@ -856,11 +993,11 @@
       if (doc && doc.addEventListener) doc.addEventListener('keydown', onKey);
     }
     navHost = doc && doc.getElementById ? doc.getElementById('method-nav') : null;
-    if (global.fetch) global.fetch('./api/status').then(r => r.ok ? r.json() : null).then(d => { const was = aiAvailable; aiAvailable = !!(d && d.ai); if (was !== aiAvailable && st.tab === 'report') render('update'); }).catch(() => {});
+    if (global.fetch) global.fetch('./api/status').then(r => r.ok ? r.json() : null).then(d => { apiInfo = { api: !!(d && d.api), ai: !!(d && d.ai), store: (d && d.store) || '' }; aiAvailable = apiInfo.ai; if (apiInfo.api && global.JazSync && global.JazSync.admin()) syncNow(true); else if (st.tab === 'report' || st.tab === 'trainer') render('update'); }).catch(() => {});
     render('enter');
   }
   function unmount() { if (doc && doc.body) doc.body.classList.remove('mx-lock'); drawer = null; }
 
-  global.JazMetodist = { mount, unmount, renderStudentContext, recordAnswer, _state: () => ({ st, rows, liveRows, pending }) };
+  global.JazMetodist = { mount, unmount, renderStudentContext, recordAnswer, localTasks, selection: () => selection, _state: () => ({ st, rows, liveRows, pending }) };
   if (C()) restore();
 })(window);

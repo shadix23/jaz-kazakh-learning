@@ -520,3 +520,29 @@ body[data-mode="method"] .mx-nav{display:flex;flex-direction:column}
 .mx-nav-item span{white-space:normal;line-height:1.2}
 .mx-doc ul,.mx-doc ol{font-size:inherit!important;max-width:none}
 .mx-step>div{min-width:0}
+
+/* ---------------------------------------------------------------- trainer layer */
+.mx-dumb{width:100%;max-width:200px;height:24px;display:block}
+.mx-dumb-track{stroke:var(--mx-none);stroke-width:6;stroke-linecap:round}
+.mx-dumb-line{stroke-width:6;stroke-linecap:round}
+.mx-dumb-line.up{stroke:color-mix(in srgb,var(--mx-good-bar) 55%,transparent)}.mx-dumb-line.down{stroke:color-mix(in srgb,var(--mx-low-bar) 55%,transparent)}
+.mx-dumb-a{fill:var(--mx-surface);stroke:var(--mx-muted);stroke-width:2}
+.mx-dumb-b.up{fill:var(--mx-good-bar)}.mx-dumb-b.down{fill:var(--mx-low-bar)}
+.mx-growth td,.mx-growth th{vertical-align:middle}
+.mx-growth td small,.mx-asg small{display:block;color:var(--mx-muted);font-size:12.5px}
+.mx-growth .mx-bar{max-width:160px}
+.mx-asg{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:12px}
+.mx-asg>li{padding:16px;border:1px solid var(--mx-line);border-radius:var(--mx-r-sm)}
+.mx-asg-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}
+.mx-asg-head strong{color:var(--mx-ink)}
+.mx-asg-grid{display:grid;grid-template-columns:1fr 1fr 1.4fr 1fr;gap:14px;align-items:end}
+.mx-asg-grid span{display:block;font-size:13px;color:var(--mx-muted)}
+.mx-asg-grid b{font-size:18px;color:var(--mx-ink)}
+.mx-asg-form h3{margin-top:4px}
+.mx-code{font-size:22px;letter-spacing:.12em;color:var(--mx-blue-ink)}
+.mx-assign{margin-top:6px;grid-column:2;justify-self:start;min-height:36px;font-size:13px}
+.mx-num-input{width:64px;border:0;background:transparent;color:var(--mx-ink);font:600 15px var(--mx-font);min-height:38px;outline:none}
+.mx-select input[type=text]{border:0;background:transparent;color:var(--mx-ink);font:600 15px var(--mx-font);min-height:38px;outline:none;min-width:160px}
+@media (max-width:860px){.mx-asg-grid{grid-template-columns:1fr 1fr}}
+@media print{body[data-mode="method"] .mx-codes{font-size:20pt}}
+.mx-growth{min-width:860px}.mx-growth td:nth-child(3){min-width:200px}.mx-growth td:nth-child(4){min-width:120px;white-space:nowrap}.mx-growth td:nth-child(6){white-space:nowrap}

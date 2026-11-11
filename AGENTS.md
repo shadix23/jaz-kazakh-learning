@@ -31,6 +31,9 @@ Optional AI mentor for the chat: set `ANTHROPIC_API_KEY` (or log in with `ant au
 | `dist/game.js` + `game.css` | **«Барыс жолы»**: original three-lane answer runner on Canvas 2D. `JazGame.{mount, destroy, stats}`. Records every answer through `JazMetodist.recordAnswer`. |
 | `dist/barys3d.js` | ES module: procedural 3D snow leopard (three.js, `dist/vendor/three.module.min.js` r170, MIT) with gallop/jump/celebrate/hit/idle animation, rendered on a transparent canvas over the game. Falls back to the 2D sprite if WebGL fails. |
 | `dist/student.css` | Learner typography (Nunito) and new learner components. |
+| `server/api.js`, `server/store.js`, `server/ai.js` | **Backend**: workspaces, class codes, learner join (HMAC token), formative answers, assignments; storage = file / Upstash Redis / memory; AI endpoints. Covered by `tests/api.test.cjs` (real HTTP). |
+| `api/index.js`, `vercel.json` | Vercel serverless entry; `/api/*` is rewritten to `/api/index?route=*`. See `DEPLOY.md`. |
+| `dist/sync.js` | Browser client for the API (`JazSync`): admin/student sessions, offline answer queue. Without a server everything works in one browser. |
 | `dev-server.cjs` | Static server + `GET /api/status`, `POST /api/correct` (chat checking) and `POST /api/summary` (methodist conclusions from aggregates only — never student codes). Claude via `@anthropic-ai/sdk`, structured JSON output, model `claude-opus-5-5`, server-side fallback. |
 
 ### Data contract
@@ -53,6 +56,7 @@ They are linked to the student selected in the learner's «Оқу деректе
 - Textbook comparison only within teachers; blocked when the teacher–textbook graph is disconnected; wording is association, never causation; "better/worse" needs CI excluding 0 **and** |diff| ≥ 5 pp.
 - Hours: program total is preserved; extra hours = reserve + up to 20% from topics mastered by ≥ 85%; proportional to share not mastered × hours × weight; cap +50% per topic; integer largest remainders.
 - School indicators: mark from percent of points 40/65/85 → 3/4/5; успеваемость = share ≥ «3», качество = share ≥ «4»; levels низкий < 40, средний 40–84, высокий ≥ 85.
+- **Two data layers, never mixed:** summative (СОР/СОЧ, imported or demo) feeds every school indicator, topic stat, report and hour plan; formative (trainer answers: lessons first attempt only, game, assignments) lives in `liveRows` / `serverRows` / demo `buildTrainer` and is analysed only by `growthCompare`, `studentTrainer`, `assignmentProgress` (early third vs late third of a student's attempts, ≥ 6 attempts, ≥ 5 students, 95% CI).
 - Students: risk high ≥ 2/3 topics not mastered, medium ≥ 1/3; support-group "core" = ≤ 40% correct. Risk is a signal for the methodist, not a grade.
 - Typical errors and "hard" flags need ≥ 10 answers per item, so single live answers never dominate.
 - Demo data is synthetic and labelled as such everywhere.
@@ -73,6 +77,15 @@ They are linked to the student selected in the learner's «Оқу деректе
 - Palette: blue for data/actions, amber/green/red only as status. Use tokens, not raw hex, in `metodist.css`.
 - Motion: UI transitions ≤ 300 ms with `cubic-bezier(.23,1,.32,1)`; data morph 520 ms `cubic-bezier(.77,0,.175,1)` via `clip-path`; drawer `cubic-bezier(.32,.72,0,1)`. Animate only transform/opacity/clip-path. Gate hover with `@media (hover:hover) and (pointer:fine)`. Always provide a `prefers-reduced-motion` path (keep fades, drop movement).
 - Responsive: no horizontal scroll at 1440/1024/768/390/320; touch targets ≥ 44 px on coarse pointers.
+
+## Verify the whole site (for Codex)
+
+```bash
+npm install && npm test                     # analytics, UI harness, API end-to-end
+PORT=4180 node dev-server.cjs &             # then:
+curl -s localhost:4180/api/status           # {"api":true,...}
+```
+Manual check in a browser: Методист → Главная / Обзор / Тренажёр (create class codes, assign), Ученик → «Сыныпқа кір» with a class code and `S-0001`, complete the task, back to Методист → «Получить ответы».
 
 ## How to extend
 

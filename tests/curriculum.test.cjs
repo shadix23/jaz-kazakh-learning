@@ -212,3 +212,28 @@ test('KTP draft keeps the order and assigns weeks', () => {
   assert.equal(csv.length, 7);
   assert.match(csv[1], /^1,Отношения и пропорции,8,/);
 });
+
+test('trainer growth is measured inside the trainer and kept apart from СОР/СОЧ', () => {
+  const summ = C.build('clean', 'Математика');
+  const trainer = C.buildTrainer(summ);
+  assert.ok(trainer.rows.length > 500);
+  assert.ok(trainer.rows.every((r) => r.demo && r.source));
+  const before = C.schoolMetrics(summ).total.quality;
+  const growth = C.growthCompare(summ, trainer.rows, {});
+  const hardest = growth.find((g) => g.topic === 'Сложение и вычитание рациональных чисел');
+  assert.ok(hardest.measured >= 5 && hardest.late > hardest.early);
+  assert.equal(C.schoolMetrics(summ).total.quality, before, 'indicators come from summative data only');
+  const asg = trainer.assignments[0];
+  const pr = C.assignmentProgress(asg, trainer.rows, summ);
+  assert.equal(pr.started, pr.target);
+  assert.ok(pr.late > pr.early);
+  assert.ok(pr.sorBefore < 45);
+});
+
+test('growth needs enough attempts: a few answers are reported as low data', () => {
+  const summ = C.build('clean', 'Математика');
+  const few = [0, 1, 1].map((c, i) => ({ id: 'x' + i, student_id: 'S-0001', class: '6А', subject: 'Математика', topic: 'Модуль числа', correct: c, ts: '2026-11-0' + (i + 1) }));
+  const g = C.growthCompare(summ, few, {}).find((r) => r.topic === 'Модуль числа');
+  assert.equal(g.verdict, 'few');
+  assert.equal(g.growth, null);
+});

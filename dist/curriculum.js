@@ -879,6 +879,112 @@
     return [header.join(',')].concat(lines).join('\r\n');
   }
 
+  /* ------------------------------------------- formative (trainer) layer */
+  // Trainer answers (lessons, game, assignments) are FORMATIVE practice. They are never
+  // mixed into СОР/СОЧ indicators; instead growth is measured inside the trainer
+  // (early vs late attempts of the same student on the same topic) and shown next to
+  // the summative result of those students.
+  function attemptsBy(form) {
+    const map = new Map();
+    for (const r of form) {
+      const k = r.subject + '\u0000' + r.student_id + '\u0000' + r.topic;
+      if (!map.has(k)) map.set(k, { student: r.student_id, cls: r.class, subject: r.subject, topic: r.topic, list: [] });
+      map.get(k).list.push(r);
+    }
+    for (const v of map.values()) v.list.sort((a, b) => String(a.ts || a.date).localeCompare(String(b.ts || b.date)));
+    return [...map.values()];
+  }
+  function earlyLate(list) {
+    const n = list.length, third = Math.max(2, Math.floor(n / 3));
+    const acc = arr => 100 * arr.reduce((s, r) => s + Number(r.correct), 0) / arr.length;
+    return { n, early: acc(list.slice(0, third)), late: acc(list.slice(-third)), all: acc(list) };
+  }
+  function meanCI(values) {
+    const n = values.length; if (!n) return { mean: null, lo: null, hi: null, n: 0 };
+    const m = mean(values), sdv = sd(values), half = n > 1 ? 1.96 * sdv / Math.sqrt(n) : null;
+    return { mean: m, lo: half == null ? null : m - half, hi: half == null ? null : m + half, n };
+  }
+  function growthCompare(summ, form, options) {
+    const o = options || {};
+    const minAttempts = o.minAttempts || 6, minStudents = o.minStudents || 5;
+    const units = studentTopic(summ);
+    const sorOf = new Map(units.map(u => [u.subject + '\u0000' + u.student + '\u0000' + u.topic, u.score]));
+    const groups = attemptsBy(form);
+    const topicsList = orderTopics([...new Set(groups.map(g => g.topic).concat(unique(summ, 'topic')))], o.program);
+    return topicsList.map(topic => {
+      const g = groups.filter(x => x.topic === topic);
+      const enough = g.filter(x => x.list.length >= minAttempts).map(x => ({ ...x, ...earlyLate(x.list), sor: sorOf.get(x.subject + '\u0000' + x.student + '\u0000' + x.topic) }));
+      const growth = meanCI(enough.map(x => x.late - x.early));
+      const sorAll = summarize(units.filter(u => u.topic === topic), 0, o).score;
+      const practicing = enough.filter(x => x.sor != null);
+      return {
+        topic, students: new Set(g.map(x => x.student)).size, attempts: g.reduce((s, x) => s + x.list.length, 0), measured: enough.length,
+        early: mean(enough.map(x => x.early)), late: mean(enough.map(x => x.late)), growth: growth.mean, lo: growth.lo, hi: growth.hi,
+        sorAll, sorPracticing: mean(practicing.map(x => x.sor)), lowData: enough.length < minStudents,
+        verdict: enough.length < minStudents ? 'few' : growth.lo != null && growth.lo > 0 ? 'up' : growth.hi != null && growth.hi < 0 ? 'down' : 'flat'
+      };
+    }).filter(r => r.students || r.sorAll != null);
+  }
+  function studentTrainer(form, studentId) {
+    return attemptsBy(form.filter(r => r.student_id === studentId)).map(g => ({ topic: g.topic, ...earlyLate(g.list) }));
+  }
+  // Progress of one assignment: who started, accuracy early→late, compared with the
+  // same students' СОР result (before) on that topic.
+  function assignmentProgress(asg, form, summ) {
+    const own = form.filter(r => r.assignmentId === asg.id);
+    const by = attemptsBy(own);
+    const units = studentTopic(summ.filter(r => r.topic === asg.topic));
+    const sor = new Map(units.map(u => [u.student, u.score]));
+    const target = asg.students && asg.students.length ? asg.students : [...new Set(summ.filter(r => r.class === asg.cls).map(r => r.student_id))];
+    const started = by.map(g => ({ student: g.student, ...earlyLate(g.list) }));
+    const measured = started.filter(x => x.n >= 4);
+    const growth = meanCI(measured.map(x => x.late - x.early));
+    return { target: target.length, started: started.length, answers: own.length, accuracy: own.length ? 100 * own.filter(r => r.correct).length / own.length : null, early: mean(measured.map(x => x.early)), late: mean(measured.map(x => x.late)), growth: growth.mean, lo: growth.lo, hi: growth.hi, sorBefore: mean(target.map(id => sor.get(id)).filter(v => v != null)), students: started };
+  }
+
+  // Deterministic synthetic trainer history for the demo (clearly labelled in the UI):
+  // students practise their weak topics; those in a demo support group get an
+  // assignment and practise more, so the dashboard can show both kinds of growth.
+  function buildTrainer(summ, options) {
+    const o = options || {};
+    const rand = mulberry32(o.seed || 909);
+    const units = studentTopic(summ);
+    const out = [], assignments = [];
+    const start = Date.UTC(2026, 9, 19);
+    const day = d => new Date(start + d * 86400000).toISOString().slice(0, 10);
+    for (const subjectName of unique(summ, 'subject')) {
+      const su = units.filter(u => u.subject === subjectName);
+      // One demo assignment per subject: the hardest topic in the weakest class, core students.
+      const topicScores = unique(su, 'topic').map(t => ({ t, s: mean(su.filter(u => u.topic === t).map(u => u.score)) })).sort((a, b) => a.s - b.s);
+      const hardest = topicScores[0] && topicScores[0].t;
+      const classScores = unique(su, 'cls').map(c => ({ c, s: mean(su.filter(u => u.cls === c && u.topic === hardest).map(u => u.score)) })).sort((a, b) => a.s - b.s);
+      const cls = classScores[0] && classScores[0].c;
+      const core = su.filter(u => u.topic === hardest && u.cls === cls && u.score <= 40).map(u => u.student).sort(cmp);
+      const asg = { id: 'demo-' + (subjectName === 'Математика' ? 'm' : 'k'), title: 'Группа поддержки: ' + hardest, subject: subjectName, topic: hardest, cls, students: core, size: 8, createdAt: day(6) + 'T09:00:00Z', demo: true };
+      if (core.length) assignments.push(asg);
+      const byStudent = new Map();
+      for (const u of su) { if (!byStudent.has(u.student)) byStudent.set(u.student, []); byStudent.get(u.student).push(u); }
+      for (const [sid, list] of byStudent) {
+        const inGroup = asg.students.includes(sid);
+        if (!inGroup && rand() > 0.42) continue;
+        const sorted = list.slice().sort((a, b) => a.score - b.score);
+        const weak = inGroup ? [list.find(u => u.topic === hardest)].concat(sorted.filter(u => u.topic !== hardest).slice(0, 1)) : sorted.slice(0, 2);
+        for (const u of weak) {
+          const assigned = inGroup && u.topic === hardest;
+          const n = assigned ? 15 + Math.floor(rand() * 9) : 9 + Math.floor(rand() * 10);
+          const p0 = Math.min(0.9, Math.max(0.15, u.score / 100 * 0.85 + 0.08));
+          const gain = assigned ? 0.25 + rand() * 0.2 : 0.06 + rand() * 0.18;
+          for (let k = 0; k < n; k++) {
+            const p = Math.min(0.97, p0 + gain * (k / Math.max(1, n - 1)));
+            const d = (assigned ? 7 : 1) + Math.floor((k / n) * (assigned ? 14 : 20) + rand() * 2);
+            out.push({ id: `demo-${sid}-${u.topic.length}-${k}-${subjectName.length}`, student_id: sid, class: u.cls, subject: subjectName, topic: u.topic, question_id: 'trainer', question_text: '', correct: rand() < p ? 1 : 0, answer: '', correct_answer: '', date: day(d), ts: day(d) + 'T' + String(10 + (k % 8)).padStart(2, '0') + ':00:00Z', source: assigned ? 'assignment' : (k % 2 ? 'game' : 'lesson'), assignmentId: assigned ? asg.id : null, demo: true });
+          }
+        }
+      }
+    }
+    return { rows: out, assignments };
+  }
+
   /* ------------------------------------------------------------ students */
   // Per-student profile: mastery by topic, risk level and live trainer activity.
   function studentProfiles(rows, options) {
@@ -955,6 +1061,6 @@
     REQUIRED_COLUMNS, OPTIONAL_COLUMNS, THRESHOLDS, DEFAULTS, LESSON_TOPICS, DEMO_BOOKS,
     band, parseCSV, exportCSV, templateCSV, unique, subjects, classes, topics, filterRows,
     build, demoProgram, studentTopic, topicStats, cell, itemStats,
-    compareBooks, compare, detect, apportion, planHours, planCSV, insights, fmtSigned, studentProfiles, supportGroups, groupsCSV, summaryPayload, detectFormat, parseJournal, journalTemplate, codeFor, SCALE, mark, schoolMetrics, ktpCSV
+    compareBooks, compare, detect, apportion, planHours, planCSV, insights, fmtSigned, studentProfiles, supportGroups, groupsCSV, summaryPayload, detectFormat, parseJournal, journalTemplate, codeFor, SCALE, mark, schoolMetrics, ktpCSV, growthCompare, studentTrainer, assignmentProgress, buildTrainer
   };
 });

@@ -295,7 +295,7 @@
     gate.resolved = true; gate.chosen = Math.round(g.laneX);
     const ok = gate.chosen === q.answer;
     g.answers.push({ q, chosen: gate.chosen, ok });
-    try { global.JazMetodist && global.JazMetodist.recordAnswer({ subject: q.subject, topic: q.topic, lessonId: q.topicId, lessonTitle: q.topicKk, questionId: q.id, questionText: q.prompt, correct: ok ? 1 : 0, answer: q.options[gate.chosen], correctAnswer: q.options[q.answer] }); } catch (_) {}
+    try { global.JazMetodist && global.JazMetodist.recordAnswer({ source: 'game', subject: q.subject, topic: q.topic, lessonId: q.topicId, lessonTitle: q.topicKk, questionId: q.id, questionText: q.prompt, correct: ok ? 1 : 0, answer: q.options[gate.chosen], correctAnswer: q.options[q.answer] }); } catch (_) {}
     const p = proj(gate.chosen - 1, 0.6, 0.9);
     if (ok) {
       g.combo++; g.bestCombo = Math.max(g.bestCombo, g.combo);

@@ -42,7 +42,8 @@
   let theme = readStorage('jaz.theme.v1', 'light') === 'dark' ? 'dark' : 'light';
   let subject = readStorage('jaz.subject.v1', P.KAZ) === P.MATH ? P.MATH : P.KAZ;
   let aiAvailable = false;
-  fetch('./api/status').then((r) => r.ok ? r.json() : null).then((d) => { aiAvailable = !!(d && d.ai); }).catch(() => {});
+  let serverOn = false;
+  fetch('./api/status').then((r) => r.ok ? r.json() : null).then((d) => { aiAvailable = !!(d && d.ai); serverOn = !!(d && d.api); if (appMode === 'student') { renderAccount(); loadTasks(); } }).catch(() => { serverOn = false; });
   function applyTheme() {
     document.documentElement.dataset.theme = theme;
     const label = theme === 'dark' ? 'Светлая тема' : 'Тёмная тема';
@@ -130,6 +131,46 @@
       return `<article class="subject-card ${math ? 'math' : 'kaz'}${s.id === subject ? ' current' : ''}"><div class="subject-card-top"><span class="subject-glyph">${math ? 'π' : 'Ә'}</span><div><h3>${esc(s.kk)}</h3><small>${done} / ${list.length} тақырып аяқталды</small></div></div><div class="meter"><span style="width:${done / list.length * 100}%"></span></div><p>Келесі: <strong>${esc(next.title)}</strong></p><div class="subject-card-actions"><button class="btn btn-primary" data-action="lesson" data-id="${next.id}">Сабақ ${icon('arrow')}</button><button class="btn btn-ghost" data-action="start-game-subject" data-id="${esc(s.id)}">${icon('run')}Ойын</button></div></article>`;
     }).join('')}</section>`;
   }
+  // Learner account: join the school with a class code (server) or pick a code (demo, same browser).
+  let remoteTasks = null, tasksLoading = false;
+  const S = () => window.JazSync;
+  function renderAccount() {
+    const box = $('#student-context');
+    const me = S() && S().student();
+    if (me) {
+      box.innerHTML = `<div class="learner-account"><span class="la-avatar">${icon('check')}</span><span><strong>${esc(me.cls)} · ${esc(me.studentId)}</strong><small>${esc(me.school || 'Мектеп')} · жауаптарың мұғалімге жіберіледі${S().pending() ? ` · ${S().pending()} жауап кезекте` : ''}</small></span><button class="btn btn-ghost" data-action="logout">Шығу</button></div>`;
+      return;
+    }
+    if (aiAvailable === null) return;
+    if (serverOn) {
+      box.innerHTML = `<form class="learner-join" id="join-form"><strong>Сыныпқа кір</strong><small>Мұғалім берген 6 таңбалы код пен өз кодыңды енгіз. Атың қажет емес.</small><div class="lj-row"><label>Сынып коды<input id="join-code" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="000000"></label><label>Оқушы коды<input id="join-id" autocomplete="off" placeholder="S-0001"></label><button class="btn btn-primary" type="submit">Кіру</button></div><p class="lj-error" id="join-error" hidden></p></form>`;
+      return;
+    }
+    window.JazMetodist.renderStudentContext(box);
+  }
+  async function loadTasks() {
+    if (tasksLoading) return;
+    const me = S() && S().student();
+    if (!me) { remoteTasks = null; return; }
+    tasksLoading = true;
+    try { remoteTasks = await S().tasks(); } catch (_) { remoteTasks = null; }
+    tasksLoading = false;
+    if (route === 'home' && appMode === 'student') render();
+  }
+  function myTasks() {
+    if (S() && S().student()) return remoteTasks || [];
+    const sel = window.JazMetodist.selection && window.JazMetodist.selection();
+    return sel ? window.JazMetodist.localTasks(sel) : [];
+  }
+  function tasksCard() {
+    const list = myTasks();
+    if (!list.length) return '';
+    return `<section class="tasks-card"><div class="tasks-head"><span class="game-tag">${icon('book')}Мұғалімнен</span><h2>Сенің тапсырмаларың</h2></div><ul>${list.map((t) => {
+      const pt = P.TOPICS.find((x) => x.id === t.topicId || x.topic === t.topic);
+      const pct = Math.min(100, Math.round(100 * (t.done || 0) / (t.size || 8)));
+      return `<li><span class="task-glyph">${esc(pt ? GLYPHS[pt.id] || '•' : '•')}</span><span class="task-info"><strong>${esc(pt ? pt.kk : t.topic)}</strong><small>${Math.min(t.done || 0, t.size || 8)} / ${t.size || 8} тапсырма${t.done ? ` · дұрыс ${t.correct || 0}` : ''}</small><span class="mini-meter"><span style="width:${pct}%"></span></span></span>${pt ? `<button class="btn btn-primary" data-action="assignment" data-id="${esc(t.id)}">${t.done ? 'Жалғастыру' : 'Бастау'} ${icon('arrow')}</button>` : ''}</li>`;
+    }).join('')}</ul></section>`;
+  }
   function gamePromo() {
     const stats = window.JazGame?.stats() || { best: 0, coins: 0 };
     return `<section class="game-promo"><div class="game-promo-copy"><span class="game-tag">${icon('run')}Жаңа ойын</span><h2>Барыс жолы</h2><p>Үш жол, бір дұрыс жауап. Барыспен бірге жүгіріп, ${esc(subjectName(subject).toLowerCase())} тақырыптарын бекіт.</p><div class="game-promo-stats"><span>${icon('trophy')}Рекорд <b>${stats.best}</b></span><span>${icon('coin')}Тиын <b>${stats.coins}</b></span></div><button class="btn btn-white" data-action="start-game">Жүгіруді бастау ${icon('arrow')}</button></div><div class="game-promo-art" aria-hidden="true"><span class="lane l1"></span><span class="lane l2"></span><span class="lane l3"></span><img src="./assets/mascot-kit/04-wave.png" alt="" width="200" height="183"></div></section>`;
@@ -161,6 +202,7 @@
     <button class="task-row ${tasks[0] ? 'done' : ''}" data-action="lesson" data-id="${nextLesson.id}"><span class="task-step">${tasks[0] ? icon('check') : '01'}</span><span><strong>Бір сабақты орында</strong><small>${esc(nextLesson.title)} · ${nextLesson.size} тапсырма</small></span>${icon('chevron')}</button>
     <button class="task-row ${tasks[1] ? 'done' : ''}" data-action="start-game"><span class="task-step">${tasks[1] ? icon('check') : '02'}</span><span><strong>Барыс жолында бір рет жүгір</strong><small>Дұрыс жауап — ұпай мен тиын</small></span>${icon('chevron')}</button>
     <button class="task-row ${tasks[2] ? 'done' : ''}" data-action="start-chat" data-id="cinema"><span class="task-step">${tasks[2] ? icon('check') : '03'}</span><span><strong>Чатта қазақша жаз</strong><small>Барыс қатеңді түзетіп береді</small></span>${icon('chevron')}</button></div><div id="scenario-deck" class="card-deck">${deck()}</div></section>
+    ${tasksCard()}
     ${gamePromo()}
     <div class="section-heading"><h2>${math ? 'Математика тақырыптары' : 'Қазақ тілі тақырыптары'}</h2><a class="text-link" href="#lessons">Барлық сабақ ${icon('arrow')}</a></div><section class="lesson-grid" aria-label="Қысқа сабақтар">${lessons.slice(0, 3).map(lessonTile).join('')}</section>
     <a class="history-strip" href="#progress"><span class="strip-icon">${icon('clock')}</span><span><strong>Өзгерісіңді байқа</strong><p>Ұпайларың, рекордтарың және түзеткен сөздерің бір жерде.</p></span>${icon('chevron')}</a></div>`;
@@ -248,7 +290,7 @@
     }
     $('#main').classList.remove('metodist');
     window.JazMetodist.unmount?.();
-    window.JazMetodist.renderStudentContext($('#student-context'));
+    renderAccount();
     document.body.dataset.page = route;
     document.title = `${nav.find((item) => item.id === route).label} · Jaz!`;
     if (route !== 'game') window.JazGame?.destroy();
@@ -336,11 +378,11 @@
     saveChats();
     if (route === 'chat' && scenarioId === id) { renderMessages(rules.suggestedReplies); $('#chat-input').focus(); }
   }
-  function startLesson(id) {
+  function startLesson(id, assignment) {
     const lesson = L.lessons.find((item) => item.id === id);
     if (!lesson) return;
-    const questions = P.set(id, lesson.size).map((item) => ({ id: item.id, prompt: item.prompt, passage: item.passage, options: item.options, answerIndex: item.answer, explanation: item.explanation }));
-    lessonRun = { lesson: { ...lesson, questions }, index: 0, selected: null, checked: false, done: false, attempts: 0, wasComplete: progress.completedLessons.includes(id) };
+    const questions = P.set(id, assignment ? assignment.size || 8 : lesson.size).map((item) => ({ id: item.id, prompt: item.prompt, passage: item.passage, options: item.options, answerIndex: item.answer, explanation: item.explanation }));
+    lessonRun = { assignment: assignment || null, lesson: { ...lesson, questions }, index: 0, selected: null, checked: false, done: false, attempts: 0, wasComplete: progress.completedLessons.includes(id) };
     renderLesson(); $('#lesson-dialog').showModal();
   }
   function renderLesson() {
@@ -355,12 +397,14 @@
     const question = run.lesson.questions[run.index];
     if (!run.checked) {
       run.checked = true; run.attempts++;
-      window.JazMetodist.recordAnswer({subject:run.lesson.subject,topic:run.lesson.topic,lessonId:run.lesson.id,lessonTitle:run.lesson.title,questionId:question.id,questionText:question.prompt,correct:run.selected === question.answerIndex ? 1 : 0,answer:question.options[run.selected],correctAnswer:question.options[question.answerIndex],date:day()});
+      // Analytics count only the first attempt per question (retries are practice, not evidence).
+      run.recorded = run.recorded || new Set();
+      if (!run.recorded.has(question.id)) run.recorded.add(question.id), window.JazMetodist.recordAnswer({source:run.assignment ? 'assignment' : 'lesson',assignmentId:run.assignment ? run.assignment.id : null,subject:run.lesson.subject,topic:run.lesson.topic,lessonId:run.lesson.id,lessonTitle:run.lesson.title,questionId:question.id,questionText:question.prompt,correct:run.selected === question.answerIndex ? 1 : 0,answer:question.options[run.selected],correctAnswer:question.options[question.answerIndex],date:day()});
       window.JazMotion?.react(run.selected === question.answerIndex ? 'success' : 'nudge');
     }
     else if (run.selected !== question.answerIndex) { run.selected = null; run.checked = false; }
     else if (run.index < run.lesson.questions.length - 1) { run.index++; run.selected = null; run.checked = false; }
-    else { award({ type: 'lesson', lessonId: run.lesson.id }); run.done = true; render(); }
+    else { award({ type: 'lesson', lessonId: run.lesson.id }); run.done = true; if (run.assignment) setTimeout(loadTasks, 800); render(); }
     renderLesson();
     requestAnimationFrame(() => $('#lesson-dialog .dialog-content').scrollIntoView({ block: 'nearest' }));
   }
@@ -381,6 +425,8 @@
     else if (action === 'lesson') startLesson(control.dataset.id);
     else if (action === 'subject') { subject = control.dataset.id === P.MATH ? P.MATH : P.KAZ; saveStorage('jaz.subject.v1', subject); render(); }
     else if (action === 'start-game') startGame();
+    else if (action === 'assignment') { const t = myTasks().find((x) => x.id === control.dataset.id); const pt = t && P.TOPICS.find((x) => x.id === t.topicId || x.topic === t.topic); if (pt) startLesson(pt.id, t); }
+    else if (action === 'logout') { S().logoutStudent(); remoteTasks = null; render(); }
     else if (action === 'start-game-subject') { subject = control.dataset.id === P.MATH ? P.MATH : P.KAZ; saveStorage('jaz.subject.v1', subject); try { const g = JSON.parse(localStorage.getItem('jaz.game.v1') || '{}'); localStorage.setItem('jaz.game.v1', JSON.stringify({ ...g, subject, topic: '' })); } catch {} startGame(); }
     else if (action === 'lesson-to-game') { $('#lesson-dialog').close(); lessonRun = null; startGame(control.dataset.id); }
     else if (action === 'start-chat') startChat(control.dataset.id);
@@ -410,7 +456,14 @@
     else if (action === 'chat-info') info('Жаттығу серігі туралы', `<p>Аян, Аружан және басқа кейіпкерлер — <strong>ойын кейіпкерлері</strong>. Бұл чатта шынайы адамдармен байланыс жоқ.</p><p>Барыс қатеңді екі жолмен тексереді. <strong>Ережелер</strong>: орыс әрпімен жазылған қазақ әріптері (салем → сәлем), үндестік заңы (мектепге → мектепке), сұраулық шылау (барамызба → барамыз ба), тәуелдік (кітапым → кітабым), бас әріп пен тыныс белгісі.</p><p>${aiAvailable ? '<strong>ИИ-тексеру қосулы:</strong> кез келген қатені табады, түзетеді және ережесін түсіндіреді.' : '<strong>ИИ-тексеру өшірулі:</strong> ережелер білмейтін сөздерді қате деп бағаламаймыз.'}</p>`);
     else if (action === 'privacy') info('Сенің деректерің', `<p>Жаттығу прогресі мен чат тарихы <strong>осы браузердің жадында</strong> сақталады. ${aiAvailable ? 'Чаттағы хабарламаң тексеру үшін мектеп серверіндегі ИИ-тексерушіге (Claude) жіберіледі. Атыңды, телефоныңды және мекенжайыңды жазба.' : 'Қазір хабарламалар осы құрылғыда, ИИ-сыз тексеріледі.'}</p><p>Сайтты басқа құрылғыдан ашсаң, жаңа прогресс басталады. Браузер деректерін тазаласаң, жергілікті тарих та өшеді.</p><p>Тіркелу, төлем және жеке дерек енгізу қажет емес.</p>`);
   });
-  document.addEventListener('submit', (event) => { if (event.target.id === 'chat-form') { event.preventDefault(); sendMessage(); } });
+  document.addEventListener('submit', (event) => {
+    if (event.target.id === 'chat-form') { event.preventDefault(); sendMessage(); }
+    if (event.target.id === 'join-form') {
+      event.preventDefault();
+      const err = $('#join-error');
+      S().join($('#join-code').value, $('#join-id').value.trim()).then(() => { notify('Сыныпқа кірдің! Тапсырмаларың осында.'); loadTasks(); render(); }).catch((e) => { err.textContent = e.status === 404 ? e.message : 'Сервермен байланыс жоқ. Кейінірек қайталап көр.'; err.hidden = false; });
+    }
+  });
   document.addEventListener('input', (event) => {
     if (event.target.id === 'chat-input') { session().draft = event.target.value; $('#char-count').textContent = `${event.target.value.length} / 500`; $('#chat-error').hidden = true; }
   });
