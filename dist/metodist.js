@@ -533,7 +533,8 @@
   }
 
   /* ----------------------------------------------- student trainer link */
-  function studentRows() { return rows.filter(r => r.subject === 'Казахский язык'); }
+  // Any subject: the trainer now covers both Kazakh and Mathematics.
+  function studentRows() { return rows; }
   function renderStudentContext(container) {
     if (!container) return;
     studentHost = container;
@@ -557,9 +558,10 @@
   function recordAnswer(payload) {
     if (!payload || typeof payload.lessonId !== 'string' || typeof payload.questionId !== 'string' || ![true, false, 0, 1].includes(payload.correct)) return;
     const date = /^\d{4}-\d{2}-\d{2}$/.test(payload.date || '') ? payload.date : new Date().toISOString().slice(0, 10);
-    const topic = C().LESSON_TOPICS[payload.lessonId] || String(payload.lessonTitle || payload.lessonId);
-    const answer = { lessonId: payload.lessonId, questionId: payload.questionId, questionText: String(payload.questionText || ''), correct: Boolean(payload.correct), date, context: selection ? { ...selection } : null, linked: false };
-    const baseline = selection && selection.student_id && studentRows().find(r => r.class === selection.class && r.student_id === selection.student_id && r.topic === topic);
+    const topic = typeof payload.topic === 'string' && payload.topic ? payload.topic : C().LESSON_TOPICS[payload.lessonId] || String(payload.lessonTitle || payload.lessonId);
+    const subjectName = typeof payload.subject === 'string' && payload.subject ? payload.subject : 'Казахский язык';
+    const answer = { lessonId: payload.lessonId, subject: subjectName, topic, questionId: payload.questionId, questionText: String(payload.questionText || ''), correct: Boolean(payload.correct), date, context: selection ? { ...selection } : null, linked: false };
+    const baseline = selection && selection.student_id && studentRows().find(r => r.class === selection.class && r.student_id === selection.student_id && r.subject === subjectName && r.topic === topic);
     if (baseline) {
       addLive({ ...baseline, question_id: 'live-' + payload.questionId, question_text: answer.questionText, correct: answer.correct ? 1 : 0, answer: String(payload.answer || ''), correct_answer: String(payload.correctAnswer || ''), date });
       answer.linked = true;

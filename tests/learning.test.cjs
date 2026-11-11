@@ -2,12 +2,15 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const engine = require('../dist/learning.js');
 
-test('four scenarios and four lessons have usable Kazakh practice content', () => {
+test('four scenarios and twelve curriculum lessons with generated questions', () => {
+  const practice = require('../dist/practice.js');
   assert.equal(engine.scenarios.length, 4);
-  assert.equal(engine.lessons.length, 4);
+  assert.equal(engine.lessons.length, 12);
+  assert.deepEqual([...new Set(engine.lessons.map((l) => l.subject))].sort(), ['Казахский язык', 'Математика']);
   for (const lesson of engine.lessons) {
-    assert.equal(lesson.questions.length, 3);
-    for (const question of lesson.questions) assert.ok(question.options[question.answerIndex]);
+    const items = practice.set(lesson.id, lesson.size);
+    assert.equal(items.length, lesson.size);
+    for (const item of items) { assert.equal(item.options.length, 3); assert.ok(item.options[item.answer]); assert.equal(item.topic, lesson.topic); }
   }
 });
 
@@ -17,7 +20,7 @@ test('known standalone errors preserve case and explain specific letters', () =>
   assert.equal(result.corrected, 'Сәлем! Киноға барамыз ба?');
   assert.equal(result.issues.length, 2);
   assert.match(result.issues[1].reason, /-ға/u);
-  assert.doesNotMatch(result.issues[1].reason, /жіңішке/u);
+  assert.match(result.issues[1].reason, /жуан/u);
   assert.equal(engine.assessMessage('САЛЕМ!').corrected, 'СӘЛЕМ!');
 });
 
@@ -98,8 +101,23 @@ test('lesson completion earns 20 XP only once and increments level honestly', ()
   for (const lesson of engine.lessons.slice(1)) state = engine.reduceProgress(state, { ...event, lessonId: lesson.id });
   state = engine.reduceProgress(state, { type: 'message', scenarioId: 'cinema', text: 'Сәлем!', day: '2026-11-11' });
   state = engine.reduceProgress(state, { type: 'message', scenarioId: 'cinema', text: 'Киноға барайық!', day: '2026-11-11' });
-  assert.equal(state.xp, 100);
-  assert.equal(state.level, 2);
+  // 12 lessons × 20 XP + 2 messages × 10 XP = 260 XP → level 3.
+  assert.equal(state.xp, 260);
+  assert.equal(state.level, 3);
+});
+
+test('game runs earn bounded XP once per run id', () => {
+  let state = engine.reduceProgress(null, { type: 'game', runId: 'run-1', correct: 7, day: '2026-11-11' });
+  assert.equal(state.xp, 24);
+  assert.equal(engine.reduceProgress(state, { type: 'game', runId: 'run-1', correct: 7, day: '2026-11-11' }).xp, 24);
+  assert.equal(engine.reduceProgress(state, { type: 'game', runId: 'run-2', correct: 0, day: '2026-11-11' }).xp, 24);
+  assert.equal(engine.reduceProgress(state, { type: 'game', runId: 'run-3', correct: 99, day: '2026-11-11' }).xp, 84);
+  assert.equal(engine.sanitizeState({ events: [{ id: 'game:x', type: 'game', runId: 'x', day: '2026-11-11', xp: 999 }] }).xp, 0);
+});
+
+test('AI-provided corrections are verified against the stored expected text', () => {
+  assert.equal(engine.verifyCorrection('мен вчера был дома', 'Мен кеше үйде болдым.', 'Мен кеше үйде болдым.'), true);
+  assert.equal(engine.verifyCorrection('мен вчера был дома', 'мен вчера был дома', 'Мен кеше үйде болдым.'), false);
 });
 
 test('streak uses actual injected calendar days and resets across gaps', () => {

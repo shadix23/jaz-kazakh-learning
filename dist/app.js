@@ -26,16 +26,23 @@
     refresh: '<path d="M20 7v5h-5M4 17v-5h5"/><path d="M5 7a8 8 0 0 1 13-2l2 3M4 16l2 3a8 8 0 0 0 13-2"/>',
     trophy: '<path d="M7 3h10v7a5 5 0 0 1-10 0zM7 5H3v4a4 4 0 0 0 4 4m10-8h4v4a4 4 0 0 1-4 4m-5 2v6m-4 0h8"/>',
     calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18"/>',
-    lock: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>'
+    lock: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>',
+    run: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+    coin: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.2 3-2.2s3 .8 3 2.2-1.3 2-3 2.5-3 1.1-3 2.5 1.3 2.2 3 2.2 3-.8 3-2.2"/>',
+    calc: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/>'
   };
   const icon = (name, extra = '') => `<svg class="icon ${extra}" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.spark}</svg>`;
-  const nav = [{ id: 'home', label: 'Басты бет', icon: 'home' }, { id: 'lessons', label: 'Сабақтар', icon: 'book' }, { id: 'chat', label: 'Чат ойыны', icon: 'chat' }, { id: 'progress', label: 'Жетістіктер', icon: 'progress' }];
+  const P = window.JazPractice;
+  const nav = [{ id: 'home', label: 'Басты бет', icon: 'home' }, { id: 'lessons', label: 'Сабақтар', icon: 'book' }, { id: 'game', label: 'Барыс жолы', icon: 'run' }, { id: 'chat', label: 'Чат ойыны', icon: 'chat' }, { id: 'progress', label: 'Жетістіктер', icon: 'progress' }];
   let storageWarning = false;
   function readStorage(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
   function saveStorage(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch { storageWarning = true; } }
   let progress = L.sanitizeState(readStorage('jaz.progress.v1', null));
   let appMode = readStorage('jaz.mode.v1', 'method') === 'student' ? 'student' : 'method';
   let theme = readStorage('jaz.theme.v1', 'light') === 'dark' ? 'dark' : 'light';
+  let subject = readStorage('jaz.subject.v1', P.KAZ) === P.MATH ? P.MATH : P.KAZ;
+  let aiAvailable = false;
+  fetch('./api/status').then((r) => r.ok ? r.json() : null).then((d) => { aiAvailable = !!(d && d.ai); }).catch(() => {});
   function applyTheme() {
     document.documentElement.dataset.theme = theme;
     const label = theme === 'dark' ? 'Светлая тема' : 'Тёмная тема';
@@ -47,7 +54,7 @@
   for (const scenario of L.scenarios) {
     const saved = savedChats && savedChats[scenario.id];
     if (!saved || !Array.isArray(saved.messages)) continue;
-    const messages = saved.messages.filter((m) => m && ['mentor', 'you', 'correction'].includes(m.role) && typeof m.text === 'string' && m.text.length <= 1600).slice(-80).map((m) => ({ role: m.role, text: m.text, original: typeof m.original === 'string' ? m.original.slice(0, 500) : '', resolved: m.resolved === true, time: typeof m.time === 'string' ? m.time.slice(0, 8) : '' }));
+    const messages = saved.messages.filter((m) => m && ['mentor', 'you', 'correction'].includes(m.role) && typeof m.text === 'string' && m.text.length <= 1600).slice(-80).map((m) => ({ role: m.role, text: m.text, original: typeof m.original === 'string' ? m.original.slice(0, 500) : '', resolved: m.resolved === true, time: typeof m.time === 'string' ? m.time.slice(0, 8) : '', ...(typeof m.corrected === 'string' ? { corrected: m.corrected.slice(0, 600), issues: Array.isArray(m.issues) ? m.issues.slice(0, 12).filter((i) => i && typeof i.from === 'string' && typeof i.to === 'string').map((i) => ({ from: i.from.slice(0, 120), to: i.to.slice(0, 120), reason: String(i.reason || '').slice(0, 300) })) : [], source: m.source === 'ai' ? 'ai' : 'rules', reply: typeof m.reply === 'string' ? m.reply.slice(0, 400) : '' } : {}) }));
     sessions[scenario.id] = { messages, turn: messages.filter((m) => m.role === 'you').length, draft: '' };
   }
   let route = 'home';
@@ -108,36 +115,51 @@
     }
     $('#page-location').textContent = nav.find((item) => item.id === route).label;
   }
-  const letters = ['Ә', 'Ң', '?', 'ға'];
+  const GLYPHS = { letters: 'Ә', ng: 'Ң', questions: '?', endings: 'ға', harmony: 'лар', possessive: '-ым', 'm-prop': 'a:b', 'm-circle': 'π', 'm-signed': '±', 'm-abs': '|x|', 'm-addsub': '+−', 'm-muldiv': '×÷' };
+  const subjectLessons = () => L.lessons.filter((lesson) => lesson.subject === subject);
+  const subjectName = (id) => (P.SUBJECTS.find((s) => s.id === id) || {}).kk || id;
+  function subjectSwitch() {
+    return `<div class="subject-switch" role="group" aria-label="Пәнді таңда">${P.SUBJECTS.map((s) => `<button data-action="subject" data-id="${esc(s.id)}" aria-pressed="${s.id === subject}">${icon(s.id === P.MATH ? 'calc' : 'book')}<span>${esc(s.kk)}</span></button>`).join('')}</div>`;
+  }
+  function gamePromo() {
+    const stats = window.JazGame?.stats() || { best: 0, coins: 0 };
+    return `<section class="game-promo"><div class="game-promo-copy"><span class="game-tag">${icon('run')}Жаңа ойын</span><h2>Барыс жолы</h2><p>Үш жол, бір дұрыс жауап. Барыспен бірге жүгіріп, ${esc(subjectName(subject).toLowerCase())} тақырыптарын бекіт.</p><div class="game-promo-stats"><span>${icon('trophy')}Рекорд <b>${stats.best}</b></span><span>${icon('coin')}Тиын <b>${stats.coins}</b></span></div><button class="btn btn-white" data-action="start-game">Жүгіруді бастау ${icon('arrow')}</button></div><div class="game-promo-art" aria-hidden="true"><span class="lane l1"></span><span class="lane l2"></span><span class="lane l3"></span><img src="./assets/mascot-kit/04-wave.png" alt="" width="200" height="183"></div></section>`;
+  }
   function mascotAvatar(extraClass = '') {
     return `<span class="barys-avatar ${extraClass}"><img src="./assets/mascot-kit/03-avatar.png" alt="" width="160" height="146"></span>`;
   }
   function heroMascot() {
     return `<span class="hero-wipe" aria-hidden="true"></span><span class="banner-ornaments" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-visual"><span class="letter-chip first" aria-hidden="true">Ә</span><span class="letter-chip second" aria-hidden="true">Ң</span><button class="mascot-stage" data-action="mascot-hello" aria-label="Барыспен амандасу"><span class="mascot-shadow" aria-hidden="true"></span><img class="barys-character" data-state-poses src="./assets/mascot-kit/01-primary.png" alt="Көк шарфы мен қазақы тақиясы бар қар барысы" width="960" height="877" draggable="false"></button><span class="mascot-speech" aria-hidden="true">Сәлем! Мен — Барыс.</span></div>`;
   }
-  function lessonTile(lesson, index) {
+  function lessonTile(lesson) {
     const complete = progress.completedLessons.includes(lesson.id);
-    return `<button class="lesson-tile ${complete ? 'completed' : ''}" data-action="lesson" data-id="${lesson.id}"><span class="letter-icon">${complete ? icon('check') : letters[index]}</span>${icon(complete ? 'check' : 'arrow', 'tile-arrow')}<h3>${esc(lesson.title)}</h3><p>${esc(lesson.description)}</p><span class="tile-meta"><span>${esc(lesson.duration)} · 3 тапсырма</span><strong>${complete ? 'Орындалды' : '+20 XP'}</strong></span><span class="mini-meter"><span style="width:${complete ? 100 : 0}%"></span></span></button>`;
+    return `<button class="lesson-tile ${complete ? 'completed' : ''}" data-action="lesson" data-id="${lesson.id}"><span class="letter-icon">${complete ? icon('check') : esc(GLYPHS[lesson.id] || '•')}</span>${icon(complete ? 'check' : 'arrow', 'tile-arrow')}<h3>${esc(lesson.title)}</h3><p>${esc(lesson.description)}</p><span class="tile-meta"><span>${esc(lesson.duration)} · ${lesson.size} тапсырма</span><strong>${complete ? 'Орындалды' : '+20 XP'}</strong></span><span class="mini-meter"><span style="width:${complete ? 100 : 0}%"></span></span></button>`;
   }
   function deck() {
     const s = L.scenarios[deckIndex];
     return `<div class="scenario-feature"><span class="eyebrow">${String(deckIndex + 1).padStart(2, '0')} / 04 · ЧАТ ОЙЫНЫ</span><h3>${esc(s.title)}</h3><p>${esc(s.task)}</p><button class="btn btn-primary" data-action="start-chat" data-id="${s.id}">Ойынды бастау ${icon('arrow')}</button><span class="scenario-glyph">${icon(s.icon)}</span></div><div class="deck-controls"><button class="deck-switch" data-action="deck-prev" aria-label="Алдыңғы жағдай">${icon('left')}</button>${L.scenarios.map((_, index) => `<button class="deck-dot ${index === deckIndex ? 'active' : ''}" data-action="deck" data-index="${index}" aria-label="${index + 1}-жағдай" ${index === deckIndex ? 'aria-current="true"' : ''}></button>`).join('')}<button class="deck-switch" data-action="deck-next" aria-label="Келесі жағдай">${icon('chevron')}</button></div>`;
   }
   function homeView() {
-    const tasks = [todayEvents().some((event) => event.type === 'lesson'), practicesToday().length > 0, practicesToday().length >= 3];
-    const nextLesson = L.lessons.find((lesson) => !progress.completedLessons.includes(lesson.id)) || L.lessons[0];
-    return `<div class="route-enter"><section class="hero"><div class="hero-copy"><span class="eyebrow">ҚАЗАҚША ЖАЗУҒА 5 МИНУТ</span><h1 data-type-title>Қазақша жазуды<br>әдетке айналдыр.</h1><p>Қысқа сабақтан баста. Ойыңды чатта жеткіз.</p><button class="btn btn-white" data-action="start-chat" data-id="cinema">Чатты бастау ${icon('arrow')}</button></div>${heroMascot()}</section>
-    <div class="section-heading"><h2>Бүгінгі жоспарың</h2><span class="section-meta">${tasks.filter(Boolean).length} / 3 орындалды<br>шамамен 8 минут</span></div>
-    <section class="daily-plan"><div class="plan-left"><div class="plan-cover"><img class="barys-mini" src="./assets/mascot-kit/07-reading.png" alt="" width="135" height="123"></div><h3>Аз-аздан.<br>Күн сайын.</h3><p>Бүгінгі мақсат <strong>${Math.min(todayXp(), 30)} / 30 XP</strong></p></div><div class="plan-tasks">
-    <button class="task-row ${tasks[0] ? 'done' : ''}" data-action="lesson" data-id="${nextLesson.id}"><span class="task-step">${tasks[0] ? icon('check') : '01'}</span><span><strong>Бір сабақты орында</strong><small>Үш қысқа тапсырма</small></span>${icon('chevron')}</button>
-    <button class="task-row ${tasks[1] ? 'done' : ''}" data-action="try-correction"><span class="task-step">${tasks[1] ? icon('check') : '02'}</span><span><strong>Бір хабарлама жаз</strong><small>Өз сөзіңмен жаттық</small></span>${icon('chevron')}</button>
-    <button class="task-row ${tasks[2] ? 'done' : ''}" data-action="start-chat" data-id="cinema"><span class="task-step">${tasks[2] ? icon('check') : '03'}</span><span><strong>Үш хабарлама жаз</strong><small>Чатта әңгіме құрастыр</small></span>${icon('chevron')}</button></div><div id="scenario-deck" class="card-deck">${deck()}</div></section>
-    <div class="section-heading"><h2>Бір сабақтан баста</h2><a class="text-link" href="#lessons">Барлық сабақ ${icon('arrow')}</a></div><section class="lesson-grid" aria-label="Қысқа сабақтар">${L.lessons.slice(0, 3).map(lessonTile).join('')}</section>
-    <a class="history-strip" href="#progress"><span class="strip-icon">${icon('clock')}</span><span><strong>Өзгерісіңді байқа</strong><p>Жинаған ұпайларың мен түзеткен сөздерің бір жерде.</p></span>${icon('chevron')}</a></div>`;
+    const games = todayEvents().filter((event) => event.type === 'game').length;
+    const tasks = [todayEvents().some((event) => event.type === 'lesson'), games > 0, practicesToday().length > 0];
+    const lessons = subjectLessons();
+    const nextLesson = lessons.find((lesson) => !progress.completedLessons.includes(lesson.id)) || lessons[0];
+    const math = subject === P.MATH;
+    return `<div class="route-enter"><section class="hero"><div class="hero-copy"><span class="eyebrow">${math ? '6-СЫНЫП · МАТЕМАТИКА' : '6-СЫНЫП · ҚАЗАҚ ТІЛІ'}</span><h1 data-type-title>${math ? 'Есепті түсін,<br>ойнап бекіт.' : 'Қазақша жазуды<br>әдетке айналдыр.'}</h1><p>${math ? 'Пропорциядан рационал сандарға дейін — сабақ пен ойын.' : 'Қысқа сабақтан баста. Ойыңды чатта жеткіз.'}</p><button class="btn btn-white" data-action="start-game">Барыс жолын бастау ${icon('arrow')}</button></div>${heroMascot()}</section>
+    <div class="section-heading subject-heading"><h2>Бүгінгі жоспарың</h2>${subjectSwitch()}</div>
+    <section class="daily-plan"><div class="plan-left"><div class="plan-cover"><img class="barys-mini" src="./assets/mascot-kit/07-reading.png" alt="" width="135" height="123"></div><h3>Аз-аздан.<br>Күн сайын.</h3><p>Бүгінгі мақсат <strong>${Math.min(todayXp(), 30)} / 30 XP</strong></p><p class="plan-count">${tasks.filter(Boolean).length} / 3 орындалды</p></div><div class="plan-tasks">
+    <button class="task-row ${tasks[0] ? 'done' : ''}" data-action="lesson" data-id="${nextLesson.id}"><span class="task-step">${tasks[0] ? icon('check') : '01'}</span><span><strong>Бір сабақты орында</strong><small>${esc(nextLesson.title)} · ${nextLesson.size} тапсырма</small></span>${icon('chevron')}</button>
+    <button class="task-row ${tasks[1] ? 'done' : ''}" data-action="start-game"><span class="task-step">${tasks[1] ? icon('check') : '02'}</span><span><strong>Барыс жолында бір рет жүгір</strong><small>Дұрыс жауап — ұпай мен тиын</small></span>${icon('chevron')}</button>
+    <button class="task-row ${tasks[2] ? 'done' : ''}" data-action="start-chat" data-id="cinema"><span class="task-step">${tasks[2] ? icon('check') : '03'}</span><span><strong>Чатта қазақша жаз</strong><small>Барыс қатеңді түзетіп береді</small></span>${icon('chevron')}</button></div><div id="scenario-deck" class="card-deck">${deck()}</div></section>
+    ${gamePromo()}
+    <div class="section-heading"><h2>${math ? 'Математика тақырыптары' : 'Қазақ тілі тақырыптары'}</h2><a class="text-link" href="#lessons">Барлық сабақ ${icon('arrow')}</a></div><section class="lesson-grid" aria-label="Қысқа сабақтар">${lessons.slice(0, 3).map(lessonTile).join('')}</section>
+    <a class="history-strip" href="#progress"><span class="strip-icon">${icon('clock')}</span><span><strong>Өзгерісіңді байқа</strong><p>Ұпайларың, рекордтарың және түзеткен сөздерің бір жерде.</p></span>${icon('chevron')}</a></div>`;
   }
   function lessonsView() {
-    const next = L.lessons.find((lesson) => !progress.completedLessons.includes(lesson.id)) || L.lessons[0];
-    return `<div class="route-enter"><div class="page-intro"><h1>Бір ереже. Бір қадам.</h1><p>Қысқа жаттығуларды орындап, күнделікті хатта қолдан.</p></div><section class="lesson-banner"><div><h2>${progress.completedLessons.length ? 'Жалғастыруға дайынсың ба?' : 'Алғашқы сабақтан бастайық.'}</h2><p>Таңда. Ойланып көр. Қате кетсе, түсіндірмеден кейін қайта байқап көр.</p><button class="btn btn-primary" data-action="lesson" data-id="${next.id}">${progress.completedLessons.length === L.lessons.length ? 'Қайталап шығу' : 'Сабақты бастау'} ${icon('arrow')}</button></div><img src="./assets/lesson-stack.svg" alt="Ә, Ң, І әріптері бар оқу карточкалары" width="210" height="140"></section><div class="section-heading"><h2>Қазақша жазу негіздері</h2><span class="section-meta">${progress.completedLessons.length} / ${L.lessons.length} сабақ орындалды</span></div><div class="lesson-list-grid">${L.lessons.map(lessonTile).join('')}</div><div class="note-row">${icon('help')}Сабақты алғаш аяқтағанда +20 XP беріледі. Қайталау ұпайды көбейтпейді.</div></div>`;
+    const lessons = subjectLessons();
+    const next = lessons.find((lesson) => !progress.completedLessons.includes(lesson.id)) || lessons[0];
+    const done = lessons.filter((lesson) => progress.completedLessons.includes(lesson.id)).length;
+    return `<div class="route-enter"><div class="page-intro subject-heading"><div><h1>Бір тақырып. Бір қадам.</h1><p>Сабақтар мұғалімнің бағдарламасымен бірдей. Әр жолы тапсырмалар жаңарады.</p></div>${subjectSwitch()}</div><section class="lesson-banner"><div><h2>${done ? `${done} / ${lessons.length} тақырып аяқталды` : 'Алғашқы тақырыптан бастайық.'}</h2><p>Таңда. Ойланып көр. Қате кетсе, түсіндірмені оқып, қайта байқап көр.</p><button class="btn btn-primary" data-action="lesson" data-id="${next.id}">${done === lessons.length ? 'Қайталап шығу' : 'Сабақты бастау'} ${icon('arrow')}</button></div><img src="./assets/lesson-stack.svg" alt="" width="210" height="140"></section><section class="lesson-grid all-lessons" aria-label="Барлық сабақтар">${lessons.map(lessonTile).join('')}</section></div>`;
   }
   function chatView() {
     const s = activeScenario();
@@ -146,9 +168,9 @@
   function messageHtml(message, index, animate = false) {
     if (message.role === 'correction') {
       if (message.resolved) return `<div class="correction-card resolved"><div class="correction-title">${icon('check')}Белгіленген сөздерді түзеттің!</div></div>`;
-      const assessment = L.assessMessage(message.original);
-      if (assessment.kind !== 'correction') return '';
-      return `<article class="correction-card ${animate ? 'message-enter' : ''}"><div class="correction-title">${icon('pencil')}Бірге түзетіп көрейік</div><p>Мына сөздерге назар аудар:</p><p class="proposed">${esc(assessment.corrected)}</p><details><summary class="text-link">Неге бұлай жазылады?</summary><ul>${assessment.issues.map((issue) => `<li><b>${esc(issue.from)} → ${esc(issue.to)}</b><br>${esc(issue.reason)}</li>`).join('')}</ul></details><div class="correction-actions"><button class="btn btn-primary" data-action="rewrite" data-index="${index}">Өзім түзетемін ${icon('pencil')}</button><small>Өзің қайта жазсаң, +10 XP</small></div></article>`;
+      const assessment = message.corrected ? { corrected: message.corrected, issues: message.issues || [] } : L.assessMessage(message.original);
+      if (!assessment.corrected) return '';
+      return `<article class="correction-card${message.source === 'ai' ? ' ai' : ''} ${animate ? 'message-enter' : ''}"><div class="correction-title">${icon('pencil')}Бірге түзетіп көрейік${message.source === 'ai' ? '<span class="ai-chip">ИИ-тексеру</span>' : ''}</div><p>Мына сөздерге назар аудар:</p><p class="proposed">${esc(assessment.corrected)}</p><details><summary class="text-link">Неге бұлай жазылады?</summary><ul>${assessment.issues.map((issue) => `<li><b>${esc(issue.from)} → ${esc(issue.to)}</b><br>${esc(issue.reason)}</li>`).join('')}</ul></details><div class="correction-actions"><button class="btn btn-primary" data-action="rewrite" data-index="${index}">Өзім түзетемін ${icon('pencil')}</button><small>Өзің қайта жазсаң, +10 XP</small></div></article>`;
     }
     return `<div class="message ${message.role} ${animate ? 'message-enter' : ''}"><div class="message-body">${esc(message.text)}</div><span class="message-label">${message.role === 'you' ? 'Сен' : esc(activeScenario().persona)}${message.time ? ' · ' + esc(message.time) : ''}</span></div>`;
   }
@@ -173,8 +195,8 @@
     const result = [];
     for (const [id, current] of Object.entries(sessions)) {
       for (const message of current.messages) if (message.role === 'correction' && message.resolved) {
-        const assessment = L.assessMessage(message.original);
-        if (assessment.kind === 'correction') result.push({ original: message.original, corrected: assessment.corrected, scenario: L.scenarios.find((s) => s.id === id)?.title || '' });
+        const corrected = message.corrected || L.assessMessage(message.original).corrected;
+        if (corrected) result.push({ original: message.original, corrected, scenario: L.scenarios.find((s) => s.id === id)?.title || '' });
       }
     }
     return result;
@@ -189,8 +211,11 @@
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       week.push(`<div class="week-day ${progress.activeDays.includes(key) ? 'earned' : ''} ${offset === 0 ? 'today' : ''}"><span class="day-circle" title="${key}">${progress.activeDays.includes(key) ? icon('check') : d.getDate()}</span><span>${names[d.getDay()]}</span></div>`);
     }
-    const badges = [{ name: 'Алғашқы қадам', icon: 'spark', earned: progress.xp > 0 }, { name: 'Сабақ шебері', icon: 'book', earned: progress.completedLessons.length === 4 }, { name: 'Үш күн қатарынан', icon: 'flame', earned: L.getStreak(progress, day()) >= 3 }];
-    return `<div class="route-enter"><div class="page-intro"><h1>Әр қадамың есепте.</h1><p>Шағын жетістіктеріңді көріп, келесі қадамды таңда.</p></div><div class="progress-grid"><article class="progress-stat"><span>${icon('spark')}Жинаған ұпайың</span><strong>${progress.xp} XP</strong><small>Тек орындаған жаттығуларыңнан.</small></article><article class="progress-stat"><span>${icon('book')}Аяқталған сабақ</span><strong>${progress.completedLessons.length} / 4</strong><small>Әр сабақта үш қысқа тапсырма.</small></article><article class="progress-stat"><span>${icon('chat')}Жаттығу хабарламалары</span><strong>${practices.length}</strong><small>Үлгіге сай жазған не түзеткен хабарламалар.</small></article></div><div class="progress-main"><section class="panel"><h2>Келесі деңгейге</h2><p>Әр 100 XP сайын жаңа деңгей ашылады.</p><div class="level-progress"><span class="level-medal">${progress.level}</span><div class="level-info"><strong>${progress.level}-деңгей</strong><div class="meter"><span style="width:${progress.xp % 100}%"></span></div><small>${progress.xp % 100} / 100 XP · келесі деңгейге ${100 - progress.xp % 100} XP</small></div></div><h2 style="margin-top:26px">Соңғы жеті күн</h2><div class="week-grid">${week.join('')}</div><p style="margin:20px 0 0;font-size:9px">Боялған күндерде жаттығу орындағансың.</p></section><section class="panel"><h2>Кішкентай жеңістер</h2><p>Белгілерді нақты қадамдармен аш.</p><div class="badge-grid">${badges.map((badge) => `<div class="badge-item ${badge.earned ? 'earned' : ''}"><span class="badge-circle">${icon(badge.earned ? badge.icon : 'lock')}</span><strong>${badge.name}</strong><span>${badge.earned ? 'Ашылды' : 'Әзірге жабық'}</span></div>`).join('')}</div><div class="section-heading" style="margin-top:30px"><h2 style="font-size:16px">Соңғы жаттығулар</h2></div>${progress.events.length ? `<div class="activity-list">${progress.events.slice(-4).reverse().map((event) => `<div class="activity-row">${icon(event.type === 'lesson' ? 'book' : 'chat')}<span><strong>${esc(event.type === 'lesson' ? L.lessons.find((lesson) => lesson.id === event.lessonId)?.title : L.scenarios.find((s) => s.id === event.scenarioId)?.title)}</strong><small>${esc(event.day)}</small></span><b>+${event.xp} XP</b></div>`).join('')}</div>` : '<div class="empty-history">Алғашқы сабақты аяқта немесе чатта бір хабарлама жаз. Жаттығуларың осында пайда болады.</div>'}</section></div><section class="panel correction-history"><h2>Түзеткен сөздерің</h2>${corrections.length ? corrections.slice(-8).reverse().map((correction) => `<div class="saved-correction"><del>${esc(correction.original)}</del><strong>${esc(correction.corrected)}</strong><small>${esc(correction.scenario)}</small></div>`).join('') : '<p style="margin:15px 0 0">Чатта қате сөзді өзің түзеткенде, осы жерге сақталады.</p>'}</section></div>`;
+    const gameStats = window.JazGame?.stats() || {};
+    const gameBadges = P.badgesFor(gameStats);
+    const badges = [{ name: 'Алғашқы қадам', icon: 'spark', earned: progress.xp > 0 }, { name: 'Сабақ шебері', icon: 'book', earned: L.lessons.filter((l) => l.subject === P.KAZ).every((l) => progress.completedLessons.includes(l.id)) }, { name: 'Үш күн қатарынан', icon: 'flame', earned: L.getStreak(progress, day()) >= 3 }]
+      .concat(P.BADGES.map((badge) => ({ name: badge.title, icon: 'trophy', earned: gameBadges.includes(badge.id) })));
+    return `<div class="route-enter"><div class="page-intro"><h1>Әр қадамың есепте.</h1><p>Шағын жетістіктеріңді көріп, келесі қадамды таңда.</p></div><div class="progress-grid"><article class="progress-stat"><span>${icon('spark')}Жинаған ұпайың</span><strong>${progress.xp} XP</strong><small>Тек орындаған жаттығуларыңнан.</small></article><article class="progress-stat"><span>${icon('book')}Аяқталған сабақ</span><strong>${progress.completedLessons.length} / ${L.lessons.length}</strong><small>Қазақ тілі мен математика тақырыптары.</small></article><article class="progress-stat"><span>${icon('chat')}Жаттығу хабарламалары</span><strong>${practices.length}</strong><small>Үлгіге сай жазған не түзеткен хабарламалар.</small></article></div><div class="progress-main"><section class="panel"><h2>Келесі деңгейге</h2><p>Әр 100 XP сайын жаңа деңгей ашылады.</p><div class="level-progress"><span class="level-medal">${progress.level}</span><div class="level-info"><strong>${progress.level}-деңгей</strong><div class="meter"><span style="width:${progress.xp % 100}%"></span></div><small>${progress.xp % 100} / 100 XP · келесі деңгейге ${100 - progress.xp % 100} XP</small></div></div><h2 style="margin-top:26px">Соңғы жеті күн</h2><div class="week-grid">${week.join('')}</div><p style="margin:20px 0 0;font-size:9px">Боялған күндерде жаттығу орындағансың.</p></section><section class="panel"><h2>Кішкентай жеңістер</h2><p>Белгілерді нақты қадамдармен аш.</p><div class="badge-grid">${badges.map((badge) => `<div class="badge-item ${badge.earned ? 'earned' : ''}"><span class="badge-circle">${icon(badge.earned ? badge.icon : 'lock')}</span><strong>${badge.name}</strong><span>${badge.earned ? 'Ашылды' : 'Әзірге жабық'}</span></div>`).join('')}</div><div class="section-heading" style="margin-top:30px"><h2 style="font-size:16px">Соңғы жаттығулар</h2></div>${progress.events.length ? `<div class="activity-list">${progress.events.slice(-4).reverse().map((event) => `<div class="activity-row">${icon(event.type === 'lesson' ? 'book' : event.type === 'game' ? 'run' : 'chat')}<span><strong>${esc(event.type === 'lesson' ? L.lessons.find((lesson) => lesson.id === event.lessonId)?.title : event.type === 'game' ? `Барыс жолы · ${event.correct} дұрыс` : L.scenarios.find((s) => s.id === event.scenarioId)?.title)}</strong><small>${esc(event.day)}</small></span><b>+${event.xp} XP</b></div>`).join('')}</div>` : '<div class="empty-history">Алғашқы сабақты аяқта немесе чатта бір хабарлама жаз. Жаттығуларың осында пайда болады.</div>'}</section></div><section class="panel correction-history"><h2>Түзеткен сөздерің</h2>${corrections.length ? corrections.slice(-8).reverse().map((correction) => `<div class="saved-correction"><del>${esc(correction.original)}</del><strong>${esc(correction.corrected)}</strong><small>${esc(correction.scenario)}</small></div>`).join('') : '<p style="margin:15px 0 0">Чатта қате сөзді өзің түзеткенде, осы жерге сақталады.</p>'}</section></div>`;
   }
   function render() {
     renderNavigation(); updateStats();
@@ -211,11 +236,20 @@
     window.JazMetodist.renderStudentContext($('#student-context'));
     document.body.dataset.page = route;
     document.title = `${nav.find((item) => item.id === route).label} · Jaz!`;
-    const views = { home: homeView, lessons: lessonsView, chat: chatView, progress: progressView };
+    if (route !== 'game') window.JazGame?.destroy();
+    const views = { home: homeView, lessons: lessonsView, game: () => '<div id="game-root" class="game-root"></div>', chat: chatView, progress: progressView };
     $('#main').innerHTML = `${storageWarning ? '<div class="storage-warning" role="status">Браузер деректі сақтауға рұқсат бермеді. Бұл жолғы прогресс бетті жапқанша ғана сақталады.</div>' : ''}${views[route]()}`;
     if (route === 'chat') renderMessages();
+    if (route === 'game') window.JazGame?.mount($('#game-root'), { subject, topicId: pendingGameTopic, onFinish: gameFinished });
+    pendingGameTopic = '';
     window.JazMotion?.mount($('#main'), { route });
   }
+  let pendingGameTopic = '';
+  function gameFinished(result) {
+    const earned = award({ type: 'game', runId: result.runId, correct: result.correct });
+    return earned;
+  }
+  function startGame(topicId) { pendingGameTopic = topicId || ''; navigate('game'); }
   function navigate(target) {
     if (route === target) { render(); return; }
     location.hash = target;
@@ -233,7 +267,23 @@
     if (current.messages.length > 80) current.messages.splice(0, current.messages.length - 80);
     saveChats();
   }
-  function sendMessage() {
+  // Ask the server-side mentor (Claude) first; fall back to the offline rules engine.
+  async function aiAssess(text, current) {
+    if (!aiAvailable) return null;
+    const s = activeScenario();
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 12000);
+    try {
+      const response = await fetch('./api/correct', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctrl.signal,
+        body: JSON.stringify({ text, scenario: { title: s.title, persona: s.persona, task: s.task }, history: current.messages.filter((m) => m.role !== 'correction').slice(-6).map((m) => ({ role: m.role, text: m.text })) }) });
+      if (!response.ok) { if (response.status === 503) aiAvailable = false; return null; }
+      const data = await response.json();
+      const issues = (data.issues || []).filter((i) => i && i.from !== i.to);
+      if (!data.ok && issues.length && L.normalizeText(data.corrected) !== L.normalizeText(text)) return { kind: 'correction', corrected: data.corrected, issues, reply: data.reply, source: 'ai' };
+      return { kind: 'recognized', reply: data.reply || 'Жақсы! Әңгімені жалғастырайық.', source: 'ai', verified: true };
+    } catch { return null; } finally { clearTimeout(timer); }
+  }
+  async function sendMessage() {
     if (busy || route !== 'chat') return;
     const input = $('#chat-input');
     const text = input.value.trim();
@@ -243,41 +293,46 @@
     const id = scenarioId;
     const current = session();
     const pending = pendingCorrection();
-    const assessment = L.assessMessage(text, { scenarioId, turn: current.turn });
+    const rules = L.assessMessage(text, { scenarioId, turn: current.turn });
     addMessage('you', text); current.turn++; current.draft = ''; input.value = ''; $('#char-count').textContent = '0 / 500';
     busy = true; window.JazMotion?.react('thinking'); renderMessages();
-    setTimeout(() => {
-      busy = false;
-      window.JazMotion?.react('idle');
-      if (pending && L.verifyCorrection(pending.original, text)) {
-        pending.resolved = true;
-        current.selectedOriginal = '';
-        const gained = award({ type: 'correction', text, original: pending.original, scenarioId: id });
-        const reply = assessment.kind === 'recognized' ? assessment.reply : 'Белгіленген сөздерді дұрыс түзеттің. Енді әңгімемізді жалғастырайық!';
-        sessions[id].messages.push({ role: 'mentor', text: `${gained ? 'Түзету қабылданды! +10 XP. ' : 'Түзету қабылданды! '}${reply}`, time: time() });
-      } else if (assessment.kind === 'correction') {
-        sessions[id].messages.push({ role: 'correction', text: assessment.reply, original: text, resolved: false, time: time() });
-        window.JazMotion?.react('nudge');
-      } else {
-        const gained = assessment.kind === 'recognized' ? award({ type: 'message', text, scenarioId: id }) : 0;
-        sessions[id].messages.push({ role: 'mentor', text: assessment.reply, time: time() });
-        if (assessment.kind === 'recognized' && !gained) notify('Бұл үлгі үшін бүгін ұпай алғансың. Басқа хабарлама жазып көр.');
-      }
-      saveChats();
-      if (route === 'chat' && scenarioId === id) { renderMessages(assessment.suggestedReplies); $('#chat-input').focus(); }
-    }, 550);
+    const started = Date.now();
+    // A rewrite of a pending correction is checked against the stored corrected text, no model call needed.
+    const rewriting = pending && L.verifyCorrection(pending.original, text, pending.corrected);
+    const ai = rewriting ? null : await aiAssess(text, current);
+    const assessment = ai || rules;
+    await new Promise((resolve) => setTimeout(resolve, Math.max(0, 450 - (Date.now() - started))));
+    busy = false;
+    window.JazMotion?.react('idle');
+    if (rewriting) {
+      pending.resolved = true;
+      current.selectedOriginal = '';
+      const gained = award({ type: 'correction', text, original: pending.original, expected: pending.corrected, scenarioId: id });
+      const reply = rules.kind === 'recognized' ? rules.reply : 'Белгіленген сөздерді дұрыс түзеттің. Енді әңгімемізді жалғастырайық!';
+      sessions[id].messages.push({ role: 'mentor', text: `${gained ? 'Түзету қабылданды! +10 XP. ' : 'Түзету қабылданды! '}${pending.reply || reply}`, time: time() });
+    } else if (assessment.kind === 'correction') {
+      sessions[id].messages.push({ role: 'correction', text: assessment.reply, original: text, corrected: assessment.corrected, issues: assessment.issues, reply: ai ? ai.reply : '', source: ai ? 'ai' : 'rules', resolved: false, time: time() });
+      window.JazMotion?.react('nudge');
+    } else {
+      const gained = assessment.kind === 'recognized' ? award({ type: 'message', text, scenarioId: id, verified: assessment.verified === true }) : 0;
+      sessions[id].messages.push({ role: 'mentor', text: assessment.reply, time: time() });
+      if (assessment.kind === 'recognized' && !gained) notify('Бұл үлгі үшін бүгін ұпай алғансың. Басқа хабарлама жазып көр.');
+    }
+    saveChats();
+    if (route === 'chat' && scenarioId === id) { renderMessages(rules.suggestedReplies); $('#chat-input').focus(); }
   }
   function startLesson(id) {
     const lesson = L.lessons.find((item) => item.id === id);
     if (!lesson) return;
-    lessonRun = { lesson, index: 0, selected: null, checked: false, done: false, attempts: 0, wasComplete: progress.completedLessons.includes(id) };
+    const questions = P.set(id, lesson.size).map((item) => ({ id: item.id, prompt: item.prompt, options: item.options, answerIndex: item.answer, explanation: item.explanation }));
+    lessonRun = { lesson: { ...lesson, questions }, index: 0, selected: null, checked: false, done: false, attempts: 0, wasComplete: progress.completedLessons.includes(id) };
     renderLesson(); $('#lesson-dialog').showModal();
   }
   function renderLesson() {
     if (!lessonRun) return;
     const run = lessonRun;
     const question = run.lesson.questions[run.index];
-    $('#lesson-dialog').innerHTML = `<div class="dialog-top">${icon('book')}<h2 id="lesson-title">${esc(run.lesson.title)}</h2><button class="icon-button" data-action="close-lesson" aria-label="Сабақты жабу">${icon('close')}</button></div><div class="dialog-content">${run.done ? `<div class="lesson-complete"><img class="barys-mini" src="./assets/mascot-kit/05-celebrate.png" alt="Барыс сені құттықтайды" width="180" height="165"><h3>Жарайсың, орындадың!</h3><p>Үш тапсырманы да дұрыс аяқтадың.<br>Енді үйренгеніңді чатта қолданып көр.</p><div class="xp-award">${run.wasComplete ? 'Қайталау аяқталды' : '+20 XP'}</div>${run.wasComplete ? '<p>Бұл сабақ үшін ұпай бұрын берілген.</p>' : ''}<button class="btn btn-primary" data-action="lesson-to-chat">Чатта байқап көру ${icon('arrow')}</button></div>` : `<div class="lesson-topline"><span>${run.index + 1} / ${run.lesson.questions.length} тапсырма</span><span>Алғаш аяқтағанда +20 XP</span></div><div class="meter"><span style="width:${run.index / run.lesson.questions.length * 100}%"></span></div><h3 class="lesson-question">${esc(question.prompt)}</h3><div class="answer-list" role="group" aria-label="Жауап нұсқалары">${question.options.map((option, index) => `<button class="answer-option ${run.selected === index ? 'selected' : ''} ${run.checked && index === run.selected ? (index === question.answerIndex ? 'correct' : 'wrong') : ''}" data-action="answer" data-index="${index}" aria-pressed="${run.selected === index}" ${run.checked ? 'disabled' : ''}><span class="answer-number">${index + 1}</span>${esc(option)}</button>`).join('')}</div>${run.checked ? `<div class="answer-feedback ${run.selected !== question.answerIndex ? 'wrong' : ''}" role="status"><strong>${run.selected === question.answerIndex ? 'Дұрыс таңдадың!' : 'Тағы бір рет байқап көр.'}</strong><br>${esc(question.explanation)}</div>` : ''}<div class="dialog-actions"><button class="btn btn-primary" data-action="check-answer" ${run.selected === null ? 'disabled' : ''}>${run.checked ? (run.selected === question.answerIndex ? (run.index === run.lesson.questions.length - 1 ? 'Сабақты аяқтау' : 'Келесі тапсырма') : 'Қайта байқап көру') : 'Тексеру'} ${icon('arrow')}</button></div>`}</div>`;
+    $('#lesson-dialog').innerHTML = `<div class="dialog-top">${icon('book')}<h2 id="lesson-title">${esc(run.lesson.title)}</h2><button class="icon-button" data-action="close-lesson" aria-label="Сабақты жабу">${icon('close')}</button></div><div class="dialog-content">${run.done ? `<div class="lesson-complete"><img class="barys-mini" src="./assets/mascot-kit/05-celebrate.png" alt="Барыс сені құттықтайды" width="180" height="165"><h3>Жарайсың, орындадың!</h3><p>Барлық тапсырманы дұрыс аяқтадың.<br>Енді Барыс жолында бекітіп көр.</p><div class="xp-award">${run.wasComplete ? 'Қайталау аяқталды' : '+20 XP'}</div>${run.wasComplete ? '<p>Бұл сабақ үшін ұпай бұрын берілген.</p>' : ''}<button class="btn btn-primary" data-action="lesson-to-game" data-id="${esc(run.lesson.id)}">Барыс жолында бекіту ${icon('arrow')}</button></div>` : `<div class="lesson-topline"><span>${run.index + 1} / ${run.lesson.questions.length} тапсырма</span><span>Алғаш аяқтағанда +20 XP</span></div><div class="meter"><span style="width:${run.index / run.lesson.questions.length * 100}%"></span></div><h3 class="lesson-question">${esc(question.prompt)}</h3><div class="answer-list" role="group" aria-label="Жауап нұсқалары">${question.options.map((option, index) => `<button class="answer-option ${run.selected === index ? 'selected' : ''} ${run.checked && index === run.selected ? (index === question.answerIndex ? 'correct' : 'wrong') : ''}" data-action="answer" data-index="${index}" aria-pressed="${run.selected === index}" ${run.checked ? 'disabled' : ''}><span class="answer-number">${index + 1}</span>${esc(option)}</button>`).join('')}</div>${run.checked ? `<div class="answer-feedback ${run.selected !== question.answerIndex ? 'wrong' : ''}" role="status"><strong>${run.selected === question.answerIndex ? 'Дұрыс таңдадың!' : 'Тағы бір рет байқап көр.'}</strong><br>${esc(question.explanation)}</div>` : ''}<div class="dialog-actions"><button class="btn btn-primary" data-action="check-answer" ${run.selected === null ? 'disabled' : ''}>${run.checked ? (run.selected === question.answerIndex ? (run.index === run.lesson.questions.length - 1 ? 'Сабақты аяқтау' : 'Келесі тапсырма') : 'Қайта байқап көру') : 'Тексеру'} ${icon('arrow')}</button></div>`}</div>`;
   }
   function checkAnswer() {
     if (!lessonRun || lessonRun.selected === null || lessonRun.done) return;
@@ -285,7 +340,7 @@
     const question = run.lesson.questions[run.index];
     if (!run.checked) {
       run.checked = true; run.attempts++;
-      window.JazMetodist.recordAnswer({lessonId:run.lesson.id,lessonTitle:run.lesson.title,questionId:question.id,questionText:question.prompt,correct:run.selected === question.answerIndex ? 1 : 0,answer:question.options[run.selected],correctAnswer:question.options[question.answerIndex],date:day()});
+      window.JazMetodist.recordAnswer({subject:run.lesson.subject,topic:run.lesson.topic,lessonId:run.lesson.id,lessonTitle:run.lesson.title,questionId:question.id,questionText:question.prompt,correct:run.selected === question.answerIndex ? 1 : 0,answer:question.options[run.selected],correctAnswer:question.options[question.answerIndex],date:day()});
       window.JazMotion?.react(run.selected === question.answerIndex ? 'success' : 'nudge');
     }
     else if (run.selected !== question.answerIndex) { run.selected = null; run.checked = false; }
@@ -309,6 +364,9 @@
     else if (action === 'theme') { theme = theme === 'dark' ? 'light' : 'dark'; saveStorage('jaz.theme.v1', theme); applyTheme(); }
     else if (action === 'mascot-hello') { window.JazMotion?.react('hello'); }
     else if (action === 'lesson') startLesson(control.dataset.id);
+    else if (action === 'subject') { subject = control.dataset.id === P.MATH ? P.MATH : P.KAZ; saveStorage('jaz.subject.v1', subject); render(); }
+    else if (action === 'start-game') startGame();
+    else if (action === 'lesson-to-game') { $('#lesson-dialog').close(); lessonRun = null; startGame(control.dataset.id); }
     else if (action === 'start-chat') startChat(control.dataset.id);
     else if (action === 'try-correction') startChat('cinema', 'Салем! Кинога барамыз ба?');
     else if (action === 'deck-prev' || action === 'deck-next' || action === 'deck') {
@@ -333,8 +391,8 @@
     else if (action === 'lesson-to-chat') { $('#lesson-dialog').close(); lessonRun = null; startChat('cinema'); }
     else if (action === 'close-info') $('#info-dialog').close();
     else if (action === 'help') showHelp();
-    else if (action === 'chat-info') info('Жаттығу серігі туралы', '<p>Аян, Аружан және басқа кейіпкерлер — <strong>ойын кейіпкерлері</strong>. Бұл чатта шынайы адамдармен байланыс жоқ.</p><p>Осы прототип дайын жағдайлар мен белгілі сөз қателерін қолданады. Мысалы, «салем» → «сәлем». Мағынасы күмәнді қысқартуды бірден қатеге жатқызбай, нақтылауды сұрайды.</p><p><strong>Еркін ИИ-диалог әзірге қосылмаған.</strong> Жүйе танымаған хабарламаны бағаламайды. Төмендегі үлгілер арқылы жаттығуды жалғастыруға болады.</p>');
-    else if (action === 'privacy') info('Сенің деректерің', '<p>Жаттығу прогресі мен чат тарихы <strong>осы браузердің жадында</strong> сақталады. Хабарламалар сыртқы ИИ қызметіне жіберілмейді.</p><p>Сайтты басқа құрылғыдан ашсаң, жаңа прогресс басталады. Браузер деректерін тазаласаң, жергілікті тарих та өшеді.</p><p>Тіркелу, төлем және жеке дерек енгізу қажет емес.</p>');
+    else if (action === 'chat-info') info('Жаттығу серігі туралы', `<p>Аян, Аружан және басқа кейіпкерлер — <strong>ойын кейіпкерлері</strong>. Бұл чатта шынайы адамдармен байланыс жоқ.</p><p>Барыс қатеңді екі жолмен тексереді. <strong>Ережелер</strong>: орыс әрпімен жазылған қазақ әріптері (салем → сәлем), үндестік заңы (мектепге → мектепке), сұраулық шылау (барамызба → барамыз ба), тәуелдік (кітапым → кітабым), бас әріп пен тыныс белгісі.</p><p>${aiAvailable ? '<strong>ИИ-тексеру қосулы:</strong> кез келген қатені табады, түзетеді және ережесін түсіндіреді.' : '<strong>ИИ-тексеру өшірулі:</strong> ережелер білмейтін сөздерді қате деп бағаламаймыз.'}</p>`);
+    else if (action === 'privacy') info('Сенің деректерің', `<p>Жаттығу прогресі мен чат тарихы <strong>осы браузердің жадында</strong> сақталады. ${aiAvailable ? 'Чаттағы хабарламаң тексеру үшін мектеп серверіндегі ИИ-тексерушіге (Claude) жіберіледі. Атыңды, телефоныңды және мекенжайыңды жазба.' : 'Қазір хабарламалар осы құрылғыда, ИИ-сыз тексеріледі.'}</p><p>Сайтты басқа құрылғыдан ашсаң, жаңа прогресс басталады. Браузер деректерін тазаласаң, жергілікті тарих та өшеді.</p><p>Тіркелу, төлем және жеке дерек енгізу қажет емес.</p>`);
   });
   document.addEventListener('submit', (event) => { if (event.target.id === 'chat-form') { event.preventDefault(); sendMessage(); } });
   document.addEventListener('input', (event) => {

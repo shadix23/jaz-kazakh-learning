@@ -1,0 +1,59 @@
+/* Learner UI: Nunito (rounded, highly legible, full Kazakh Cyrillic) replaces
+   Comfortaa for text; Comfortaa stays only in the jaz! wordmark. */
+@font-face{font-family:Nunito;src:url('./fonts/Nunito.ttf') format('truetype');font-style:normal;font-weight:200 1000;font-display:swap}
+:root{font-family:Nunito,ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px}
+body:not([data-mode="method"]) :is(h1,h2,h3){-webkit-text-stroke:0;font-weight:800;letter-spacing:-.015em!important}
+body:not([data-mode="method"]) :is(p,small,li,.task-row small,.lesson-tile p){line-height:1.55}
+.brand>span,.mobile-brand,.brand-dot{font-family:Comfortaa,Nunito,sans-serif}
+body:not([data-mode="method"]) .hero h1{font-weight:900}
+body:not([data-mode="method"]) .btn{font-weight:800}
+body:not([data-mode="method"]) .eyebrow{letter-spacing:.08em;font-weight:800}
+
+/* Subject switch */
+.subject-heading{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.page-intro.subject-heading{align-items:flex-end}
+.subject-switch{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:var(--pale,#eaf2ff)}
+.subject-switch button{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--muted,#64758e);font:800 13px Nunito,sans-serif;transition:background-color 180ms ease,color 180ms ease,box-shadow 180ms ease}
+.subject-switch button .icon{width:17px;height:17px}
+.subject-switch button[aria-pressed="true"]{background:var(--white,#fff);color:var(--blue-dark,#2857d7);box-shadow:0 1px 6px rgba(20,35,61,.10)}
+.subject-switch button:active{transform:scale(.97)}
+.plan-count{font-size:12px;color:var(--muted)}
+.all-lessons{grid-template-columns:repeat(3,minmax(0,1fr))}
+.letter-icon{font-weight:900}
+
+/* Game promo card */
+.game-promo{position:relative;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:16px;margin:26px 0 8px;padding:26px 28px;border-radius:24px;overflow:hidden;color:#fff;background:linear-gradient(135deg,#1f4fc2 0%,#2f6fde 55%,#3aa0e8 100%);box-shadow:0 12px 30px -12px rgba(31,79,194,.55)}
+.game-promo h2{font-size:28px;margin:6px 0 6px;color:#fff}
+.game-promo p{color:rgba(255,255,255,.88);max-width:46ch;margin:0 0 14px;font-size:14px}
+.game-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.18);font-size:12px;font-weight:800;letter-spacing:.04em}
+.game-tag .icon{width:14px;height:14px}
+.game-promo-stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;font-size:13px}
+.game-promo-stats span{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.9)}
+.game-promo-stats .icon{width:16px;height:16px}
+.game-promo-stats b{color:#fff;font-weight:900}
+.game-promo-art{position:relative;height:170px;perspective:300px}
+.game-promo-art .lane{position:absolute;bottom:0;width:30%;height:150%;border-radius:12px;background:linear-gradient(to top,rgba(255,255,255,.28),rgba(255,255,255,0));transform:rotateX(62deg);transform-origin:bottom}
+.game-promo-art .l1{left:2%}.game-promo-art .l2{left:35%}.game-promo-art .l3{left:68%}
+.game-promo-art img{position:absolute;left:50%;bottom:6px;width:150px;height:auto;transform:translateX(-50%);filter:drop-shadow(0 10px 14px rgba(0,0,0,.25))}
+@media (prefers-reduced-motion:no-preference){.game-promo-art img{animation:promo-run 1.6s ease-in-out infinite}}
+@keyframes promo-run{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-6px)}}
+:root[data-theme="dark"] .game-promo{background:linear-gradient(135deg,#1d3a86,#2650b4 60%,#2b6aa8)}
+
+/* Chat: AI-verified corrections */
+.ai-chip{margin-left:auto;padding:2px 8px;border-radius:999px;background:var(--pale,#eaf2ff);color:var(--blue-dark,#2857d7);font-size:10px;font-weight:800;letter-spacing:.03em}
+.correction-title{display:flex;align-items:center;gap:8px}
+
+/* Game route takes the whole workspace height */
+body[data-page="game"] .app-footer,body[data-page="game"] #student-context{display:none}
+.game-root{height:calc(100dvh - 120px);min-height:520px;margin-bottom:16px}
+
+@media (max-width:1000px){.all-lessons{grid-template-columns:repeat(2,minmax(0,1fr))}.game-promo{grid-template-columns:1fr}.game-promo-art{display:none}}
+@media (max-width:760px){.subject-switch{width:100%}.subject-switch button{flex:1;justify-content:center}.all-lessons{grid-template-columns:1fr}.game-root{height:calc(100dvh - 170px);min-height:480px}.game-promo{padding:22px}.game-promo h2{font-size:24px}}
+/* Five learner sections in the mobile tab bar; the game runs full-height without it. */
+@media (max-width:760px){
+  .mobile-nav{grid-template-columns:repeat(5,1fr)!important;gap:2px}
+  .mobile-nav .nav-item{font-size:9px;gap:5px;padding:7px 2px;text-align:center;line-height:1.1}
+  body[data-page="game"] .mobile-nav{display:none!important}
+  body[data-page="game"] .workspace{padding-bottom:12px}
+  body[data-page="game"] .game-root{height:calc(100dvh - 112px)}
+}
