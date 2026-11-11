@@ -69,10 +69,34 @@ Student's new message to check:
   return { ok: !!data.ok, corrected: String(data.corrected || text), issues: (data.issues || []).slice(0, 12), reply: String(data.reply || ''), source: 'ai' };
 }
 
+const SUMMARY_SYSTEM = `Ты — помощник школьного методиста (Казахстан). Тебе дают сводные результаты тестирования по темам учебной программы одного предмета: доли освоения, приросты, типичные ошибки, сравнение учебников с учётом учителя (с 95% интервалами) и рекомендуемый план часов.
+Сформулируй выводы для педсовета на русском языке, простым деловым стилем:
+- "summary": 3–5 предложений — главное о результатах, самые проблемные темы и причины по типичным ошибкам;
+- "actions": 3–6 конкретных действий (кому, что, по какой теме; часы; работа с учебником; разбор ошибок с учителями);
+- "caveats": 1–3 ограничения данных (мало данных, сравнение учебников — связь, а не причина, синтетические данные если очевидно).
+Опирайся только на переданные цифры, ничего не выдумывай. Если сравнение учебников заблокировано или разница не подтверждена — так и скажи.`;
+const SUMMARY_SCHEMA = { type: 'object', additionalProperties: false, required: ['summary', 'actions', 'caveats'], properties: { summary: { type: 'string' }, actions: { type: 'array', items: { type: 'string' } }, caveats: { type: 'array', items: { type: 'string' } } } };
+async function summarize(body) {
+  const response = await client.beta.messages.create({
+    model: MODEL,
+    max_tokens: 6000,
+    betas: ['server-side-fallback-2026-07-01'],
+    fallbacks: 'default',
+    output_config: { effort: 'medium', format: { type: 'json_schema', schema: SUMMARY_SCHEMA } },
+    system: SUMMARY_SYSTEM,
+    messages: [{ role: 'user', content: 'Сводные данные (JSON):\n' + JSON.stringify(body).slice(0, 15000) }]
+  });
+  if (response.stop_reason === 'refusal') throw new Error('refusal');
+  const block = response.content.find(b => b.type === 'text');
+  if (!block) throw new Error('no text');
+  const data = JSON.parse(block.text);
+  return { summary: String(data.summary || ''), actions: (data.actions || []).slice(0, 8).map(String), caveats: (data.caveats || []).slice(0, 4).map(String), source: 'ai' };
+}
+
 function readJson(req) {
   return new Promise((resolve, reject) => {
     let raw = '';
-    req.on('data', chunk => { raw += chunk; if (raw.length > 20000) { reject(new Error('too large')); req.destroy(); } });
+    req.on('data', chunk => { raw += chunk; if (raw.length > 40000) { reject(new Error('too large')); req.destroy(); } });
     req.on('end', () => { try { resolve(JSON.parse(raw || '{}')); } catch (e) { reject(e); } });
   });
 }
@@ -84,6 +108,12 @@ http.createServer(async (req, res) => {
   try { pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); } catch { res.writeHead(400).end(); return; }
 
   if (pathname === '/api/status') return json(res, 200, { ai: !!client && Date.now() > aiDisabledUntil });
+  if (pathname === '/api/summary') {
+    if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
+    if (!client || Date.now() < aiDisabledUntil) return json(res, 503, { error: 'ai unavailable' });
+    try { return json(res, 200, await summarize(await readJson(req))); }
+    catch (error) { console.warn('[ai summary]', error && error.message); return json(res, 502, { error: 'ai failed' }); }
+  }
   if (pathname === '/api/correct') {
     if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
     if (!client || Date.now() < aiDisabledUntil) return json(res, 503, { error: 'ai unavailable' });

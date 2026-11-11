@@ -439,7 +439,7 @@
         disc = sxx && syy ? sxy / Math.sqrt(sxx * syy) : null;
       }
       const flags = [];
-      if (p < 0.4) flags.push('hard');
+      if (p < 0.4 && g.total >= 10) flags.push('hard');
       if (disc != null && disc < 0.15 && g.total >= 30) flags.push('weak');
       if (wrong[0] && wrong[0].count >= Math.max(5, 0.5 * wrongTotal) && wrong[0].share >= 0.15) flags.push('misconception');
       return {
@@ -707,7 +707,8 @@
     const mastery = opt(opts, 'mastery');
     const ranked = stats.filter(s => !s.lowData).sort((a, b) => b.notMasteredShare - a.notMasteredShare);
     const problems = ranked.filter(s => s.status !== 'ok').slice(0, 3).map(s => {
-      const item = itemStats(rows, s.topic).find(q => q.wrong.length) || null;
+      // Typical error only from items with enough answers (live single answers must not dominate).
+      const item = itemStats(rows, s.topic).find(q => q.wrong.length && q.total >= 10) || null;
       return { ...s, item };
     });
     const books = opts.compareRows ? compareBooks(opts.compareRows, { reps: opts.reps }) : null;
@@ -736,6 +737,72 @@
     };
   }
 
+  /* ------------------------------------------------------------ students */
+  // Per-student profile: mastery by topic, risk level and live trainer activity.
+  function studentProfiles(rows, options) {
+    const opts = options || {};
+    const mastery = opt(opts, 'mastery');
+    const topics = orderTopics(unique(rows, 'topic'), opts.program);
+    const units = studentTopic(rows);
+    const live = new Map();
+    for (const r of rows) if (String(r.question_id).startsWith('live-')) live.set(r.student_id, (live.get(r.student_id) || 0) + 1);
+    const map = new Map();
+    for (const u of units) {
+      if (!map.has(u.student)) map.set(u.student, { id: u.student, cls: u.cls, teacher: u.teacher, book: u.book, topics: {}, scores: [], gains: [] });
+      const p = map.get(u.student);
+      p.topics[u.topic] = { score: u.score, mastered: u.score >= mastery, n: u.n };
+      p.scores.push(u.score); p.gains.push(u.gain);
+    }
+    return [...map.values()].map(p => {
+      const weak = topics.filter(t => p.topics[t] && !p.topics[t].mastered);
+      const covered = topics.filter(t => p.topics[t]).length;
+      const share = covered ? weak.length / covered : 0;
+      return {
+        id: p.id, cls: p.cls, teacher: p.teacher, book: p.book, topics: p.topics, weak, covered,
+        score: mean(p.scores), gain: mean(p.gains), live: live.get(p.id) || 0,
+        risk: share >= 2 / 3 ? 'high' : share >= 1 / 3 ? 'medium' : 'low'
+      };
+    }).sort((a, b) => b.weak.length - a.weak.length || a.score - b.score || cmp(a.id, b.id));
+  }
+
+  // Ready-made support groups: for each topic, the students who did not master it, by class.
+  function supportGroups(rows, options) {
+    const opts = options || {};
+    const profiles = studentProfiles(rows, opts);
+    const topics = orderTopics(unique(rows, 'topic'), opts.program);
+    const minSize = opts.minSize || 3;
+    return topics.map(topic => {
+      const weak = profiles.filter(p => p.topics[topic] && !p.topics[topic].mastered);
+      const byClass = new Map();
+      for (const p of weak) { if (!byClass.has(p.cls)) byClass.set(p.cls, []); byClass.get(p.cls).push(p.id); }
+      // "Core" = clearly struggling (≤ 40% correct): the first candidates for extra lessons.
+      const core = new Set(weak.filter(p => p.topics[topic].score <= 40).map(p => p.id));
+      const groups = [...byClass.entries()].sort((a, b) => cmp(a[0], b[0])).map(([cls, students]) => ({ cls, students: students.sort(cmp), core: students.filter(id => core.has(id)).sort(cmp), size: students.length, viable: students.length >= minSize }));
+      const total = profiles.filter(p => p.topics[topic]).length;
+      return { topic, count: weak.length, core: core.size, total, share: total ? weak.length / total : 0, groups };
+    }).filter(g => g.count).sort((a, b) => b.share - a.share);
+  }
+
+  function groupsCSV(groups) {
+    const header = ['topic', 'class', 'students_count', 'core_count', 'core_ids', 'student_ids'];
+    const lines = [];
+    for (const g of groups) for (const c of g.groups) lines.push([g.topic, c.cls, c.size, c.core.length, c.core.join(' '), c.students.join(' ')].map(quoteCSV).join(','));
+    return [header.join(',')].concat(lines).join('\r\n');
+  }
+
+  // Aggregates safe to send to a model: no student codes, only topic/class/textbook numbers.
+  function summaryPayload(rows, program, options) {
+    const ins = insights(rows, program, options);
+    return {
+      subject: unique(rows, 'subject').join(', '), students: ins.kpi.students, answers: ins.kpi.answers,
+      mastery: opt(options, 'mastery'),
+      topics: ins.stats.map(s => ({ topic: s.topic, score: Math.round(s.score), notMastered: Math.round(100 * s.notMasteredShare), gain: Math.round(s.gain), n: s.n, lowData: s.lowData })),
+      problems: ins.problems.map(p => ({ topic: p.topic, typicalError: p.item && p.item.wrong[0] ? { question: p.item.text, answer: p.item.wrong[0].answer, share: Math.round(100 * p.item.wrong[0].share) } : null })),
+      textbooks: ins.books && (ins.books.state === 'ok' || ins.books.state === 'partial') ? ins.books.books.map(b => ({ book: b.book, reference: b.reference, diff: b.diff == null ? null : Math.round(b.diff * 10) / 10, lo: b.lo == null ? null : Math.round(b.lo * 10) / 10, hi: b.hi == null ? null : Math.round(b.hi * 10) / 10, verdict: b.verdict })) : { state: ins.books && ins.books.state, why: ins.books && ins.books.why },
+      hours: ins.plan.rows.map(p => ({ topic: p.topic, program: p.base, recommended: p.recommended }))
+    };
+  }
+
   function fmtSigned(value) {
     if (!Number.isFinite(value)) return '—';
     const r = Math.round(value * 10) / 10;
@@ -746,6 +813,6 @@
     REQUIRED_COLUMNS, OPTIONAL_COLUMNS, THRESHOLDS, DEFAULTS, LESSON_TOPICS, DEMO_BOOKS,
     band, parseCSV, exportCSV, templateCSV, unique, subjects, classes, topics, filterRows,
     build, demoProgram, studentTopic, topicStats, cell, itemStats,
-    compareBooks, compare, detect, apportion, planHours, planCSV, insights, fmtSigned
+    compareBooks, compare, detect, apportion, planHours, planCSV, insights, fmtSigned, studentProfiles, supportGroups, groupsCSV, summaryPayload
   };
 });
