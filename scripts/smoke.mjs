@@ -14,7 +14,7 @@ async function call(method, path, body, headers = {}) {
 console.log(`Smoke test: ${base}`);
 const page = await fetch(base + '/');
 ok(page.ok && /Jaz!/.test(await page.text()), 'main page is served');
-for (const f of ['/curriculum.js', '/metodist.js', '/sync.js', '/game.js', '/barys3d.js', '/vendor/three.module.min.js', '/pitch.html', '/vendor/addons/RoundedBoxGeometry.js']) {
+for (const f of ['/curriculum.js', '/metodist.js', '/sync.js', '/game.js', '/barys3d.js', '/vendor/three.module.min.js', '/pitch.html', '/vendor/addons/RoundedBoxGeometry.js', '/downloads/Jaz-pitch.pdf']) {
   const r = await fetch(base + f); ok(r.ok, `static ${f}`);
 }
 const status = await call('GET', '/api/status');

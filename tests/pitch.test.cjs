@@ -20,11 +20,20 @@ test('barys3d.js exports the model and pose for the pitch', () => {
   assert.match(src, /export \{ buildLeopard, pose \}/);
 });
 
-test('pitch has one formation section per scene and no invented percentages', () => {
-  const fs_ = [...html.matchAll(/data-f="(\w+)"/g)].map(m => m[1]);
-  assert.deepStrictEqual(fs_, ['hero', 'parade', 'steps', 'grid', 'ring', 'party']);
-  const text = html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '');
-  assert.doesNotMatch(text, /\d+\s?%/, 'no metric claims on the pitch');
+test('pitch slides: ten numbered pages and every statistic has a source link', () => {
+  const pages = [...html.matchAll(/<span class="pg">Бет<b>(\d\d)\/10<\/b><\/span>/g)].map(m => m[1]);
+  assert.deepStrictEqual(pages, ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10']);
+  const stats = [...html.matchAll(/<div class="card stat[^"]*">([\s\S]*?)<\/div>\s*(?=<div class="card stat|<\/div>)/g)];
+  assert.ok(stats.length >= 4, 'evidence cards present');
+  for (const m of stats) assert.match(m[1], /class="src">[\s\S]*<a href="https:\/\//, 'each statistic cites a source');
+  assert.match(html, /болжам/, 'the cost estimate is labelled as an assumption');
+  assert.match(html, /Shadil Nurmukhammed/);
+  assert.match(html, /Amangeldiev Kaisar/);
+});
+
+test('pitch screenshots and downloads exist', () => {
+  for (const m of html.matchAll(/(?:src|href)="((?:assets\/pitch|downloads)\/[^"]+)"/g)) assert.ok(fs.existsSync(path.join(dist, m[1])), m[1]);
+  for (const m of html.matchAll(/url\((assets\/pitch\/[^)]+)\)/g)) assert.ok(fs.existsSync(path.join(dist, m[1])), m[1]);
 });
 
 test('links from the pitch open the right app mode', () => {
