@@ -27,3 +27,4 @@ body[data-mode="method"] #main{padding-top:12px}
 :root[data-theme="dark"] .sidebar .nav-item.active{background:#4774ef;color:#fff}
 @media(max-width:900px){.student-context{margin:0 22px}.topbar{gap:8px}.page-location{display:none}.top-stats .level-pill{display:none}.mode-switch button{padding:9px 10px}}
 @media(max-width:560px){.topbar{padding:14px 16px;justify-content:space-between;gap:8px}.mobile-brand{margin-right:0}.mode-switch{margin-left:0}.top-stats{width:100%;justify-content:flex-end}.student-context{margin:0 16px}.student-context select{max-width:100%}body[data-mode="method"] .app-shell{padding-bottom:0}.theme-switch{width:32px;height:32px}.mode-switch button{font-size:10px;padding:8px}.mode-switch{gap:1px}}
+.mode-switch.lang-switch{margin-left:0}.lang-switch button{min-width:44px;font-weight:700}@media(max-width:520px){.lang-switch button{min-width:0;padding:9px 8px}}

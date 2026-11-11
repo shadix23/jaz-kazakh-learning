@@ -24,6 +24,7 @@
   <script src="./metodist.js" defer></script>
   <script src="./game.js" defer></script>
   <script type="module" src="./barys3d.js"></script>
+  <script src="./i18n.js" defer></script>
   <script src="./assistant.js" defer></script>
   <script src="./app.js" defer></script>
 </head>
@@ -42,7 +43,7 @@
       </div>
     </aside>
     <div class="workspace">
-      <header class="topbar"><span class="page-location" id="page-location">Басты бет</span><a class="mobile-brand" href="#home">jaz!</a><div class="mode-switch" role="group" aria-label="Режим работы"><button data-action="mode-method" aria-pressed="true">Методист</button><button data-action="mode-student" aria-pressed="false">Ученик</button></div><button class="theme-switch" data-action="theme" aria-label="Тёмная тема" title="Тёмная тема">◐</button><div class="top-stats"><span class="stat-pill" title="Қатарынан жаттыққан күндер"><span data-icon="flame"></span><b id="streak">0</b><span>күн</span></span><span class="stat-pill xp-pill"><span data-icon="spark"></span><b id="xp">0</b> XP</span><a class="level-pill" id="level" href="#progress">1-деңгей</a></div></header>
+      <header class="topbar"><span class="page-location" id="page-location">Басты бет</span><a class="mobile-brand" href="#home">jaz!</a><div class="mode-switch" role="group" aria-label="Режим работы"><button data-action="mode-method" aria-pressed="true">Методист</button><button data-action="mode-student" aria-pressed="false">Ученик</button></div><div class="mode-switch lang-switch" role="group" aria-label="Тіл / Язык"><button type="button" data-lang="kk" aria-pressed="true">Қаз</button><button type="button" data-lang="ru" aria-pressed="false">Рус</button></div><button class="theme-switch" data-action="theme" aria-label="Тёмная тема" title="Тёмная тема">◐</button><div class="top-stats"><span class="stat-pill" title="Қатарынан жаттыққан күндер"><span data-icon="flame"></span><b id="streak">0</b><span>күн</span></span><span class="stat-pill xp-pill"><span data-icon="spark"></span><b id="xp">0</b> XP</span><a class="level-pill" id="level" href="#progress">1-деңгей</a></div></header>
       <div id="student-context" class="student-context"></div>
       <main id="main" tabindex="-1"></main>
       <footer class="app-footer"><span>Қазақша жазуға арналған жаттығулар</span><button data-action="privacy">Прогресім қайда сақталады?</button></footer>
