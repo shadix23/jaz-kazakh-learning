@@ -34,6 +34,14 @@
   function readStorage(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
   function saveStorage(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch { storageWarning = true; } }
   let progress = L.sanitizeState(readStorage('jaz.progress.v1', null));
+  let appMode = readStorage('jaz.mode.v1', 'student') === 'method' ? 'method' : 'student';
+  let theme = readStorage('jaz.theme.v1', 'light') === 'dark' ? 'dark' : 'light';
+  function applyTheme() {
+    document.documentElement.dataset.theme = theme;
+    const label = theme === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    $('[data-action="theme"]').setAttribute('aria-label', label);
+    $('[data-action="theme"]').title = label;
+  }
   let sessions = {};
   const savedChats = readStorage('jaz.chats.v1', {});
   for (const scenario of L.scenarios) {
@@ -186,6 +194,20 @@
   }
   function render() {
     renderNavigation(); updateStats();
+    document.body.dataset.mode = appMode;
+    document.documentElement.lang = appMode === 'method' ? 'ru' : 'kk';
+    for (const button of document.querySelectorAll('.mode-switch button')) button.setAttribute('aria-pressed', String(button.dataset.action === `mode-${appMode}`));
+    $('#student-context').hidden = appMode !== 'student';
+    if (appMode === 'method') {
+      $('#page-location').textContent = 'Методист';
+      document.body.dataset.page = 'method';
+      document.title = 'Методист · Jaz!';
+      window.JazMetodist.mount($('#main'));
+      window.JazMotion?.mount($('#main'), { route: 'method' });
+      return;
+    }
+    $('#main').classList.remove('metodist');
+    window.JazMetodist.renderStudentContext($('#student-context'));
     document.body.dataset.page = route;
     document.title = `${nav.find((item) => item.id === route).label} · Jaz!`;
     const views = { home: homeView, lessons: lessonsView, chat: chatView, progress: progressView };
@@ -260,7 +282,11 @@
     if (!lessonRun || lessonRun.selected === null || lessonRun.done) return;
     const run = lessonRun;
     const question = run.lesson.questions[run.index];
-    if (!run.checked) { run.checked = true; run.attempts++; window.JazMotion?.react(run.selected === question.answerIndex ? 'success' : 'nudge'); }
+    if (!run.checked) {
+      run.checked = true; run.attempts++;
+      window.JazMetodist.recordAnswer({lessonId:run.lesson.id,lessonTitle:run.lesson.title,questionId:question.id,questionText:question.prompt,correct:run.selected === question.answerIndex ? 1 : 0,answer:question.options[run.selected],correctAnswer:question.options[question.answerIndex],date:day()});
+      window.JazMotion?.react(run.selected === question.answerIndex ? 'success' : 'nudge');
+    }
     else if (run.selected !== question.answerIndex) { run.selected = null; run.checked = false; }
     else if (run.index < run.lesson.questions.length - 1) { run.index++; run.selected = null; run.checked = false; }
     else { award({ type: 'lesson', lessonId: run.lesson.id }); run.done = true; render(); }
@@ -278,7 +304,9 @@
     const control = event.target.closest('[data-action]');
     if (!control) return;
     const action = control.dataset.action;
-    if (action === 'mascot-hello') { window.JazMotion?.react('hello'); }
+    if (action === 'mode-student' || action === 'mode-method') { appMode = action === 'mode-method' ? 'method' : 'student'; saveStorage('jaz.mode.v1', appMode); render(); }
+    else if (action === 'theme') { theme = theme === 'dark' ? 'light' : 'dark'; saveStorage('jaz.theme.v1', theme); applyTheme(); }
+    else if (action === 'mascot-hello') { window.JazMotion?.react('hello'); }
     else if (action === 'lesson') startLesson(control.dataset.id);
     else if (action === 'start-chat') startChat(control.dataset.id);
     else if (action === 'try-correction') startChat('cinema', 'Салем! Кинога барамыз ба?');
@@ -325,5 +353,6 @@
   window.addEventListener('focus', updateStats);
   for (const placeholder of document.querySelectorAll('[data-icon]')) placeholder.innerHTML = icon(placeholder.dataset.icon);
   route = nav.some((item) => item.id === location.hash.slice(1)) ? location.hash.slice(1) : 'home';
+  applyTheme();
   render();
 })();

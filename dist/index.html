@@ -11,8 +11,12 @@
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./mascot.css">
   <link rel="stylesheet" href="./motion.css">
+  <link rel="stylesheet" href="./metodist.css">
+  <link rel="stylesheet" href="./themes.css">
   <script src="./learning.js" defer></script>
   <script src="./motion.js" defer></script>
+  <script src="./curriculum.js" defer></script>
+  <script src="./metodist.js" defer></script>
   <script src="./app.js" defer></script>
 </head>
 <body>
@@ -28,7 +32,8 @@
       </div>
     </aside>
     <div class="workspace">
-      <header class="topbar"><span class="page-location" id="page-location">Басты бет</span><a class="mobile-brand" href="#home">jaz!</a><div class="top-stats"><span class="stat-pill" title="Қатарынан жаттыққан күндер"><span data-icon="flame"></span><b id="streak">0</b><span>күн</span></span><span class="stat-pill xp-pill"><span data-icon="spark"></span><b id="xp">0</b> XP</span><a class="level-pill" id="level" href="#progress">1-деңгей</a></div></header>
+      <header class="topbar"><span class="page-location" id="page-location">Басты бет</span><a class="mobile-brand" href="#home">jaz!</a><div class="mode-switch" role="group" aria-label="Режим работы"><button data-action="mode-student" aria-pressed="true">Ученик</button><button data-action="mode-method" aria-pressed="false">Методист</button></div><button class="theme-switch" data-action="theme" aria-label="Тёмная тема" title="Тёмная тема">◐</button><div class="top-stats"><span class="stat-pill" title="Қатарынан жаттыққан күндер"><span data-icon="flame"></span><b id="streak">0</b><span>күн</span></span><span class="stat-pill xp-pill"><span data-icon="spark"></span><b id="xp">0</b> XP</span><a class="level-pill" id="level" href="#progress">1-деңгей</a></div></header>
+      <div id="student-context" class="student-context"></div>
       <main id="main" tabindex="-1"></main>
       <footer class="app-footer"><span>Қазақша жазуға арналған жаттығулар</span><button data-action="privacy">Прогресім қайда сақталады?</button></footer>
     </div>

@@ -1,0 +1,30 @@
+:root{color-scheme:light;--surface:#fff;--surface-soft:#f6f9ff;--m-bg:#f6f9ff;--m-surface:#fff;--m-ink:#14233d;--m-muted:#64758e;--m-line:#e1e9f4;--m-blue:#3f70f7;--m-pale:#eaf2ff;--m-good:#e6f5ed;--m-mid:#fff4d3;--m-low:#fbe8e8}
+:root[data-theme="dark"]{color-scheme:dark;--surface:#18253b;--surface-soft:#111c2e;--blue:#83a7ff;--blue-dark:#476de0;--ink:#edf3ff;--muted:#a9b9d0;--line:#34445d;--pale:#263958;--cloud:#111c2e;--white:#18253b;--success:#7adbb1;--m-bg:#111c2e;--m-surface:#18253b;--m-ink:#edf3ff;--m-muted:#a9b9d0;--m-line:#34445d;--m-blue:#83a7ff;--m-pale:#263958;--m-good:#173e34;--m-mid:#493e24;--m-low:#4b2934;background:var(--cloud);color:var(--ink)}
+body{background:var(--cloud);color:var(--ink)}
+.mode-switch{display:flex;gap:4px;align-items:center;background:var(--pale);padding:4px;border-radius:13px;flex-shrink:0;margin-left:auto}
+.mode-switch button{font-size:11px;padding:10px 13px;border-radius:10px;background:transparent;color:var(--muted)}
+.mode-switch button[aria-pressed="true"]{background:var(--surface);color:var(--blue-dark);box-shadow:0 1px 5px #14233d12}
+.theme-switch{background:var(--surface);border:1px solid var(--line);border-radius:12px;width:37px;height:37px;flex-shrink:0;font-size:21px;color:var(--ink)}
+.topbar{gap:12px;flex-wrap:wrap;min-width:0}.top-stats{margin-left:0}.workspace,.student-context,#main{min-width:0}
+.student-context{margin:0 38px}.student-context:empty{display:none}
+body[data-mode="method"] .sidebar .nav-list,body[data-mode="method"] .sidebar-bottom,body[data-mode="method"] .mobile-nav,body[data-mode="method"] .top-stats,body[data-mode="method"] .app-footer{display:none}
+body[data-mode="method"] .sidebar:after{content:'Данные → решение';font-size:12px;color:var(--muted);padding:10px 14px;line-height:1.8}
+body[data-mode="method"] #main{padding-top:12px}
+:root[data-theme="dark"] :is(.sidebar,.topbar,.panel,.lesson-card,.scenario-card,.progress-stat,.chat-window,.scenario-list,.stat-pill,.level-pill,.mobile-nav,.goal-card,.deck-card,.chat-input-wrap,.dialog-top,dialog,.answer-option,.correction-history,.correction-card,.word-chip,.chat-empty,.chat-header,.chat-form){background:var(--surface);color:var(--ink);border-color:var(--line)}
+:root[data-theme="dark"] :is(.workspace,.chat-messages,.week-day,.badge-item,.info-body,.dialog-content,.answer-feedback,.chat-notice,.saved-correction,.empty-history){background:var(--surface-soft);color:var(--ink)}
+:root[data-theme="dark"] :is(input,textarea,select){background:var(--surface-soft);color:var(--ink);border-color:var(--line)}
+:root[data-theme="dark"] .btn-primary{background:#4774ef;color:#fff}
+:root[data-theme="dark"] .hero{color:#fff}
+:root[data-theme="dark"] .nav-item.active{color:#fff;background:#4774ef}
+:root[data-theme="dark"] .mode-switch button[aria-pressed="true"]{color:#c0d3ff}
+:root[data-theme="dark"] :is(.daily-plan,.lesson-tile,.history-strip,.scenario-rail,.scenario-option,.messenger,.messenger-head,.message-body,.chat-suggestions,.suggestion,.composer,.btn-ghost,.deck-switch,.chat-mobile-select){background:var(--surface);color:var(--ink);border-color:var(--line);box-shadow:none}
+:root[data-theme="dark"] :is(.messages,.composer-box,.lesson-banner,.correction-card .proposed,.day-circle,.badge-circle,.answer-number){background-color:var(--pale);color:var(--ink);border-color:var(--line)}
+:root[data-theme="dark"] :is(.daily-plan p,.daily-plan small,.scenario-feature p,.scenario-feature .eyebrow,.lesson-tile p,.history-strip small,.nav-item){color:var(--muted)}
+:root[data-theme="dark"] .hero{background:#3159bc}
+:root[data-theme="dark"] .hero-wipe:after{background:#3159bc}
+:root[data-theme="dark"] .message.you .message-body{background:#3159bc;color:#fff}
+:root[data-theme="dark"] :is(.answer-option.correct,.correction-card.resolved){background:#193d35;color:#b8ecd7;border-color:#44896e}
+:root[data-theme="dark"] :is(.answer-option.wrong,.answer-feedback.wrong){background:#472b31;color:#ffbdb3;border-color:#8d5863}
+:root[data-theme="dark"] .sidebar .nav-item.active{background:#4774ef;color:#fff}
+@media(max-width:900px){.student-context{margin:0 22px}.topbar{gap:8px}.page-location{display:none}.top-stats .level-pill{display:none}.mode-switch button{padding:9px 10px}}
+@media(max-width:560px){.topbar{padding:14px 16px;justify-content:space-between;gap:8px}.mobile-brand{margin-right:0}.mode-switch{margin-left:0}.top-stats{width:100%;justify-content:flex-end}.student-context{margin:0 16px}.student-context select{max-width:100%}body[data-mode="method"] .app-shell{padding-bottom:0}.theme-switch{width:32px;height:32px}.mode-switch button{font-size:10px;padding:8px}.mode-switch{gap:1px}}
