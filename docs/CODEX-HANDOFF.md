@@ -15,7 +15,8 @@ Hackathon jury criteria we optimise for: fit to the case, validity of analytics,
 
 - Branch with all work: `learner-game-and-kazakh-checker` (PR into `main` may still be open — see task P0-1).
 - Stack: vanilla HTML/CSS/JS in `dist/` (no build), Node ≥ 20 backend in `server/` (no framework), Vercel config ready (`vercel.json`, `api/index.js`), only dependency `@anthropic-ai/sdk`.
-- Tests: `npm test` → 58 passing (analytics, UI harness, API end-to-end over HTTP, Vercel entry).
+- Pitch page: `dist/pitch.html` (scroll-story, 3D Barys cubs + the game's leopard via `export { buildLeopard, pose }` in `dist/barys3d.js`; three.js addons vendored in `dist/vendor/addons/`). Script in `docs/PITCH.md`. Keep it free of invented metrics (a test checks for `%`).
+- Tests: `npm test` → 62 passing (analytics, UI harness, API end-to-end over HTTP, Vercel entry).
 - Not done yet: real deployment, real school data, roles/accounts, ГОСО objective codes, Kundelik/BilimClass import, summative before/after comparison.
 
 ## 3. Rules you must keep (do not weaken)
@@ -83,6 +84,7 @@ Browser checklist: Методист → Главная, Обзор (успева
 
 ## 6. Defense demo script (3 minutes)
 
+0. Open `/pitch.html` full screen, press → through it (~1 min), then «Кабинет методиста».
 1. Главная → «Загрузить результаты СОР/СОЧ» → paste a real anonymised table.
 2. Обзор: успеваемость, качество by class.
 3. Темы → the hardest topic → typical error.

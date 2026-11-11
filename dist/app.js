@@ -38,7 +38,10 @@
   function readStorage(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
   function saveStorage(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch { storageWarning = true; } }
   let progress = L.sanitizeState(readStorage('jaz.progress.v1', null));
-  let appMode = readStorage('jaz.mode.v1', 'method') === 'student' ? 'student' : 'method';
+  // ?mode=student / ?mode=method opens a mode directly (links from the pitch page).
+  const queryMode = new URLSearchParams(location.search).get('mode');
+  let appMode = queryMode === 'student' || queryMode === 'method' ? queryMode : (readStorage('jaz.mode.v1', 'method') === 'student' ? 'student' : 'method');
+  if (queryMode === appMode) saveStorage('jaz.mode.v1', appMode);
   let theme = readStorage('jaz.theme.v1', 'light') === 'dark' ? 'dark' : 'light';
   let subject = readStorage('jaz.subject.v1', P.KAZ) === P.MATH ? P.MATH : P.KAZ;
   let aiAvailable = false;

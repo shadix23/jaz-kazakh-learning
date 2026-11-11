@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jaz! — питч</title>
+<meta name="description" content="Jaz! — аналитика СОР/СОЧ для методиста школы: трудные темы, группы поддержки, часы и справка.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Pitch scroll-story. Based on the scroll-story-3d template (MIT, © 2026 Aly Danner, github.com/DannerAly/scroll-story-3d), characters are Jaz! own snow leopards. */
+:root{
+  --font:'Nunito';
+  --accent:#3f70f7;
+  --accent-d:#2550c9;
+  --grad:linear-gradient(95deg,#2550c9 0%,#3f70f7 50%,#7aa2ff 100%);
+  --bg:#ffffff;--ink:#1d1d1f;--ink2:#5f6470;--ink3:#9a9ea8;--line:#e6e8ee;--soft:#f3f5fa;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);-webkit-text-size-adjust:100%}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font),ui-sans-serif,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+
+#stage{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none}
+#tags{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.tag{position:absolute;left:0;top:0;opacity:0;white-space:nowrap;font-size:13px;font-weight:700;color:var(--ink);background:rgba(255,255,255,.92);border:1px solid rgba(0,0,0,.06);box-shadow:0 6px 18px rgba(20,40,90,.08);padding:5px 12px;border-radius:999px;will-change:transform,opacity}
+
+.bar{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:16px max(16px,3vw);pointer-events:none}
+.bar a{pointer-events:auto;text-decoration:none}
+.brand{font-weight:800;font-size:22px;letter-spacing:-.03em;color:var(--ink)}
+.brand b{color:var(--accent)}
+.demo{font-size:14px;font-weight:700;color:var(--accent-d);background:rgba(255,255,255,.85);border:1px solid var(--line);padding:9px 16px;border-radius:999px;transition:background .2s var(--ease),transform .16s var(--ease)}
+.demo:hover{background:#fff}
+.demo:active{transform:scale(.97)}
+
+main{position:relative;z-index:2;overflow-x:clip}
+section{position:relative;height:100vh;height:100svh;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 max(20px,5vw)}
+section.pin{display:block;height:auto;padding:0}
+.sticky{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;justify-content:center;padding:0 max(20px,5vw);text-align:center}
+
+.eyebrow{font-size:clamp(11px,.95vw,13px);font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-d);margin-bottom:20px}
+h1{font-size:clamp(52px,9vw,140px);font-weight:800;letter-spacing:-.045em;line-height:1}
+h2{font-size:clamp(36px,5.6vw,88px);font-weight:800;letter-spacing:-.04em;line-height:1.05}
+.lead{font-size:clamp(17px,1.6vw,23px);color:var(--ink2);margin:24px auto 0;max-width:34em;letter-spacing:-.005em;font-weight:600;line-height:1.4}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:32px}
+.chips a{font-size:15px;font-weight:700;padding:12px 20px;border-radius:999px;background:var(--soft);color:var(--ink);text-decoration:none;min-height:44px;display:inline-flex;align-items:center;transition:transform .16s var(--ease),background .2s var(--ease)}
+.chips a.main{background:var(--accent);color:#fff;box-shadow:0 10px 26px rgba(63,112,247,.28)}
+.chips a:hover{background:#e8ecf6}
+.chips a.main:hover{background:var(--accent-d)}
+.chips a:active{transform:scale(.97)}
+
+.r{opacity:0;transform:translate3d(0,42px,0);filter:blur(10px);transition:opacity 1.2s var(--ease) var(--d,0s),transform 1.3s var(--ease) var(--d,0s),filter 1.2s var(--ease) var(--d,0s)}
+.r.in{opacity:1;transform:none;filter:none}
+
+.hero-in{margin-top:-8vh}
+.cue{position:absolute;bottom:22px;left:max(20px,4vw);display:flex;align-items:center;gap:12px;font-size:11px;font-weight:800;color:var(--ink3);letter-spacing:.2em;text-transform:uppercase}
+.cue i{display:block;width:1px;height:34px;background:linear-gradient(var(--ink3),transparent);animation:cue 2.2s var(--ease) infinite;transform-origin:top}
+@keyframes cue{0%{transform:scaleY(0)}60%{transform:scaleY(1);opacity:1}100%{opacity:0}}
+
+.words{max-width:1100px;font-size:clamp(28px,4.2vw,64px);font-weight:800;letter-spacing:-.035em;line-height:1.15;margin-top:-14vh}
+.words .w{opacity:.13}
+
+.steps-sec .sticky,.top{align-items:flex-start;padding-top:max(84px,12vh)}
+.head{width:100%;max-width:1000px}
+.stages{position:relative;height:clamp(170px,25vh,260px)}
+.stage{position:absolute;left:0;right:0;top:0;opacity:0;transform:translate3d(0,36px,0);filter:blur(10px);transition:opacity .7s var(--ease),transform .9s var(--ease),filter .7s var(--ease)}
+.stage.past{transform:translate3d(0,-36px,0)}
+.stage.on{opacity:1;transform:none;filter:none}
+.stage .num{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.12em}
+.stage h3{font-size:clamp(38px,6.2vw,96px);font-weight:800;letter-spacing:-.045em;line-height:1.02;margin-top:6px}
+.stage p{font-size:clamp(16px,1.5vw,22px);color:var(--ink2);margin:14px auto 0;max-width:30em;font-weight:600;line-height:1.35}
+.guard .stage h3{font-size:clamp(30px,4.6vw,70px)}
+.ticks{display:flex;gap:8px;justify-content:center}
+.ticks i{display:block;width:22px;height:4px;border-radius:4px;background:var(--line);transition:width .6s var(--ease),background .6s}
+.ticks i.done{background:color-mix(in srgb,var(--accent) 35%,white)}
+.ticks i.on{width:46px;background:var(--accent)}
+.loop>div{margin-top:4vh}
+.loop h2{font-size:clamp(34px,5.2vw,80px)}
+.loop h2 .arr{color:var(--accent);font-weight:700}
+.cta-in{margin-top:-30vh}
+footer{position:relative;z-index:2;padding:30px 20px 46px;text-align:center;font-size:12px;color:var(--ink3);letter-spacing:.06em;font-weight:600}
+footer a{color:inherit}
+@media (max-aspect-ratio:9/10){
+  .tag{font-size:11px;padding:4px 9px}
+  .hero-in{margin-top:-22vh}
+  .stages{height:clamp(190px,27vh,260px)}
+  .cue{left:50%;transform:translateX(-50%);bottom:16px}
+  .cue span{display:none}
+  .cta-in{margin-top:-14vh}
+}
+@media (prefers-reduced-motion:reduce){.r{transition:none;opacity:1;transform:none;filter:none}.cue i{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="stage" aria-hidden="true"></canvas>
+<div id="tags" aria-hidden="true"></div>
+<header class="bar">
+  <a class="brand" href="./">Jaz<b>!</b></a>
+  <a class="demo" href="./">Открыть демо →</a>
+</header>
+
+<main>
+  <section data-f="hero">
+    <div data-hero class="hero-in">
+      <p class="eyebrow r">Кейс 1 · Data-Driven Curriculum</p>
+      <h1 class="r" style="--d:.12s">Jaz!<br><span class="grad">От СОР к решению.</span></h1>
+      <p class="lead r" style="--d:.28s">Аналитика для методиста школы: трудные темы, группы поддержки, часы и справка — за минуты, а не дни.</p>
+    </div>
+    <div class="cue"><i></i><span>Листайте или нажимайте →</span></div>
+  </section>
+
+  <section class="pin" data-f="parade" data-pin style="height:240vh">
+    <div class="sticky"><p class="words" data-words>Каждую четверть методист вручную сводит таблицы СОР и СОЧ, считает качество, пишет справку — а решения о часах и помощи остаются на интуиции.</p></div>
+  </section>
+
+  <section class="pin steps-sec" data-f="steps" data-pin style="height:620vh">
+    <div class="sticky">
+      <div class="head">
+        <p class="eyebrow">Как работает Jaz!</p>
+        <div class="stages">
+          <div class="stage on"><span class="num">01</span><h3>Загрузить</h3><p>Вставьте таблицу СОР/СОЧ из Excel. ФИО сразу заменяются кодами.</p></div>
+          <div class="stage"><span class="num">02</span><h3>Итоги</h3><p>Успеваемость, качество и уровни — по каждому классу.</p></div>
+          <div class="stage"><span class="num">03</span><h3>Трудные темы</h3><p>Карта «тема × класс» и типичные ошибки в заданиях.</p></div>
+          <div class="stage"><span class="num">04</span><h3>Группы поддержки</h3><p>Кому и по какой теме помочь — готовым списком.</p></div>
+          <div class="stage"><span class="num">05</span><h3>Тренажёр</h3><p>Задание группе в один клик. Рост считается отдельно от СОР.</p></div>
+          <div class="stage"><span class="num">06</span><h3>Справка</h3><p>Аналитическая справка на русском или казахском — сразу в Word.</p></div>
+        </div>
+        <div class="ticks"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pin steps-sec guard" data-f="grid" data-pin style="height:300vh">
+    <div class="sticky">
+      <div class="head">
+        <p class="eyebrow">Честная аналитика</p>
+        <div class="stages">
+          <div class="stage on"><h3>Учебники сравниваем<br>внутри учителя.</h3><p>Если сравнить нельзя, вывод блокируется.</p></div>
+          <div class="stage"><h3>Мало данных —<br>так и пишем.</h3><p>Меньше 10 учеников или 30 ответов — пометка «мало данных».</p></div>
+          <div class="stage"><h3>Тренажёр не смешиваем<br>с СОР и СОЧ.</h3><p>Два слоя данных, рост видно рядом с баллом СОР.</p></div>
+        </div>
+        <div class="ticks"><i class="on"></i><i></i><i></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="loop" data-f="ring">
+    <div>
+      <h2 class="r">СОР <span class="arr">→</span> помощь <span class="arr">→</span><br>рост <span class="arr">→</span> СОР.</h2>
+      <p class="lead r" style="--d:.12s">Цикл замыкается внутри школы.</p>
+    </div>
+  </section>
+
+  <section data-f="party">
+    <div class="cta-in">
+      <p class="eyebrow r">Попробуйте сами</p>
+      <h2 class="r" style="--d:.08s">Откройте демо.<br><span class="grad">Методист и ученик — рядом.</span></h2>
+      <div class="chips r" style="--d:.15s">
+        <a class="main" href="./?mode=method">Кабинет методиста</a>
+        <a href="./?mode=student">Режим ученика</a>
+        <a href="https://github.com/shadix23/jaz-kazakh-learning" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>Jaz! · Кейс 1 «Data-Driven Curriculum» · демо-данные синтетические</footer>
+
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+/* Scroll engine (scroll-story-3d template): smooth scroll, text reveals, arrow-key stops, tells the 3D scene which formation to show. */
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const lenis = (window.Lenis && !reduce) ? new Lenis({ lerp: 0.09, smoothWheel: true }) : null;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const sstep = (a, b, v) => { const x = clamp((v - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); };
+
+  document.querySelectorAll('[data-words]').forEach(el => {
+    el.innerHTML = el.textContent.trim().split(/\s+/).map(w => '<span class="w">' + w + '</span>').join(' ');
+  });
+  const words = [...document.querySelectorAll('[data-words] .w')];
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+    else if (e.boundingClientRect.top > 0) e.target.classList.remove('in');
+  }), { threshold: 0.15 });
+  document.querySelectorAll('.r').forEach(el => io.observe(el));
+
+  const secs = [...document.querySelectorAll('[data-f]')];
+  let geo = [], vh = innerHeight;
+  function measure() {
+    vh = innerHeight;
+    geo = secs.map(el => {
+      const top = el.getBoundingClientRect().top + scrollY, h = el.offsetHeight;
+      if (el.hasAttribute('data-pin')) return { f: el.dataset.f, start: top, end: Math.max(top + 1, top + h - vh) };
+      const c = top + h / 2 - vh / 2;
+      return { f: el.dataset.f, start: c - vh * 0.12, end: c + vh * 0.12 };
+    });
+  }
+  function stateAt(S) {
+    const n = geo.length;
+    if (S <= geo[0].end) return { a: 0, b: 0, t: 0 };
+    for (let k = 0; k < n; k++) {
+      const g = geo[k];
+      if (S >= g.start && S <= g.end) return { a: k, b: k, t: 0 };
+      if (k < n - 1 && S > g.end && S < geo[k + 1].start) return { a: k, b: k + 1, t: (S - g.end) / (geo[k + 1].start - g.end) };
+    }
+    return { a: n - 1, b: n - 1, t: 0 };
+  }
+  const stepTo = (list, act) => list.forEach((s, i) => { s.classList.toggle('on', i === act); s.classList.toggle('past', i < act); });
+
+  const pinned = secs.map(el => ({ el, stages: [...el.querySelectorAll('.stage')], ticks: [...el.querySelectorAll('.ticks i')], act: 0 }));
+  const hero = document.querySelector('[data-hero]');
+  const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+  addEventListener('pointermove', e => { mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = -(e.clientY / innerHeight * 2 - 1); }, { passive: true });
+  let S = scrollY, last = performance.now(), stepA = 0;
+
+  function frame(now) {
+    const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000)); last = now;
+    if (lenis) lenis.raf(now);
+    const y = scrollY;
+    S = reduce ? y : S + (y - S) * (1 - Math.exp(-dt * (lenis ? 22 : 10)));
+    if (Math.abs(y - S) < 0.1) S = y;
+    mouse.x += (mouse.tx - mouse.x) * (1 - Math.exp(-dt * 3.5));
+    mouse.y += (mouse.ty - mouse.y) * (1 - Math.exp(-dt * 3.5));
+
+    if (hero) {
+      const he = clamp(S / vh, 0, 1);
+      hero.style.transform = 'translate3d(0,' + (S * 0.3).toFixed(1) + 'px,0) scale(' + (1 - he * 0.08).toFixed(4) + ')';
+      hero.style.opacity = clamp(1 - he * 1.5, 0, 1).toFixed(3);
+    }
+    const ps = geo.map(g => clamp((S - g.start) / (g.end - g.start), 0, 1));
+    secs.forEach((el, k) => {
+      if (el.dataset.f === 'parade') {
+        const n = words.length;
+        words.forEach((w, i) => { w.style.opacity = (0.13 + 0.87 * clamp(ps[k] * (n + 3) - i - 1, 0, 1)).toFixed(2); });
+      }
+      const P = pinned[k];
+      if (!P.stages.length) return;
+      let act;
+      if (el.dataset.f === 'steps') {
+        const x = ps[k] * (P.stages.length - 1), j = Math.min(P.stages.length - 1, Math.floor(x));
+        stepA = j + sstep(0.3, 0.7, x - j); act = Math.round(stepA);
+      } else act = Math.min(P.stages.length - 1, Math.floor(ps[k] * P.stages.length));
+      if (act !== P.act) {
+        P.act = act; stepTo(P.stages, act);
+        P.ticks.forEach((t, i) => { t.classList.toggle('on', i === act); t.classList.toggle('done', i < act); });
+      }
+    });
+
+    const st = stateAt(S);
+    if (window.__render) window.__render({ fa: geo[st.a].f, fb: geo[st.b].f, t: st.t, pa: ps[st.a], pb: ps[st.b], step: stepA, sv: S / vh, mouse, dt, time: now / 1000, reduce });
+    requestAnimationFrame(frame);
+  }
+
+  function stops() {
+    const out = [];
+    geo.forEach((g, k) => {
+      const el = secs[k];
+      if (!el.hasAttribute('data-pin')) { out.push((g.start + g.end) / 2); return; }
+      const n = pinned[k].stages.length, span = g.end - g.start;
+      const qs = el.dataset.f === 'steps' ? pinned[k].stages.map((_, i) => i / (n - 1)) : n ? Array.from({ length: n }, (_, i) => (i + 0.5) / n) : [1];
+      qs.forEach(q => out.push(g.start + q * span));
+    });
+    return out.map(Math.round);
+  }
+  let nav = { y: 0, t: -1e9 };
+  function go(dir) {
+    const y = performance.now() - nav.t < 1200 ? nav.y : scrollY, list = stops();
+    const target = dir > 0 ? list.find(v => v > y + 4) : [...list].reverse().find(v => v < y - 4);
+    if (target === undefined) return;
+    nav = { y: target, t: performance.now() };
+    if (lenis) lenis.scrollTo(target, { duration: 1.1 }); else scrollTo({ top: target, behavior: reduce ? 'auto' : 'smooth' });
+  }
+  addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (['ArrowDown', 'ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(e.shiftKey && e.key === ' ' ? -1 : 1); }
+    else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(-1); }
+  });
+
+  measure();
+  addEventListener('resize', measure);
+  addEventListener('load', measure);
+  if ('ResizeObserver' in window) new ResizeObserver(measure).observe(document.body);
+  requestAnimationFrame(frame);
+})();
+</script>
+
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three.module.min.js",
+  "three/addons/": "./vendor/addons/"
+} }
+</script>
+<script type="module">
+/* 3D scene: Jaz! snow-leopard cubs change formation per section; the big Barys from «Барыс жолы» leads them. */
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/RoomEnvironment.js';
+import { buildLeopard, pose } from './barys3d.js';
+
+const CONFIG = {
+  roles: ['СОР/СОЧ', 'Итоги', 'Темы', 'Группы', 'Тренажёр', 'Справка'],
+  extras: 6,
+};
+
+const css = getComputedStyle(document.documentElement);
+const ACCENT = new THREE.Color(css.getPropertyValue('--accent').trim() || '#3f70f7');
+const canvas = document.getElementById('stage'), tagsEl = document.getElementById('tags');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); }
+catch (_) { canvas.remove(); throw new Error('WebGL unavailable — the page still works as text.'); }
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.setClearColor(0xffffff, 1);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+const scene = new THREE.Scene(), CAM_Z = 12;
+const camera = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, 0.1, 120);
+camera.position.set(0, 0, CAM_Z);
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+scene.add(new THREE.HemisphereLight(0xffffff, 0xe6ebf5, 0.5));
+const key = new THREE.DirectionalLight(0xffffff, 1.3); key.position.set(4, 9, 5); scene.add(key);
+
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const outBounce = x => { const n1 = 7.5625, d1 = 2.75; if (x < 1 / d1) return n1 * x * x; if (x < 2 / d1) return n1 * (x -= 1.5 / d1) * x + 0.75; if (x < 2.5 / d1) return n1 * (x -= 2.25 / d1) * x + 0.9375; return n1 * (x -= 2.625 / d1) * x + 0.984375; };
+const wrapPi = a => Math.atan2(Math.sin(a), Math.cos(a));
+const lerpAngle = (a, b, t) => a + wrapPi(b - a) * t;
+const hash = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
+
+const ROLES = CONFIG.roles, N = ROLES.length + CONFIG.extras;
+const R = Array.from({ length: N }, (_, i) => hash(i + 1)), R2 = Array.from({ length: N }, (_, i) => hash(i + 101));
+
+// ---------- Barys cub: rounded snow-leopard block with spots, ears, a blue taqiya with a gold band ----------
+const fur = new THREE.MeshPhysicalMaterial({ color: 0xe4e9f2, roughness: 0.55, clearcoat: 0.25, clearcoatRoughness: 0.5, envMapIntensity: 0.7 });
+const white = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.5, envMapIntensity: 0.6 });
+const spotM = new THREE.MeshStandardMaterial({ color: 0x4b5466, roughness: 0.7 });
+const pinkM = new THREE.MeshStandardMaterial({ color: 0xe9849b, roughness: 0.5 });
+const hatM = new THREE.MeshPhysicalMaterial({ color: ACCENT, roughness: 0.45, clearcoat: 0.45, clearcoatRoughness: 0.35 });
+const goldM = new THREE.MeshStandardMaterial({ color: 0xf2c14e, roughness: 0.35, metalness: 0.3 });
+const eyeM = new THREE.MeshPhysicalMaterial({ color: 0x141a2a, roughness: 0.15, clearcoat: 1 });
+const glintM = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
+const gBody = new RoundedBoxGeometry(1, 0.95, 0.85, 5, 0.24);
+const gSph = new THREE.SphereGeometry(1, 16, 12);
+const gEar = new THREE.ConeGeometry(0.13, 0.22, 14);
+const gHat = new THREE.CylinderGeometry(0.25, 0.28, 0.15, 28);
+const gBand = new THREE.TorusGeometry(0.278, 0.026, 8, 32);
+const gArm = new RoundedBoxGeometry(0.16, 0.34, 0.2, 3, 0.07);
+const gLeg = new RoundedBoxGeometry(0.2, 0.2, 0.24, 3, 0.07);
+const gTail = new THREE.CapsuleGeometry(0.085, 0.34, 4, 10);
+const gShadow = new THREE.PlaneGeometry(1.6, 0.42);
+const shTex = (() => {
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const g = c.getContext('2d'), grd = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  grd.addColorStop(0, 'rgba(30,40,70,.5)'); grd.addColorStop(0.45, 'rgba(30,40,70,.18)'); grd.addColorStop(1, 'rgba(30,40,70,0)');
+  g.fillStyle = grd; g.fillRect(0, 0, 128, 128);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+})();
+const blob = (parent, mat, x, y, z, sx, sy, sz) => { const m = new THREE.Mesh(gSph, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); parent.add(m); return m; };
+
+function makeCharacter(i) {
+  const root = new THREE.Group(), b = new THREE.Group(); root.add(b);
+  b.add(new THREE.Mesh(gBody, fur));
+  // face
+  blob(b, white, 0, -0.07, 0.4, 0.2, 0.14, 0.07);
+  blob(b, pinkM, 0, 0.0, 0.46, 0.055, 0.035, 0.03);
+  const eyes = [-1, 1].map(sx => {
+    const e = new THREE.Group(); e.position.set(sx * 0.2, 0.13, 0.43); b.add(e);
+    blob(e, eyeM, 0, 0, 0, 0.068, 0.078, 0.035);
+    blob(e, glintM, -0.022, 0.026, 0.03, 0.02, 0.02, 0.01);
+    return e;
+  });
+  // spots (sides, front corners, back)
+  for (const sx of [-1, 1]) {
+    for (const [y, z, r] of [[0.16, 0.14, 0.07], [-0.1, -0.12, 0.06], [0.05, -0.3, 0.05], [-0.26, 0.18, 0.05]]) blob(b, spotM, sx * 0.5, y, z, 0.02, r, r);
+    blob(b, spotM, sx * 0.37, -0.27, 0.425, 0.05, 0.05, 0.02);
+    blob(b, spotM, sx * 0.2, 0.08, -0.425, 0.06, 0.06, 0.02);
+  }
+  blob(b, spotM, 0, -0.22, -0.425, 0.05, 0.05, 0.02);
+  // ears + taqiya
+  for (const sx of [-1, 1]) {
+    const ear = new THREE.Mesh(gEar, fur); ear.position.set(sx * 0.33, 0.55, -0.06); ear.rotation.z = -sx * 0.38; b.add(ear);
+    blob(ear, pinkM, 0, -0.03, 0.06, 0.06, 0.08, 0.02);
+  }
+  const hat = new THREE.Group(); hat.position.set(0, 0.53, -0.02); hat.rotation.x = -0.08; b.add(hat);
+  hat.add(new THREE.Mesh(gHat, hatM));
+  const band = new THREE.Mesh(gBand, goldM); band.position.y = -0.05; band.rotation.x = Math.PI / 2; hat.add(band);
+  blob(hat, goldM, 0, 0.085, 0, 0.04, 0.04, 0.04);
+  // limbs + tail
+  const arms = [-1, 1].map(sx => { const p = new THREE.Group(); p.position.set(sx * 0.5, -0.05, 0); const m = new THREE.Mesh(gArm, fur); m.position.set(sx * 0.06, -0.14, 0); p.add(m); b.add(p); return p; });
+  const legs = [-1, 1].map(sx => { const p = new THREE.Group(); p.position.set(sx * 0.22, -0.45, 0); const m = new THREE.Mesh(gLeg, fur); m.position.y = -0.1; p.add(m); b.add(p); return p; });
+  const tail = new THREE.Group(); tail.position.set(0.12, -0.22, -0.4); b.add(tail);
+  const tm = new THREE.Mesh(gTail, fur); tm.position.set(0, 0.17, -0.06); tm.rotation.x = -0.5; tail.add(tm);
+  blob(tail, spotM, 0, 0.36, -0.16, 0.09, 0.09, 0.09);
+  scene.add(root);
+  const shadow = new THREE.Mesh(gShadow, new THREE.MeshBasicMaterial({ map: shTex, transparent: true, depthWrite: false, toneMapped: false, opacity: 0 }));
+  scene.add(shadow);
+  let tag = null;
+  if (i < ROLES.length) { tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = ROLES[i]; tagsEl.appendChild(tag); }
+  return { root, b, eyes, arms, legs, tail, shadow, tag, tagOn: false, phase: R[i] * 6.283, blinkAt: 1 + R2[i] * 4, blinkEnd: 0, yaw: 0, pitch: 0 };
+}
+const chars = Array.from({ length: N }, (_, i) => makeCharacter(i));
+const FOOT = 0.66;
+
+// ---------- the big Barys (same model as the game) ----------
+const lead = buildLeopard(); scene.add(lead.root);
+const leadShadow = new THREE.Mesh(gShadow, new THREE.MeshBasicMaterial({ map: shTex, transparent: true, depthWrite: false, toneMapped: false, opacity: 0 }));
+scene.add(leadShadow);
+const leadState = { yaw: 0.5 };
+
+// ---------- dot field ----------
+const FX = 150, FZ = 56, fpos = new Float32Array(FX * FZ * 3);
+for (let z = 0, p = 0; z < FZ; z++) for (let x = 0; x < FX; x++) { fpos[p++] = (x / (FX - 1) - 0.5) * 34; fpos[p++] = 0; fpos[p++] = -20 + z / (FZ - 1) * 24; }
+const fieldGeo = new THREE.BufferGeometry(); fieldGeo.setAttribute('position', new THREE.BufferAttribute(fpos, 3));
+const fieldMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false,
+  uniforms: { uTime: { value: 0 }, uOpacity: { value: 1 }, uPR: { value: renderer.getPixelRatio() }, uColor: { value: new THREE.Color(0xb6bccb) }, uAccent: { value: ACCENT.clone() } },
+  vertexShader: `uniform float uTime; uniform float uPR; varying float vFade; varying float vH;
+    void main(){ vec3 p = position;
+      float w = sin(p.x*0.35 + uTime*0.6)*0.35 + cos(p.z*0.45 + uTime*0.4)*0.35 + sin((p.x+p.z)*0.2 + uTime*0.3)*0.25;
+      p.y += w; vH = w; vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
+      gl_PointSize = uPR * 2.1 * (13.0 / -mv.z); vFade = smoothstep(34.0, 14.0, -mv.z) * smoothstep(17.0, 9.0, abs(p.x)); }`,
+  fragmentShader: `uniform vec3 uColor; uniform vec3 uAccent; uniform float uOpacity; varying float vFade; varying float vH;
+    void main(){ vec2 c = gl_PointCoord - 0.5; if (dot(c, c) > 0.25) discard;
+      gl_FragColor = vec4(mix(uColor, uAccent, smoothstep(0.5, 0.95, vH)), vFade * uOpacity * 0.85);
+      #include <colorspace_fragment>
+    }`
+});
+const field = new THREE.Points(fieldGeo, fieldMat); field.position.y = -3.4; scene.add(field);
+const FIELD = { hero: 1, parade: 0.5, steps: 0.55, grid: 0.3, ring: 0.5, party: 1 };
+
+// ---------- viewport ----------
+const V = { w: 1, h: 1, portrait: false }; let U = 1;
+function resize() {
+  renderer.setSize(innerWidth, innerHeight, false);
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  V.h = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * CAM_Z; V.w = V.h * camera.aspect; V.portrait = camera.aspect < 0.9;
+  U = V.portrait ? Math.min(V.w / 4.4, V.h / 5) : Math.min(V.w / 9, V.h / 4.6);
+}
+resize(); addEventListener('resize', resize);
+
+// ---------- formations ----------
+const F = {
+  hero(i, c) { // around the title; bottom-centre gap is the big Barys's spot
+    if (c.V.portrait) { // phone: two rows under the text, the big Barys in the middle of the front row
+      const back = i % 2 === 0, k = i >> 1, n = N / 2;
+      const side = k < n / 2 ? -1 : 1, kk = side < 0 ? k : k - n / 2, f = (kk + 0.5) / (n / 2);
+      const x = back ? (-0.42 + 0.84 * (k + 0.5) / n) * c.V.w : side * (0.25 + 0.2 * f) * c.V.w;
+      const y = back ? -0.17 : -0.36 + (kk % 2) * 0.05;
+      return { x, y: c.V.h * y + Math.sin(c.t * 0.9 + i) * 0.04 * c.u, z: back ? -1.2 : 0.4 - (kk % 2) * 0.6, s: c.u * (back ? 0.3 : 0.32), yaw: -x * 0.15, look: 1 };
+    }
+    const P = c.V.portrait, top = i % 2 === 1, k = i >> 1, n = top ? Math.floor(N / 2) : Math.ceil(N / 2), m = P ? 0.32 : 0.42;
+    // two arcs per half (left/right) so the title and the big Barys stay clear
+    const half = Math.ceil(n / 2), g = top ? (P ? 0.75 : 0.62) : (P ? 0.55 : 0.5), left = k < half, kk = left ? k : k - half;
+    const mid = top ? 0.5 * Math.PI : 1.5 * Math.PI, lo = top ? m : Math.PI + m, hi = top ? Math.PI - m : 2 * Math.PI - m;
+    const a0 = left === top ? mid + g : lo, a1 = left === top ? hi : mid - g;
+    let ang = a0 + (a1 - a0) * ((kk + 0.5) / half);
+    ang += (R[i] - 0.5) * 0.08;
+    return { x: Math.cos(ang) * c.V.w * 0.41, y: Math.sin(ang) * c.V.h * 0.37 - c.V.h * 0.04 + Math.sin(c.t * 0.9 + i) * 0.06 * c.u, z: (R2[i] - 0.55) * 3, s: c.u * (0.32 + R2[i] * 0.18), yaw: -Math.cos(ang) * 0.4, look: 1 };
+  },
+  parade(i, c) { // walk in a line, the big Barys runs in front
+    const span = c.V.w * (c.V.portrait ? 1.0 : 0.84);
+    return { x: -span / 2 + (i + 0.5) * span * 0.8 / N + (c.p - 0.5) * c.V.w * 0.14, y: -c.V.h * 0.37, z: 0.3, s: c.u * (c.V.portrait ? 0.2 : 0.26), yaw: 0.9, walk: 1 };
+  },
+  steps(i, c) { // carousel: the active step's cub in front
+    if (i >= ROLES.length) return { x: (R[i] - 0.5) * c.V.w * 0.8, y: -c.V.h * 0.42, z: -6, s: c.u * 0.25, yaw: 0, walk: 0.3 };
+    const d = i - c.step, ad = Math.abs(d), focus = Math.max(0, 1 - ad);
+    return { x: d * c.V.w * (c.V.portrait ? 0.6 : 0.24), y: -c.V.h * (c.V.portrait ? 0.12 : 0.2) - ad * ad * 0.05 * c.u, z: -Math.min(ad, 4) * 1.4 + focus * 0.5,
+      s: c.u * (0.34 + 0.3 * focus) * (1 - Math.min(ad, 3) * 0.06), yaw: -clamp(d, -1, 1) * 0.5, look: focus * 0.7, label: clamp(1 - ad * 1.8, 0, 1), active: focus * focus };
+  },
+  grid(i, c) { // three groups, one per guarantee; the current one jumps
+    const P = c.V.portrait, k = i % 3, j = Math.floor(i / 3), act = Math.min(2, Math.floor(c.p * 3)), on = k === act ? 1 : 0;
+    const cx = (k - 1) * c.V.w * (P ? 0.33 : 0.25), off = c.u * (P ? 0.26 : 0.36);
+    return { x: cx + ((j % 2) - 0.5) * off * 1.5, y: -c.V.h * (P ? 0.27 : 0.25) - (Math.floor(j / 2) - 0.5) * off * 1.3, z: on * 0.7 - (j >= 2 ? 0.5 : 0),
+      s: c.u * (P ? 0.2 : 0.28) * (1 + on * 0.2), yaw: -(k - 1) * 0.3 + ((j % 2) - 0.5) * 0.3, look: 1, active: on * 0.8 };
+  },
+  ring(i, c) { // run around the text
+    const P = c.V.portrait, R0 = P ? c.V.w * 0.44 : Math.min(c.V.w * 0.36, c.V.h * 0.7), tilt = P ? 0.32 : 0.42;
+    const ang = (i / (N + 1)) * Math.PI * 2 + c.t * 0.22 + c.sv * 0.5, lx = Math.cos(ang) * R0, lz = Math.sin(ang) * R0;
+    return { x: lx, y: c.V.h * (P ? -0.27 : 0.04) - lz * Math.sin(tilt), z: lz * Math.cos(tilt), s: c.u * (P ? 0.28 : 0.32), yaw: wrapPi(-ang), walk: 1 };
+  },
+  party(i, c) { // arc at the bottom, jumping in a wave
+    const k = i / (N - 1) - 0.5, span = c.V.portrait ? c.V.w * 0.96 : Math.min(c.V.w * 0.8, c.u * 14);
+    return { x: k * span, y: -c.V.h * 0.25 + (0.25 - k * k) * c.u * 0.9, z: -Math.abs(k) * 1.6 - 0.6, s: c.u * (c.V.portrait ? 0.17 : 0.25), yaw: -k * 0.9, look: 1, wave: 0.6, hopL: Math.max(0, Math.sin(c.t * 4.2 - i * 0.55)) * 0.55 };
+  }
+};
+// The big Barys: one spot per section. mode drives the gallop from barys3d.js.
+const LEAD = {
+  hero: c => ({ x: 0, y: -c.V.h * (c.V.portrait ? 0.33 : 0.36), z: 1.2, s: c.u * (c.V.portrait ? 0.62 : 0.5), yaw: 0.55, look: 1, mode: 'idle' }),
+  parade: c => { const span = c.V.w * (c.V.portrait ? 1.0 : 0.84);
+    return { x: -span / 2 + span * (c.V.portrait ? 0.88 : 0.9) + (c.p - 0.5) * c.V.w * 0.14, y: -c.V.h * 0.37, z: 0.6, s: c.u * (c.V.portrait ? 0.3 : 0.4), yaw: Math.PI / 2, mode: 'run', rate: 2.2 }; },
+  steps: c => ({ x: -c.V.w * (c.V.portrait ? 0.28 : 0.35), y: -c.V.h * 0.43, z: 0.8, s: c.u * (c.V.portrait ? 0.3 : 0.36), yaw: 0.7, look: 1, mode: 'idle' }),
+  grid: c => ({ x: c.V.w * (c.V.portrait ? 0.28 : 0.36), y: -c.V.h * 0.42, z: 0.8, s: c.u * (c.V.portrait ? 0.28 : 0.34), yaw: -0.7, look: 1, mode: 'idle' }),
+  ring: c => { const P = c.V.portrait, R0 = P ? c.V.w * 0.44 : Math.min(c.V.w * 0.36, c.V.h * 0.7), tilt = P ? 0.32 : 0.42;
+    const ang = (N / (N + 1)) * Math.PI * 2 + c.t * 0.22 + c.sv * 0.5, lx = Math.cos(ang) * R0, lz = Math.sin(ang) * R0;
+    return { x: lx, y: c.V.h * (P ? -0.27 : 0.04) - lz * Math.sin(tilt), z: lz * Math.cos(tilt), s: c.u * (P ? 0.3 : 0.38), yaw: wrapPi(-ang - Math.PI / 2), mode: 'run', rate: 2.4 }; },
+  party: c => ({ x: 0, y: -c.V.h * (c.V.portrait ? 0.3 : 0.35), z: 1.4, s: c.u * (c.V.portrait ? 0.46 : 0.44), yaw: 0.35 + Math.sin(c.t * 1.4) * 0.35, look: 0.5, mode: 'run', rate: 1.6, hop: Math.max(0, Math.sin(c.t * 4.2)) * 0.45 })
+};
+
+// ---------- render ----------
+const KEYS = ['x', 'y', 'z', 's', 'pitch', 'look', 'label', 'walk', 'active', 'wave', 'hopL'];
+const LKEYS = ['x', 'y', 'z', 's', 'look', 'hop'];
+const cur = {}, lc = {}, tmp = new THREE.Vector3();
+let t0 = null;
+window.__render = st => {
+  const t = st.time; if (t0 === null) t0 = t;
+  const base = { V, u: U, t, step: st.step, sv: st.sv };
+  const ca = Object.assign({}, base, { p: st.pa }), cb = Object.assign({}, base, { p: st.pb });
+  const FA = F[st.fa] || F.hero, FB = F[st.fb] || F.hero, same = st.fa === st.fb;
+  camera.position.set(st.mouse.x * 0.4, st.mouse.y * 0.22, CAM_Z); camera.lookAt(0, 0, 0);
+  const mwx = st.mouse.x * V.w / 2, mwy = st.mouse.y * V.h / 2, kS = 1 - Math.exp(-st.dt * 7);
+
+  for (let i = 0; i < N; i++) {
+    const a = chars[i], A = FA(i, ca), B = same ? A : FB(i, cb);
+    const e = same ? 0 : ease(clamp(st.t * 1.5 - R[i] * 0.5, 0, 1));
+    for (const k of KEYS) cur[k] = lerp(A[k] || 0, B[k] || 0, e);
+    const travel = same ? 0 : Math.sin(Math.PI * e);
+    const ki = st.reduce ? 1 : clamp((t - t0 - 0.2 - R[i] * 0.8) / 1.2, 0, 1);
+    const lift = travel * U * 0.9 + (1 - outBounce(ki)) * V.h;
+    const sc = Math.max(1e-4, cur.s * Math.min(1, ki * 4));
+    a.root.position.set(cur.x, cur.y + lift, cur.z); a.root.scale.setScalar(sc);
+    const ly = clamp((mwx - cur.x) * 0.12, -0.55, 0.55) * cur.look, lp = clamp(-(mwy - cur.y) * 0.1, -0.3, 0.3) * cur.look;
+    a.yaw += wrapPi(lerpAngle(A.yaw || 0, B.yaw || 0, e) + ly + travel * (R2[i] > 0.5 ? 0.7 : -0.7) - a.yaw) * kS;
+    a.pitch += (cur.pitch + lp - a.pitch) * kS;
+    a.root.rotation.set(a.pitch, a.yaw, 0);
+
+    const ph = a.phase, ws = Math.sin(t * 10 + ph);
+    a.b.position.y = Math.sin(t * 1.7 + ph) * 0.035 + Math.abs(ws) * 0.05 * cur.walk + cur.active * Math.max(0, Math.sin(t * 5.2 + ph)) * 0.32 + cur.hopL;
+    a.b.rotation.z = ws * 0.06 * cur.walk;
+    a.legs[0].rotation.x = ws * 0.6 * cur.walk; a.legs[1].rotation.x = -ws * 0.6 * cur.walk;
+    const wave = Math.max(cur.wave, cur.active * 0.8);
+    a.arms[1].rotation.z = wave * (1.4 + Math.sin(t * 9 + ph) * 0.4) + travel * 0.8;
+    a.arms[0].rotation.z = -cur.active * 0.6 - travel * 0.8;
+    a.tail.rotation.y = Math.sin(t * 2.4 + ph) * 0.45; a.tail.rotation.x = Math.sin(t * 1.6 + ph) * 0.15 - cur.walk * 0.1;
+    if (t > a.blinkAt) { a.blinkEnd = t + 0.13; a.blinkAt = t + 2.2 + Math.random() * 3.5; }
+    a.eyes[0].scale.y = a.eyes[1].scale.y = t < a.blinkEnd ? 0.15 : 1;
+
+    const f = clamp(1 - lift / (U * 1.4), 0, 1) * Math.min(1, ki * 4);
+    a.shadow.position.set(cur.x, cur.y - FOOT * sc, cur.z - 0.02); a.shadow.quaternion.copy(camera.quaternion);
+    a.shadow.scale.set(sc * (0.55 + 0.45 * f), sc * (0.55 + 0.45 * f), 1); a.shadow.material.opacity = sc > 0.01 ? 0.5 * f : 0;
+
+    if (a.tag) {
+      if (cur.label > 0.01 && sc > 0.01) {
+        tmp.set(cur.x, cur.y + lift - 0.78 * sc, cur.z).project(camera);
+        a.tag.style.transform = 'translate3d(' + ((tmp.x * 0.5 + 0.5) * innerWidth).toFixed(1) + 'px,' + ((-tmp.y * 0.5 + 0.5) * innerHeight + 6).toFixed(1) + 'px,0) translate(-50%,0)';
+        a.tag.style.opacity = cur.label.toFixed(3); a.tagOn = true;
+      } else if (a.tagOn) { a.tag.style.opacity = 0; a.tagOn = false; }
+    }
+  }
+
+  // big Barys
+  {
+    const A = (LEAD[st.fa] || LEAD.hero)(ca), B = same ? A : (LEAD[st.fb] || LEAD.hero)(cb);
+    const e = same ? 0 : ease(clamp(st.t * 1.3, 0, 1)), travel = same ? 0 : Math.sin(Math.PI * e);
+    for (const k of LKEYS) lc[k] = lerp(A[k] || 0, B[k] || 0, e);
+    const ki = st.reduce ? 1 : clamp((t - t0 - 0.6) / 1.2, 0, 1);
+    const lift = travel * U * 0.25 + (1 - outBounce(ki)) * V.h + lc.hop * U;
+    const sc = Math.max(1e-4, lc.s * Math.min(1, ki * 4));
+    lead.root.position.set(lc.x, lc.y + lift, lc.z); lead.root.scale.setScalar(sc);
+    const ly = clamp((mwx - lc.x) * 0.1, -0.5, 0.5) * lc.look;
+    const toward = travel > 0.2 ? Math.atan2(B.x - A.x, 1.2) : null;
+    const yawT = toward !== null ? toward : lerpAngle(A.yaw, B.yaw, e) + ly;
+    leadState.yaw += wrapPi(yawT - leadState.yaw) * kS;
+    lead.root.rotation.set(0.1, leadState.yaw, 0);
+    const mode = travel > 0.2 ? 'run' : (e < 0.5 ? A : B).mode;
+    pose(lead, { t, mode, rate: travel > 0.2 ? 3 : ((e < 0.5 ? A : B).rate || 2.4), reduced: st.reduce });
+    const f = clamp(1 - (lift - (1 - outBounce(ki)) * V.h) / (U * 1.2), 0, 1) * Math.min(1, ki * 4);
+    leadShadow.position.set(lc.x, lc.y - 0.02 * sc, lc.z - 0.05); leadShadow.quaternion.copy(camera.quaternion);
+    leadShadow.scale.set(sc * 1.25 * (0.6 + 0.4 * f), sc * 1.1 * (0.6 + 0.4 * f), 1); leadShadow.material.opacity = ki > 0.5 ? 0.5 * f : 0;
+  }
+
+  fieldMat.uniforms.uTime.value = t;
+  fieldMat.uniforms.uOpacity.value = lerp(FIELD[st.fa] ?? 0.4, FIELD[st.fb] ?? 0.4, same ? 0 : ease(clamp(st.t, 0, 1)));
+  renderer.render(scene, camera);
+};
+</script>
+</body>
+</html>
