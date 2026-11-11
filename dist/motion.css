@@ -1,0 +1,55 @@
+/* Motion follows the supplied screen recording; easing is an approximation,
+   not a recovered source curve. The app remains usable while elements enter. */
+:root{--motion-out:cubic-bezier(.2,.75,.25,1);--motion-pop:cubic-bezier(.18,.8,.25,1.14)}
+.motion-ready .route-enter{animation:none}
+.motion-ready .hero{isolation:isolate;background:#fff}
+.hero-wipe{position:absolute;inset:0;z-index:0;background:#bcd4ff;pointer-events:none;clip-path:ellipse(160% 190% at 100% 50%)}
+.hero-wipe:after{content:'';position:absolute;inset:0;background:var(--blue,#3f70f7);clip-path:ellipse(160% 190% at 100% 50%)}
+.motion-ready .hero-wipe{animation:hero-cloud-wipe 720ms var(--motion-out) both}
+.motion-ready .hero-wipe:after{animation:hero-cloud-wipe 680ms var(--motion-out) 120ms both}
+.hero-copy{position:relative;z-index:1}.hero-visual{z-index:1}
+.motion-reveal{animation:ui-block-reveal 470ms var(--motion-out) both;animation-delay:var(--reveal-delay,0ms)}
+.type-char{opacity:1}
+.motion-ready .type-char{animation:type-letter 1ms step-end both;animation-delay:calc(300ms + var(--type-index,0)*18ms)}
+.mascot-entrance{animation:mascot-pop-in 350ms var(--motion-pop) both;animation-delay:260ms}
+.mascot-stage{transform-origin:50% 88%;will-change:transform}
+.motion-ready .mascot-stage{animation:barys-idle 7.2s ease-in-out 1.1s infinite}
+.mascot-shadow{transform-origin:center;animation:barys-shadow 7.2s ease-in-out 1.1s infinite}
+.mascot-stage:hover .barys-character{filter:drop-shadow(0 10px 10px #183c741c)}
+.barys-character{transition:filter 200ms ease;transform-origin:50% 88%}
+.mascot-speech{animation:speech-arrive 400ms var(--motion-out) 620ms both}
+.motion-ready[data-mascot-state="hello"] .mascot-stage,.motion-ready[data-mascot-state="nudge"] .mascot-stage{animation:barys-greeting 950ms var(--motion-out) both}
+.motion-ready[data-mascot-state="success"] .mascot-stage{animation:barys-success 850ms var(--motion-out) both}
+.motion-ready[data-mascot-state="thinking"] .mascot-stage{animation:barys-thinking 2.4s ease-in-out infinite}
+.motion-ready[data-mascot-state="success"] .barys-avatar{animation:avatar-cheer 650ms var(--motion-out) both}
+.motion-ready[data-mascot-state="thinking"] .barys-avatar{animation:avatar-thinking 2.4s ease-in-out infinite}
+.mascot-stage.mascot-paused,.mascot-stage.mascot-paused .mascot-shadow,.motion-hidden .mascot-stage,.motion-hidden .mascot-shadow,.motion-hidden .barys-avatar{animation-play-state:paused!important}
+.xp-pill.xp-earned{animation:xp-awarded 600ms var(--motion-out) both}
+.deck-arriving{animation:deck-slide-in 400ms var(--motion-out) both}
+.card-deck:before,.card-deck:after{transition:transform 380ms var(--motion-out)}
+.card-deck:hover:after{transform:translateY(2px) rotate(4deg)}
+.card-deck:hover:before{transform:translateY(4px) rotate(6deg)}
+.lesson-tile,.task-row,.scenario-option{transition:border-color 200ms ease,background 200ms ease,box-shadow 220ms ease,transform 220ms var(--motion-out)}
+.lesson-tile:hover{box-shadow:0 7px 20px #2857d711}
+.btn{transition:background 170ms ease,box-shadow 170ms ease,transform 170ms var(--motion-out)}
+.btn:active{transform:translateY(2px) scale(.985)}
+#desktop-nav{position:relative;isolation:isolate}
+#desktop-nav .nav-active-indicator{position:absolute;top:0;left:0;width:100%;height:49px;border-radius:14px;background:var(--blue,#3f70f7);box-shadow:0 3px 0 var(--blue-dark,#2857d7);transform:translateY(calc(var(--active-row,0)*58px));transition:transform 420ms var(--motion-pop);z-index:-1;pointer-events:none}
+#desktop-nav:has(.nav-active-indicator) .nav-item.active{background:transparent;box-shadow:none}
+#desktop-nav:has(.nav-active-indicator) .nav-item.active:hover{background:transparent;color:#fff}
+@keyframes hero-cloud-wipe{0%{clip-path:ellipse(0% 120% at 120% 50%)}45%{clip-path:ellipse(65% 170% at 112% 50%)}100%{clip-path:ellipse(160% 190% at 100% 50%)}}
+@keyframes ui-block-reveal{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+@keyframes type-letter{from{opacity:0}to{opacity:1}}
+@keyframes mascot-pop-in{0%{opacity:0;transform:translateY(12px) scale(.72)}72%{opacity:1;transform:translateY(-2px) scale(1.025)}100%{opacity:1;transform:none}}
+@keyframes barys-idle{0%,18%,52%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-4px) rotate(-1deg)}39%{transform:translateY(-3px) rotate(.6deg)}44%{transform:translateY(0) rotate(0)}}
+@keyframes barys-shadow{0%,18%,52%,100%{transform:scaleX(1);opacity:.25}30%,39%{transform:scaleX(.94);opacity:.19}}
+@keyframes barys-greeting{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-5px) rotate(-4deg)}52%{transform:translateY(-2px) rotate(3deg)}75%{transform:translateY(-1px) rotate(-1.5deg)}}
+@keyframes barys-success{0%,100%{transform:translateY(0) scale(1)}12%{transform:translateY(3px) scale(1.025,.97)}38%{transform:translateY(-17px) scale(.985,1.025)}65%{transform:translateY(2px) scale(1.02,.98)}84%{transform:translateY(-2px) scale(1)}}
+@keyframes barys-thinking{0%,55%,100%{transform:rotate(0)}25%{transform:rotate(-2deg)}38%{transform:rotate(-1deg)}}
+@keyframes avatar-cheer{0%,100%{transform:translateY(0)}35%{transform:translateY(-4px) rotate(-4deg)}65%{transform:translateY(0) rotate(2deg)}}
+@keyframes avatar-thinking{0%,60%,100%{transform:rotate(0)}30%{transform:rotate(-3deg)}}
+@keyframes speech-arrive{from{opacity:0;transform:translateY(5px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes xp-awarded{0%,100%{transform:scale(1)}35%{transform:scale(1.09);box-shadow:0 0 0 5px #3f70f712}}
+@keyframes deck-slide-in{from{opacity:.3;transform:translateX(calc(15px * var(--deck-direction,1))) rotate(calc(1deg * var(--deck-direction,1)))}to{opacity:1;transform:none}}
+@media(max-width:760px){.mascot-entrance{animation-delay:220ms}.motion-ready .mascot-stage{animation-name:barys-idle}.card-deck:hover:before{transform:rotate(5deg)}.card-deck:hover:after{transform:rotate(3deg)}}
+@media(prefers-reduced-motion:reduce){.motion-ready .hero{background:var(--blue,#3f70f7)}.hero-wipe,.hero-wipe:after{clip-path:none;animation:none!important}.motion-ready .type-char,.motion-reveal,.mascot-entrance,.mascot-speech{opacity:1!important;transform:none!important;animation:none!important}.mascot-stage,.mascot-shadow,.barys-avatar,.xp-earned,.deck-arriving{animation:none!important;transform:none!important}#desktop-nav .nav-active-indicator{transition:none}.card-deck:before,.card-deck:after{transition:none}.btn,.lesson-tile,.task-row,.scenario-option,.barys-character{transition:none}}

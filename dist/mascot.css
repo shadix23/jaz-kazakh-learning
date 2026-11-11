@@ -1,0 +1,34 @@
+/* One original snow-leopard identity, reused as the full-body hero and small face crop. */
+.hero{background-image:none}
+.hero-copy{z-index:3}
+.banner-ornaments{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;border-radius:inherit}
+.banner-ornaments i{position:absolute;width:155px;height:155px;background:url('./assets/qoshqar-ornament.svg') center/contain no-repeat;opacity:.1}
+.banner-ornaments i:nth-child(1){left:-29px;top:-30px;transform:rotate(180deg)}
+.banner-ornaments i:nth-child(2){right:-29px;top:-30px;transform:rotate(-90deg)}
+.banner-ornaments i:nth-child(3){left:-29px;bottom:-30px;transform:rotate(90deg)}
+.banner-ornaments i:nth-child(4){right:-29px;bottom:-30px}
+@media(max-width:760px){.banner-ornaments i{width:110px;height:110px;opacity:.08}}
+.brand>.barys-avatar{font-size:initial;letter-spacing:normal;line-height:normal}
+.barys-avatar{position:relative;display:inline-block;overflow:hidden;width:44px;height:44px;flex-shrink:0;border-radius:14px;background:#eff5ff;vertical-align:middle;isolation:isolate}
+.barys-avatar img{position:absolute;width:100%;max-width:none;height:100%;inset:0;object-fit:contain}
+.brand .barys-brand{width:48px;height:48px;background:transparent;border-radius:0;overflow:hidden;margin-left:-4px}
+.brand .barys-brand img{width:100%;height:100%;inset:0}
+.hero-visual{position:absolute;right:2%;top:0;width:43%;height:100%;display:grid;place-items:center;pointer-events:none;isolation:isolate}
+.hero-visual:before{content:'';width:78%;height:90%;position:absolute;border:1px solid #ffffff1c;background:#ffffff08;border-radius:50%;z-index:-1}
+.mascot-stage{position:absolute;left:3%;right:3%;top:2%;bottom:2%;display:block;width:94%;height:96%;min-height:0;padding:0;background:none;border:0;isolation:isolate;transform-origin:50% 89%;pointer-events:auto;cursor:pointer;border-radius:40%}
+.mascot-stage:focus-visible{outline:3px solid #fff;outline-offset:0}
+.barys-character{position:absolute;inset:0;display:block;width:100%;height:100%;max-height:100%;min-height:0;object-fit:contain;object-position:center;z-index:1;filter:drop-shadow(0 12px 8px #173f9b25);user-select:none;pointer-events:none}
+.mascot-shadow{position:absolute;left:24%;right:14%;bottom:5%;height:7%;background:#153f9c3b;border-radius:50%;filter:blur(3px);z-index:0}
+.letter-chip{position:absolute;display:grid;place-items:center;width:55px;height:61px;border-radius:16px;background:#fff;color:#3f70f7;font-size:31px;font-weight:700;box-shadow:0 6px 0 #234dbd40;z-index:2;pointer-events:none}
+.letter-chip.first{left:-1%;top:11%;transform:rotate(-12deg)}
+.letter-chip.second{right:1%;bottom:14%;transform:rotate(12deg);width:48px;height:52px;font-size:28px}
+.mascot-speech{position:absolute;bottom:7%;left:-12%;padding:10px 14px;background:#fff;color:#395b91;font-size:9px;line-height:1.6;font-weight:700;border-radius:16px 16px 4px 16px;box-shadow:0 5px 0 #234dbd25;z-index:3;opacity:0;pointer-events:none;transform:translateY(7px);transition:opacity .2s,transform .2s;white-space:nowrap}
+.hero-visual:has(.mascot-stage:hover) .mascot-speech,.hero-visual:has(.mascot-stage:focus-visible) .mascot-speech,body[data-mascot-state="hello"] .mascot-speech{opacity:1;transform:translateY(0)}
+.plan-cover img.barys-mini{height:100%;width:100%;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 5px 3px #2857d71a)}
+.rail-info .rail-barys{width:95px;height:95px;object-fit:contain;margin:0 auto 12px}
+.messenger-head .chat-barys{width:44px;height:44px;border-radius:14px}
+.lesson-complete img.barys-mini{width:180px;height:165px;object-fit:contain;margin-bottom:12px}
+@media(max-width:1220px){.hero-visual{right:0;width:45%}.letter-chip.first{left:-3%;top:15%}.letter-chip{width:45px;height:50px;font-size:27px}.letter-chip.second{width:41px;height:45px;font-size:25px;right:-3%}.mascot-speech{left:-15%;font-size:8px}}
+@media(max-width:1000px){.hero-visual{right:-1%;width:43%;height:90%;top:10%}.letter-chip.first{left:0;top:7%;width:38px;height:42px;font-size:23px}.letter-chip.second{width:35px;height:38px;right:-2%;bottom:14%;font-size:22px}.mascot-speech{display:none}}
+@media(max-width:760px){.hero-visual{right:0;top:auto;bottom:0;width:48%;height:62%}.hero-visual:before{width:100%;height:90%}.hero-copy{max-width:91%}.hero h1{max-width:280px}.hero p{max-width:185px}.hero .btn{position:relative;z-index:3}.mascot-stage{inset:0;height:100%;width:100%}.barys-character{filter:drop-shadow(0 7px 5px #173f9b25);object-position:center bottom}.letter-chip.first{left:1%;top:4%;width:31px;height:35px;font-size:19px;border-radius:10px;box-shadow:0 4px 0 #234dbd40}.letter-chip.second{display:none}.mascot-shadow{bottom:2%;left:14%;right:3%;height:6%}.mascot-speech{display:none}.messenger-head .chat-barys{width:40px;height:40px}}
+@media(max-width:360px){.hero-visual{width:47%;height:57%;bottom:0}.hero p{max-width:172px}.letter-chip.first{left:-1%;top:5%}}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="300" viewBox="0 0 460 300" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Чатта бірге үйрен</title>
+  <desc id="desc">Бұлт кейіпкері және қазақша сәлемдесу жазылған көк пен ақ хабарламалар.</desc>
+  <rect width="460" height="300" rx="28" fill="#eaf3ff"/>
+  <circle cx="373" cy="64" r="99" fill="white" opacity=".55"/>
+  <circle cx="60" cy="295" r="100" fill="#3f70f7" opacity=".07"/>
+  <g transform="translate(52 39) rotate(-4 128 35)"><path d="M21 6H251C263 6 273 16 273 28V59C273 71 263 81 251 81H59L41 97V81H21C9 81-1 71-1 59V28C-1 16 9 6 21 6Z" fill="#2655db" opacity=".09"/><path d="M21 0H251C263 0 273 10 273 22V53C273 65 263 75 251 75H59L41 91V75H21C9 75-1 65-1 53V22C-1 10 9 0 21 0Z" fill="white"/><text x="25" y="44" fill="#14233d" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700">Сәлем! Қалың қалай?</text></g>
+  <g transform="translate(166 136) rotate(4 111 30)"><path d="M19 4H225C236 4 245 13 245 24V50C245 61 236 70 225 70H207V85L189 70H19C8 70-1 61-1 50V24C-1 13 8 4 19 4Z" fill="#2655db" opacity=".15"/><path d="M19 0H225C236 0 245 9 245 20V46C245 57 236 66 225 66H207V81L189 66H19C8 66-1 57-1 46V20C-1 9 8 0 19 0Z" fill="#3f70f7"/><text x="25" y="41" fill="white" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700">Жақсы! Өзің ше?</text></g>
+  <ellipse cx="92" cy="262" rx="62" ry="8" fill="#2655db" opacity=".10"/>
+  <path d="M49 248C27 248 17 232 21 216C24 204 33 197 46 196C47 180 60 169 77 172C88 152 120 156 129 178C150 173 167 190 163 210C178 216 180 232 171 243C166 250 156 251 147 251H49Z" fill="#2655db" opacity=".15"/>
+  <path d="M47 241C27 241 17 226 21 210C24 199 34 192 47 191C48 175 61 164 77 167C89 147 120 152 129 173C149 169 164 184 161 204C176 210 178 226 169 236C164 242 155 245 146 245H47Z" fill="white" stroke="#3f70f7" stroke-width="3"/>
+  <ellipse cx="74" cy="206" rx="4" ry="7" fill="#14233d"/><ellipse cx="115" cy="206" rx="4" ry="7" fill="#14233d"/><path d="M87 220C91 224 98 224 102 220" stroke="#14233d" stroke-width="3" stroke-linecap="round"/>
+  <g fill="#3f70f7"><circle cx="244" cy="252" r="5" opacity=".35"/><circle cx="264" cy="252" r="5" opacity=".6"/><circle cx="284" cy="252" r="5"/></g>
+  <path d="M407 58V74M399 66H415M356 256V268M350 262H362" stroke="#3f70f7" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+</svg>

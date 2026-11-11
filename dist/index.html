@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#3f70f7">
+  <meta name="description" content="Қысқа сабақтар мен ойын түріндегі хат алмасу арқылы қазақша сауатты жазуға жаттық.">
+  <title>Jaz! — Қазақша жаз</title>
+  <link rel="icon" href="./assets/mascot-kit/02-logo-head.png" type="image/png">
+  <link rel="preload" href="./fonts/Comfortaa.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./mascot.css">
+  <link rel="stylesheet" href="./motion.css">
+  <script src="./learning.js" defer></script>
+  <script src="./motion.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Мазмұнға өту</a>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Негізгі мәзір">
+      <a class="brand" href="#home" aria-label="Jaz! — басты бет"><span class="barys-avatar barys-brand"><img src="./assets/mascot-kit/02-logo-head.png" alt="" width="160" height="160"></span><span>jaz<span class="brand-dot">!</span></span></a>
+      <nav id="desktop-nav" class="nav-list"></nav>
+      <div class="sidebar-bottom">
+        <div class="goal-card"><span class="mini-label">БҮГІНГІ МАҚСАТ</span><div class="goal-number"><strong id="sidebar-goal">0</strong><span>/ 30 XP</span></div><div class="meter"><span id="sidebar-meter"></span></div><p>Бір сабақ. Бір әңгіме.<br>Күн сайын бір қадам.</p></div>
+        <button class="help-button" data-action="help"><span data-icon="help"></span>Қалай жұмыс істейді?</button>
+        <a class="profile-link" href="#progress"><span class="profile-avatar">С</span><span><strong>Сенің кеңістігің</strong><small id="sidebar-level">1-деңгей · Жаңа қадам</small></span><span data-icon="chevron"></span></a>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar"><span class="page-location" id="page-location">Басты бет</span><a class="mobile-brand" href="#home">jaz!</a><div class="top-stats"><span class="stat-pill" title="Қатарынан жаттыққан күндер"><span data-icon="flame"></span><b id="streak">0</b><span>күн</span></span><span class="stat-pill xp-pill"><span data-icon="spark"></span><b id="xp">0</b> XP</span><a class="level-pill" id="level" href="#progress">1-деңгей</a></div></header>
+      <main id="main" tabindex="-1"></main>
+      <footer class="app-footer"><span>Қазақша жазуға арналған жаттығулар</span><button data-action="privacy">Прогресім қайда сақталады?</button></footer>
+    </div>
+    <nav id="mobile-nav" class="mobile-nav" aria-label="Мобильді мәзір"></nav>
+  </div>
+  <dialog id="lesson-dialog" aria-labelledby="lesson-title"></dialog>
+  <dialog id="info-dialog" aria-labelledby="info-title"></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <noscript><p>Жаттығуларды іске қосу үшін браузерде JavaScript қосулы болуы керек.</p></noscript>
+</body>
+</html>

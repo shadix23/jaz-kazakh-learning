@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="200" viewBox="0 0 240 200" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Jaz бұлт кейіпкері</title>
+  <desc id="desc">Көк жиекті, күлімдеген ақ бұлт.</desc>
+  <ellipse cx="122" cy="176" rx="68" ry="10" fill="#2655db" opacity=".10"/>
+  <path d="M59 145C34 145 21 128 24 108C26 91 39 81 54 79C54 55 72 39 94 41C108 14 151 19 164 49C191 44 214 65 210 91C227 98 233 119 220 135C214 143 203 147 189 147H59Z" fill="#2655db"/>
+  <path d="M57 136C34 136 22 120 25 101C27 86 39 76 55 74C56 51 74 36 96 39C111 14 151 19 163 47C190 42 210 61 206 86C224 93 228 113 216 128C210 135 199 138 187 138H57Z" fill="white" stroke="#3f70f7" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M57 86C60 67 70 59 85 60" stroke="#eaf3ff" stroke-width="8" stroke-linecap="round"/>
+  <ellipse cx="93" cy="94" rx="6" ry="10" fill="#14233d"/>
+  <ellipse cx="148" cy="94" rx="6" ry="10" fill="#14233d"/>
+  <path d="M111 111C117 117 125 117 131 111" stroke="#14233d" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="77" cy="112" rx="10" ry="5" fill="#eaf3ff"/>
+  <ellipse cx="164" cy="112" rx="10" ry="5" fill="#eaf3ff"/>
+  <path d="M69 145L63 154M173 146L180 154" stroke="#3f70f7" stroke-width="6" stroke-linecap="round"/>
+  <path d="M209 39V51M203 45H215" stroke="#3f70f7" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="30" cy="46" r="4" fill="#3f70f7"/>
+</svg>

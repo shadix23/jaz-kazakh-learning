@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="320" viewBox="0 0 600 320" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Қазақша әңгімеге шақыру</title>
+  <desc id="desc">Ақ бұлт кейіпкерінің айналасында Ә, Ң, Ө әріптері бар хабарламалар қалықтап тұр.</desc>
+  <g opacity=".15" fill="white"><circle cx="317" cy="173" r="129"/><circle cx="317" cy="173" r="155" opacity=".35"/></g>
+  <g transform="translate(60 41) rotate(-11 50 47)"><rect x="3" y="8" width="109" height="91" rx="25" fill="#2655db" opacity=".45"/><path d="M26 0H86C100 0 111 11 111 25V64C111 78 100 89 86 89H53L36 105V89H26C12 89 1 78 1 64V25C1 11 12 0 26 0Z" fill="#eaf3ff"/><text x="56" y="63" text-anchor="middle" fill="#3f70f7" font-family="Comfortaa,sans-serif" font-size="57" font-weight="700">Ә</text></g>
+  <g transform="translate(429 28) rotate(10 46 45)"><rect x="4" y="7" width="100" height="88" rx="24" fill="#2655db" opacity=".4"/><rect width="100" height="88" rx="24" fill="white"/><text x="50" y="63" text-anchor="middle" fill="#3f70f7" font-family="Comfortaa,sans-serif" font-size="54" font-weight="700">Ң</text></g>
+  <g transform="translate(431 215) rotate(-8 40 35)"><rect x="3" y="6" width="87" height="74" rx="22" fill="#2655db" opacity=".4"/><rect width="87" height="74" rx="22" fill="#eaf3ff"/><text x="43" y="54" text-anchor="middle" fill="#3f70f7" font-family="Comfortaa,sans-serif" font-size="47" font-weight="700">Ө</text></g>
+  <ellipse cx="293" cy="278" rx="111" ry="15" fill="#2655db" opacity=".35"/>
+  <path d="M194 238C156 238 137 212 143 183C147 160 165 146 188 143C188 110 215 87 247 92C270 54 328 63 346 104C385 95 416 125 410 161C437 170 444 201 426 224C417 236 399 241 381 241H194Z" fill="#2655db" opacity=".42"/>
+  <path d="M192 225C155 225 137 201 143 173C147 150 166 138 189 136C190 104 216 82 247 87C269 50 328 59 346 99C384 91 413 118 407 154C434 164 441 192 423 214C414 225 398 229 379 229H192Z" fill="white"/>
+  <path d="M190 155C193 131 209 117 229 117" stroke="#eaf3ff" stroke-width="12" stroke-linecap="round"/>
+  <ellipse cx="244" cy="165" rx="9" ry="15" fill="#14233d"/>
+  <ellipse cx="328" cy="165" rx="9" ry="15" fill="#14233d"/>
+  <path d="M270 192C279 202 292 202 302 192" stroke="#14233d" stroke-width="7" stroke-linecap="round"/>
+  <ellipse cx="220" cy="190" rx="15" ry="7" fill="#eaf3ff"/><ellipse cx="352" cy="190" rx="15" ry="7" fill="#eaf3ff"/>
+  <path d="M205 233L192 247M367 233L380 247" stroke="white" stroke-width="9" stroke-linecap="round"/>
+  <g stroke="white" stroke-width="4" stroke-linecap="round"><path d="M392 41V57M384 49H400"/><path d="M104 221V239M95 230H113"/><path d="M532 153V167M525 160H539"/></g>
+  <circle cx="206" cy="31" r="5" fill="white" opacity=".8"/><circle cx="555" cy="242" r="4" fill="white" opacity=".6"/>
+  <path d="M96 162C116 163 127 171 133 183M440 134C455 124 465 123 480 128" stroke="white" stroke-opacity=".4" stroke-width="3" stroke-dasharray="5 7" stroke-linecap="round"/>
+</svg>
