@@ -8,7 +8,7 @@ npm start                  # сайт + бэкенд API: http://127.0.0.1:4174
 npm test                   # 58+ тестов: аналитика, интерфейс, сквозной сценарий API
 ```
 
-Деплой на Vercel (сайт + API + Redis) — [DEPLOY.md](DEPLOY.md).
+Деплой на Vercel (сайт + API + Redis) — [DEPLOY.md](DEPLOY.md). Продолжение работы для Codex — [docs/CODEX-HANDOFF.md](docs/CODEX-HANDOFF.md) и [CODEX_PROMPT.md](CODEX_PROMPT.md).
 
 Без сборки: чистые HTML/CSS/JS в `dist/`. Анализ кейса — [docs/CASE-ANALYSIS.md](docs/CASE-ANALYSIS.md), работа методиста и решаемая проблема — [docs/METHODIST-RESEARCH.md](docs/METHODIST-RESEARCH.md). Для ИИ-агентов (Codex и др.) — [AGENTS.md](AGENTS.md).
 

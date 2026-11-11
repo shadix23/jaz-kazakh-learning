@@ -2,7 +2,7 @@
 
 Jaz! is a hackathon project for **Case 1 «Data-Driven Curriculum»**: an EdTech platform for school methodists that analyses test results by curriculum topic, finds hard topics, compares textbooks and recommends teaching hours. A learner trainer (Kazakh + Mathematics, 6th grade) produces live answers for the analytics.
 
-Read `docs/CASE-ANALYSIS.md` and `docs/METHODIST-RESEARCH.md` first: it states the user, the jury criteria and the methodology. Every change must keep the product oriented to that case.
+**Start with `docs/CODEX-HANDOFF.md`** (current state, rules, prioritised tasks). Then read `docs/CASE-ANALYSIS.md` and `docs/METHODIST-RESEARCH.md`: it states the user, the jury criteria and the methodology. Every change must keep the product oriented to that case.
 
 ## Run and test
 
@@ -10,6 +10,7 @@ Read `docs/CASE-ANALYSIS.md` and `docs/METHODIST-RESEARCH.md` first: it states t
 npm install            # only dependency: @anthropic-ai/sdk (server-side AI mentor)
 npm start              # = node dev-server.cjs → http://127.0.0.1:4174
 npm test               # = node --test tests/*.test.cjs  (must stay green)
+npm run smoke -- <url> # API + static smoke test against a running/deployed site
 ```
 
 No build step, no framework, no bundler. Files in `dist/` are served as-is. Node ≥ 20.
