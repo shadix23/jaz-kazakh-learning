@@ -55,7 +55,7 @@
   function context() { try { return provider() || {}; } catch (_) { return {}; } }
   function renderContext() {
     const c = context();
-    panel.querySelector('.bx-ctx').textContent = c.topicKk ? `Тақырып: ${c.topicKk}${c.task ? ' · тапсырма ашық' : ''}` : 'Тақырыпты «Сабақтар» бөлімінен таңда';
+    panel.querySelector('.bx-ctx').textContent = c.topicKk ? `Тақырып: ${c.topicKk}${c.task ? ', тапсырма ашық' : ''}` : 'Тақырыпты «Сабақтар» бөлімінен таңда';
   }
 
   async function ask(kind, text) {

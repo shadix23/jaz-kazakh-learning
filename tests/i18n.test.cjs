@@ -21,3 +21,9 @@ test('unknown text (learning content) is left alone', () => {
   assert.equal(I.translate('Дұрыс жазылуын таңда: «девочка»', 'ru'), null);
   assert.equal(I.translate('Біз кітаптар оқыдық.', 'ru'), null);
 });
+
+test('curriculum topic names and the group core are Kazakh in Kazakh mode', () => {
+  assert.equal(I.translate('Окружность, круг и масштаб', 'kk'), 'Шеңбер, дөңгелек, масштаб');
+  assert.equal(I.translate('Особые буквы: Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, І', 'kk'), 'Ерекше әріптер');
+  assert.equal(I.translate('ядро: S-0001, S-0002', 'kk'), 'өзек: S-0001, S-0002');
+});

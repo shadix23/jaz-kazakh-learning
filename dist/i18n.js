@@ -191,6 +191,11 @@
   for (const [kk, ru] of PAIRS) { if (!TO_RU.has(kk)) TO_RU.set(kk, ru); if (!TO_KK.has(ru)) TO_KK.set(ru, kk); }
   for (const [kk, ru] of METHOD) { if (!TO_KK.has(ru)) TO_KK.set(ru, kk); if (!TO_RU.has(kk)) TO_RU.set(kk, ru); }
   TO_KK.set('Казахский язык', 'Қазақ тілі');
+  // Curriculum topic names in data are Russian: show the Kazakh topic name in Kazakh mode.
+  const P = root.JazPractice || (typeof require === 'function' ? (() => { try { return require('./practice.js'); } catch (_) { return null; } })() : null);
+  if (P && P.TOPICS) for (const t of P.TOPICS) { TO_KK.set(t.topic, t.kk); if (!TO_RU.has(t.kk)) TO_RU.set(t.kk, t.topic); }
+  // the group "core" (≤ 40%) in Kazakh
+  TO_KK.set('ядро', 'өзек'); TO_KK.set('ядра нет', 'өзек жоқ');
 
   // Patterns for strings with numbers. Each: [RegExp, (match, tr) => string]
   const PAT_RU = [
@@ -228,6 +233,7 @@
     [/^Начало (\d+)%, сейчас (\d+)%$/, m => `Басы ${m[1]}%, қазір ${m[2]}%`],
     [/^(.+), класс (.+): (.+), (\d+) учеников$/, m => `${m[1]}, ${m[2]} сынып: ${m[3]}, ${m[4]} оқушы`],
     [/^(.+), параллель: (.+), (\d+) учеников$/, m => `${m[1]}, параллель: ${m[2]}, ${m[3]} оқушы`],
+    [/^ядро: (.+)$/, m => `өзек: ${m[1]}`],
     [/^неверно · (.+)$/, m => `қате · ${m[1]}`],
     [/^верно · (.+)$/, m => `дұрыс · ${m[1]}`],
     [/^Группа поддержки: (.+)$/, m => `Қолдау тобы: ${m[1]}`],
