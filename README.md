@@ -91,4 +91,4 @@ docs/        питч, исследование, разбор кейса, тех
 
 ## Материалы защиты
 
-Презентация: [PDF](docs/pitch/Jaz-pitch.pdf) · [PPTX](docs/pitch/Jaz-pitch.pptx) (12 слайдов, корректно открываются в Canva). Сценарий и источники цифр: [docs/PITCH.md](docs/PITCH.md), спич на двоих: [docs/PITCH-SPEECH.md](docs/PITCH-SPEECH.md).
+Презентация: [PDF](docs/pitch/Jaz-pitch.pdf) · [PPTX](docs/pitch/Jaz-pitch.pptx) (12 слайдов, корректно открываются в Canva). 
