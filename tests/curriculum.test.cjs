@@ -144,3 +144,31 @@ test('period filter uses the latest date of the selected subject', () => {
   assert.equal(C.filterRows(rows, { subject: 'Математика', period: 30 }).length, 2);
   assert.throws(() => C.filterRows(rows, { period: 7 }), /Период/);
 });
+
+test('student profiles and support groups find who needs help on which topic', () => {
+  const math = C.build('clean', 'Математика');
+  const profiles = C.studentProfiles(math, { mastery: 70 });
+  assert.equal(profiles.length, 147);
+  assert.ok(profiles[0].weak.length >= profiles[profiles.length - 1].weak.length, 'sorted by number of weak topics');
+  for (const p of profiles) assert.ok(['high', 'medium', 'low'].includes(p.risk));
+  const groups = C.supportGroups(math, { mastery: 70 });
+  assert.equal(groups[0].topic, 'Сложение и вычитание рациональных чисел');
+  const g = groups[0];
+  assert.equal(g.groups.reduce((a, c) => a + c.size, 0), g.count);
+  assert.ok(g.groups.every((c) => c.core.every((id) => c.students.includes(id))));
+  assert.match(C.groupsCSV(groups), /^topic,class,students_count,core_count/);
+});
+
+test('summary payload for the AI holds aggregates only, no student codes', () => {
+  const math = C.build('clean', 'Математика');
+  const payload = C.summaryPayload(math, C.demoProgram()['Математика'], { compareRows: math, reps: 50 });
+  assert.equal(payload.topics.length, 6);
+  assert.doesNotMatch(JSON.stringify(payload), /S-\d{4}/);
+});
+
+test('a single live answer cannot become the typical error of a topic', () => {
+  const math = C.build('clean', 'Математика');
+  const live = { ...math.find((r) => r.topic === 'Модуль числа'), question_id: 'live-x', question_text: 'Редкое задание', answer: 'X', correct: 0 };
+  const ins = C.insights(math.concat([live]), C.demoProgram()['Математика'], {});
+  assert.ok(ins.problems.every((p) => !p.item || p.item.text !== 'Редкое задание'));
+});

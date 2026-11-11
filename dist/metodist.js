@@ -15,6 +15,7 @@
   const TABS = [
     { id: 'overview', label: 'Обзор', title: 'Сводка для решения', sub: 'Главное о результатах, учебниках и часах на одном экране.', icon: 'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z' },
     { id: 'topics', label: 'Темы', title: 'Где возникают затруднения', sub: 'Освоение тем по классам и разбор заданий с типичными ошибками.', icon: 'M4 4h16v16H4zM4 9.3h16M4 14.6h16M9.3 4v16M14.6 4v16' },
+    { id: 'students', label: 'Ученики', title: 'Ученики и группы поддержки', sub: 'Кому и по какой теме нужна помощь — готовые списки для дополнительных занятий.', icon: 'M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM22 19v-1a4 4 0 0 0-3-3.9M16 4.1a3 3 0 0 1 0 5.8' },
     { id: 'books', label: 'Учебники', title: 'Эффективность учебников', sub: 'Сравнение прироста с учётом учителя: вывод только там, где данные позволяют.', icon: 'M5 4h10a4 4 0 0 1 4 4v12H9a4 4 0 0 1-4-4zM5 16a4 4 0 0 1 4-4h10' },
     { id: 'hours', label: 'Часы', title: 'Распределение учебных часов', sub: 'Программа → рекомендация. Сумма часов сохраняется, каждое изменение обосновано.', icon: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2' },
     { id: 'report', label: 'Отчёт', title: 'Отчёт для педсовета', sub: 'Одна страница: печать или сохранение в PDF.', icon: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6' },
@@ -26,7 +27,8 @@
   /* ---------------------------------------------------------------- state */
   let rows = [], baseRows = [], liveRows = [], pending = [], version = 0;
   let st = { tab: 'overview', subject: 'Математика', className: '', period: 0, mastery: 70, scenario: 'clean', source: 'demo', reserve: 4, rebalance: true, program: {}, weights: {}, bookTopic: '', reference: '' };
-  let selection = null, drawer = null, error = '', notice = '', storageError = false;
+  let selection = null, drawer = null, error = '', notice = '', storageError = false, riskFilter = 'high', aiAvailable = false, aiBusy = false;
+  const aiSummary = {};
   let host = null, navHost = null, studentHost = null;
   const memo = new Map();
   const prevBars = new Map(), prevNums = new Map(), prevSeg = new Map();
@@ -103,7 +105,7 @@
   const icon = (path, cls = '') => `<svg class="mx-icon ${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"/></svg>`;
   const I = {
     arrow: 'M5 12h14M13 6l6 6-6 6', close: 'M6 6l12 12M18 6L6 18', warn: 'M12 4l9 16H3zM12 10v4M12 17v.5', check: 'M5 12.5l4.5 4.5L19 7',
-    info: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 11v6M12 7.5v.5', book: TABS[2].icon, clock: TABS[3].icon, topic: TABS[1].icon,
+    info: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 11v6M12 7.5v.5', book: TABS.find(t => t.id === 'books').icon, clock: TABS.find(t => t.id === 'hours').icon, topic: TABS.find(t => t.id === 'topics').icon,
     download: 'M12 4v11M7 10l5 5 5-5M5 20h14', upload: 'M12 20V9M7 14l5-5 5 5M5 4h14', print: 'M7 9V4h10v5M7 17H4v-7h16v7h-3M7 14h10v6H7z', reset: 'M4 12a8 8 0 1 0 2.3-5.7M4 4v4h4', minus: 'M6 12h12', plus: 'M12 6v12M6 12h12'
   };
   const seg = (key, field, items, value, extra = '') => `<div class="mx-seg" data-seg="${esc(key)}" role="group"><div class="mx-seg-row">${items.map(([v, label]) => `<button type="button" data-mx-set="${field}" data-value="${esc(v)}"${extra} aria-pressed="${String(v) === String(value)}">${esc(label)}</button>`).join('')}</div><div class="mx-seg-row mx-seg-active" aria-hidden="true">${items.map(([, label]) => `<span>${esc(label)}</span>`).join('')}</div></div>`;
@@ -173,6 +175,7 @@
       ${card('Решения для педсовета', decisions, 'accent', 7, `<button type="button" class="mx-link" data-mx-tab="report">Отчёт ${icon(I.arrow)}</button>`)}
       ${card('Учебники · с учётом учителя', booksBody, '', 8, `<button type="button" class="mx-link" data-mx-tab="books">Подробнее ${icon(I.arrow)}</button>`)}
       ${card('Часы · было → стало', hours, '', 9, `<button type="button" class="mx-link" data-mx-tab="hours">План ${icon(I.arrow)}</button>`)}
+      ${card('Живые данные из тренажёра', liveUI(), '', 10, `<button type="button" class="mx-link" data-mx-tab="students">Ученики ${icon(I.arrow)}</button>`)}
     </div>`;
   }
 
@@ -197,7 +200,57 @@
   }
   function flagPill(flag) { return ({ hard: pill('low', 'Трудное'), weak: pill('watch', 'Плохо различает'), misconception: pill('info', 'Типичная ошибка') })[flag] || ''; }
 
+  function liveUI() {
+    const live = liveRows.filter(r => r.subject === st.subject);
+    if (!live.length) return `<p class="mx-muted">Ответы учеников из тренажёра появятся здесь сразу — из уроков и игры «Барыс жолы». Переключитесь в режим «Ученик», выберите класс и код ученика и пройдите задание.</p>`;
+    const ok = live.filter(r => r.correct).length;
+    const byTopic = new Map();
+    for (const r of live) { const t = byTopic.get(r.topic) || { n: 0, ok: 0 }; t.n++; t.ok += r.correct; byTopic.set(r.topic, t); }
+    return `<div class="mx-live-kpis"><div>${num('lv:n', live.length, 'int')}<span>ответов</span></div><div>${num('lv:acc', 100 * ok / live.length, 'pct0')}<span>верно</span></div><div>${num('lv:s', new Set(live.map(r => r.student_id)).size, 'int')}<span>учеников</span></div></div>
+      <ul class="mx-live-topics">${[...byTopic.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 5).map(([t, v]) => `<li><span>${esc(t)}</span>${bar('lvt:' + t, 100 * v.ok / v.n, toneOfScore(100 * v.ok / v.n))}<b>${v.ok}/${v.n}</b></li>`).join('')}</ul>
+      <p class="mx-foot">${icon(I.info)} Живые ответы сразу учитываются в диагностике тем и в плане часов.</p>`;
+  }
+
+  /* ------------------------------------------------------------- students */
+  const RISK = { high: 'Высокий риск', medium: 'Средний риск', low: 'Освоено' };
+  function studentsUI() {
+    const data = viewRows();
+    if (!data.length) return emptyUI();
+    const profiles = cached('prof|' + st.subject + st.period + st.className + st.mastery, () => C().studentProfiles(data, opts()));
+    const groups = cached('grp|' + st.subject + st.period + st.className + st.mastery, () => C().supportGroups(data, opts()));
+    const high = profiles.filter(p => p.risk === 'high'), medium = profiles.filter(p => p.risk === 'medium');
+    const active = profiles.filter(p => p.live > 0).length;
+    const topics = C().topicStats(data, opts()).map(t => t.topic);
+    const list = riskFilter === 'all' ? profiles : profiles.filter(p => p.risk === riskFilter);
+    const kpis = `<div class="mx-kpis">
+      <article class="mx-kpi"><span>Высокий риск</span>${num('st:h', high.length, 'int')}<small>не освоено ≥ 2/3 тем</small>${bar('st:h', 100 * high.length / profiles.length, 'low')}</article>
+      <article class="mx-kpi"><span>Средний риск</span>${num('st:m', medium.length, 'int')}<small>не освоено ≥ 1/3 тем</small>${bar('st:m', 100 * medium.length / profiles.length, 'mid')}</article>
+      <article class="mx-kpi"><span>Учеников</span>${num('st:n', profiles.length, 'int')}<small>${st.className ? 'класс ' + esc(st.className) : 'вся параллель'}</small>${bar('st:n', 100, 'info')}</article>
+      <article class="mx-kpi"><span>Занимаются в тренажёре</span>${num('st:a', active, 'int')}<small>есть живые ответы</small>${bar('st:a', profiles.length ? 100 * active / profiles.length : 0, 'good')}</article>
+    </div>`;
+    const groupList = groups.length ? `<ul class="mx-groups">${groups.slice(0, 8).map(g => `<li><details><summary><span class="mx-g-topic"><strong>${esc(g.topic)}</strong><small>не освоили ${g.count} из ${g.total} · ядро ${g.core} (≤ 40%)</small></span><span class="mx-g-classes">${g.groups.map(c => `<span class="mx-class-chip">${esc(c.cls)} · ${c.core.length || c.size}</span>`).join('')}</span></summary><div class="mx-g-body">${g.groups.map(c => `<div><b>${esc(c.cls)}</b><span>${c.core.length ? 'ядро: ' + c.core.map(esc).join(', ') : 'ядра нет'}</span><small>все не освоившие (${c.size}): ${c.students.map(esc).join(', ')}</small></div>`).join('')}</div></details></li>`).join('')}</ul>` : '<p class="mx-muted">Все темы освоены.</p>';
+    const table = `<div class="mx-controls">${seg('risk', 'risk', [['high', 'Высокий'], ['medium', 'Средний'], ['all', 'Все']], riskFilter)}<span class="mx-chip">${list.length} учеников</span></div>
+      <div class="mx-table-wrap"><table class="mx-table mx-students"><thead><tr><th>Код</th><th>Класс</th><th>Темы</th><th>Не освоено</th><th>Результат</th><th>Прирост</th><th>Тренажёр</th></tr></thead><tbody>${list.slice(0, 40).map(p => `<tr><th scope="row"><button type="button" class="mx-link" data-mx-student="${esc(p.id)}">${esc(p.id)}</button></th><td>${esc(p.cls)}</td><td><span class="mx-dots">${topics.map(t => { const v = p.topics[t]; return `<i class="tone-${!v ? 'none' : v.mastered ? 'good' : v.score <= 40 ? 'low' : 'mid'}" title="${esc(t)}: ${v ? fmt.pct0(v.score) : '—'}"></i>`; }).join('')}</span></td><td>${p.weak.length} / ${p.covered}</td><td>${fmt.pct0(p.score)}</td><td>${fmt.pp(p.gain)}</td><td>${p.live ? p.live + ' отв.' : '—'}</td></tr>`).join('')}</tbody></table></div>${list.length > 40 ? `<p class="mx-foot">Показаны первые 40. Полный список — в CSV групп.</p>` : ''}`;
+    return `${kpis}
+      ${card('Группы поддержки по темам', `<p class="mx-lead">Для каждой трудной темы — кто не освоил её в каждом классе. «Ядро» (≤ 40% верных) — первые кандидаты на дополнительные занятия из резерва часов.</p>${groupList}<div class="mx-actions"><button type="button" class="mx-btn primary" data-mx-action="groups-csv">${icon(I.download)}Скачать списки групп (CSV)</button><button type="button" class="mx-btn" data-mx-tab="hours">${icon(I.clock)}Связать с планом часов</button></div>`, '', 3)}
+      ${card('Ученики в зоне риска', `<p class="mx-lead">Квадраты — темы программы: зелёный — освоено, янтарный — повторить, красный — ≤ 40%. Нажмите на код, чтобы открыть профиль.</p>${table}`, '', 4)}
+      <p class="mx-foot">${icon(I.info)} Только псевдонимные коды. Риск — сигнал для внимания методиста и учителя, а не оценка ученика.</p>`;
+  }
+  function studentDrawerUI() {
+    const data = viewRows();
+    const p = C().studentProfiles(data, opts()).find(x => x.id === drawer.student);
+    if (!p) return '';
+    const topics = C().topicStats(data, opts()).map(t => t.topic);
+    const live = liveRows.filter(r => r.student_id === p.id && r.subject === st.subject);
+    const body = `<div class="mx-mini-kpis"><div><span>Результат</span>${num('sd:s', p.score, 'pct0')}</div><div><span>Не освоено</span>${num('sd:w', p.weak.length, 'int')}<small>из ${p.covered} тем</small></div><div><span>Прирост</span>${num('sd:g', p.gain, 'pp')}</div></div>
+      <h3>Темы</h3><ul class="mx-class-bars mx-topic-mini">${topics.map(t => { const v = p.topics[t]; return `<li><span title="${esc(t)}">${esc(t)}</span>${bar('sdt:' + t, v ? v.score : 0, v ? toneOfScore(v.score) : 'none')}<b>${v ? fmt.pct0(v.score) : '—'}</b></li>`; }).join('')}</ul>
+      <h3>Тренажёр</h3><p class="mx-muted">${live.length ? `${live.length} живых ответов, верно ${live.filter(r => r.correct).length}.` : 'Живых ответов пока нет.'}</p>
+      <h3>Что сделать</h3><ul class="mx-todo">${p.weak.length ? p.weak.slice(0, 3).map(t => `<li>Включить в группу поддержки по теме «${esc(t)}»${p.topics[t].score <= 40 ? ' (ядро группы)' : ''}.</li>`).join('') + `<li>Назначить в тренажёре уроки и «Барыс жолы» по теме «${esc(p.weak[0])}».</li>` : '<li>Все темы освоены — можно давать задания повышенной сложности.</li>'}</ul>`;
+    return `<div class="mx-drawer-backdrop" data-mx-close></div><aside class="mx-drawer" role="dialog" aria-modal="true" aria-labelledby="mx-drawer-title"><header><div><h2 id="mx-drawer-title">${esc(p.id)}</h2><p class="mx-drawer-sub">${esc(p.cls)} · ${esc(p.teacher)} · ${esc(p.book)} · ${RISK[p.risk]}</p></div><button type="button" class="mx-icon-btn" data-mx-close aria-label="Закрыть">${icon(I.close)}</button></header><div class="mx-drawer-body">${body}</div></aside>`;
+  }
+
   function drawerUI() {
+    if (drawer && drawer.student) return studentDrawerUI();
     if (!drawer) return '';
     const base = subjectRows();
     const data = drawer.className ? base.filter(r => r.class === drawer.className) : base;
@@ -221,7 +274,7 @@
       <ul class="mx-q">${s.questions.map(q => `<li><div class="mx-q-head"><strong>${esc(q.text)}</strong><span>${fmt.pct0(q.p)} верно</span></div>${bar('drq:' + q.id, q.p, toneOfScore(q.p))}<div class="mx-q-meta">${q.correctAnswer ? `<span class="ok">${icon(I.check)}${esc(q.correctAnswer)}</span>` : ''}${q.wrong.map(w => `<span class="bad">${esc(w.answer)} · ${fmt.pct0(100 * w.share)}</span>`).join('')}</div><div class="mx-q-foot">${q.flags.map(flagPill).join('')}<span class="mx-muted">различает: ${q.discrimination == null ? '—' : q.discrimination.toFixed(2).replace('.', ',')}</span></div></li>`).join('')}</ul>
       <h3>Что сделать</h3>
       <ul class="mx-todo">
-        ${s.questions[0] && s.questions[0].wrong[0] ? `<li>Разобрать с учителями ошибку «${esc(s.questions[0].wrong[0].answer)}» в задании ${esc(quote(s.questions[0].text))}.</li>` : ''}
+        ${(() => { const q = s.questions.find(x => x.wrong[0] && x.total >= 10); return q ? `<li>Разобрать с учителями ошибку «${esc(q.wrong[0].answer)}» в задании ${esc(quote(q.text))}.</li>` : ''; })()}
         ${plan && plan.delta > 0 ? `<li>Добавить ${plan.delta} ч к теме (план: ${plan.base} → ${plan.recommended} ч).</li>` : ''}
         ${worse.map(b => `<li>В классах с «${esc(b.book)}» прирост ниже на ${esc(fmt.pp(Math.abs(b.diff)))} — дать дополнительные материалы.</li>`).join('')}
         ${s.status === 'ok' ? '<li>Тема освоена — достаточно поддерживающего повторения.</li>' : ''}
@@ -309,7 +362,7 @@
   function reasonExtra(p) {
     if (!p.stats || p.delta <= 0) return '';
     const data = viewRows();
-    const q = C().itemStats(data, p.topic).find(x => x.wrong.length);
+    const q = C().itemStats(data, p.topic).find(x => x.wrong.length && x.total >= 10);
     const cmp = C().compareBooks(subjectRows(), { topic: p.topic, reps: 200 });
     const worse = (cmp.books || []).filter(b => b.verdict === 'worse').map(b => b.book);
     return (q ? ' Частая ошибка: «' + esc(q.wrong[0].answer) + '» в задании ' + esc(quote(short(q.text, 40))) + '.' : '') + (worse.length ? ' Слабее результаты у: ' + worse.map(esc).join(', ') + ' — нужны доп. материалы.' : '');
@@ -321,10 +374,14 @@
     if (!data.length) return emptyUI();
     const ins = insights(), k = ins.kpi, plan = ins.plan, books = ins.books;
     const date = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-    return `<div class="mx-actions mx-in" style="--i:1"><button type="button" class="mx-btn primary" data-mx-action="print">${icon(I.print)}Печать / PDF</button></div>
+    const key = [st.subject, st.className, st.period, st.mastery].join('|');
+    const ai = aiSummary[key];
+    const aiBlock = ai ? `<section class="mx-ai"><h3>Выводы ИИ <span class="mx-pill tone-info">черновик — проверьте</span></h3><p>${esc(ai.summary)}</p>${ai.actions && ai.actions.length ? `<ol>${ai.actions.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}${ai.caveats && ai.caveats.length ? `<p class="mx-small">${ai.caveats.map(esc).join(' ')}</p>` : ''}</section>` : '';
+    return `<div class="mx-actions mx-in" style="--i:1"><button type="button" class="mx-btn primary" data-mx-action="print">${icon(I.print)}Печать / PDF</button><button type="button" class="mx-btn" data-mx-action="ai-summary"${aiAvailable && !aiBusy ? '' : ' disabled'} title="${aiAvailable ? 'Отправляются только сводные цифры по темам и учебникам, без кодов учеников' : 'ИИ доступен, если на сервере задан ANTHROPIC_API_KEY'}">${icon(I.info)}${aiBusy ? 'Формулирую выводы…' : ai ? 'Обновить выводы ИИ' : 'Сформулировать выводы с ИИ'}</button>${aiAvailable ? '' : '<span class="mx-chip">ИИ выключен: на сервере нет ключа</span>'}</div>
     <article class="mx-report mx-in" style="--i:2">
       <header><div><h2>${esc(st.subject)}: результаты, учебники и часы</h2><p>Отчёт методиста от ${esc(date)} · ${st.className ? 'Класс ' + esc(st.className) : 'Вся параллель'} · ${st.period ? 'последние ' + st.period + ' дней' : 'весь период'} · освоено при ≥ ${st.mastery}% · ${st.source === 'csv' ? 'данные школы (CSV)' : 'демо-данные (синтетические)'}</p></div></header>
       <div class="mx-r-kpis"><div><b>${fmt.pct(k.score)}</b><span>средний результат</span></div><div><b>${fmt.pct0(100 * k.masteredShare)}</b><span>освоили темы</span></div><div><b>${k.risk} из ${k.topics}</b><span>темы в зоне риска</span></div><div><b>${fmt.int(k.students)}</b><span>учеников</span></div></div>
+      ${aiBlock}
       <h3>1. Решения</h3><ol>${ins.decisions.map(d => `<li>${esc(d.text)}</li>`).join('')}</ol>
       <h3>2. Освоение тем</h3><div class="mx-table-wrap"><table class="mx-table"><thead><tr><th>Тема</th><th>Результат</th><th>Не освоили</th><th>Прирост</th><th>n</th><th>Статус</th></tr></thead><tbody>${ins.stats.map(s => `<tr><td>${esc(s.topic)}</td><td>${fmt.pct(s.score)}</td><td>${fmt.pct0(100 * s.notMasteredShare)}</td><td>${fmt.pp(s.gain)}</td><td>${s.n}</td><td>${STATUS[s.status]}${s.lowData ? ' · мало данных' : ''}</td></tr>`).join('')}</tbody></table></div>
       <h3>3. Учебники (с учётом учителя)</h3>${books && (books.state === 'ok' || books.state === 'partial') ? `<div class="mx-table-wrap"><table class="mx-table"><thead><tr><th>Учебник</th><th>Учеников</th><th>Разница с «${esc(books.reference)}»</th><th>95% ДИ</th><th>Вывод</th></tr></thead><tbody>${books.books.map(b => `<tr><td>${esc(b.book)}</td><td>${b.n}</td><td>${b.reference ? '—' : fmt.pp(b.diff)}</td><td>${b.reference || !b.comparable ? '—' : fmt.signed(b.lo) + ' … ' + fmt.signed(b.hi)}</td><td>${VERDICT[b.verdict]}</td></tr>`).join('')}</tbody></table></div>` : `<p>${esc(books && books.why ? books.why : 'Сравнение невозможно.')}</p>`}
@@ -365,7 +422,7 @@
     if (!host || !C()) return;
     renderNav();
     const tab = TABS.find(t => t.id === st.tab) || TABS[0];
-    const views = { overview: overviewUI, topics: topicsUI, books: booksUI, hours: hoursUI, report: reportUI, data: dataUI };
+    const views = { overview: overviewUI, topics: topicsUI, students: studentsUI, books: booksUI, hours: hoursUI, report: reportUI, data: dataUI };
     const focusKey = doc && doc.activeElement && host.contains(doc.activeElement) ? focusId(doc.activeElement) : null;
     const scrollY = global.scrollY;
     host.classList.add('metodist');
@@ -454,6 +511,22 @@
     const done = () => { drawer = null; if (doc) doc.body.classList.remove('mx-lock'); render('update'); };
     if (d) { d.classList.add('is-closing'); if (bd) bd.classList.add('is-closing'); setTimeout(done, reduced() ? 120 : 200); } else done();
   }
+  async function requestSummary() {
+    if (aiBusy || !aiAvailable) return;
+    aiBusy = true; render('update');
+    const key = [st.subject, st.className, st.period, st.mastery].join('|');
+    try {
+      const payload = C().summaryPayload(viewRows(), program(), { mastery: st.mastery, reserve: st.reserve, rebalance: st.rebalance, weights: st.weights[st.subject] || {}, compareRows: subjectRows(), reps: 200 });
+      const res = await fetch('./api/summary', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error(String(res.status));
+      aiSummary[key] = await res.json();
+      toast('Выводы ИИ добавлены в отчёт.');
+    } catch (_) {
+      if (String(_ && _.message) === '503') aiAvailable = false;
+      notice = 'ИИ сейчас недоступен — в отчёте остаются автоматические выводы по правилам.';
+    }
+    aiBusy = false; render('update');
+  }
   function toast(text) {
     if (!doc || !doc.createElement) return;
     let el = doc.querySelector('.mx-toast');
@@ -478,17 +551,19 @@
 
   /* -------------------------------------------------------------- events */
   function onClick(event) {
-    const t = event.target.closest ? event.target.closest('[data-mx-tab],[data-mx-set],[data-mx-topic],[data-mx-close],[data-mx-hours],[data-mx-reserve],[data-mx-action]') : null;
+    const t = event.target.closest ? event.target.closest('[data-mx-tab],[data-mx-set],[data-mx-topic],[data-mx-student],[data-mx-close],[data-mx-hours],[data-mx-reserve],[data-mx-action]') : null;
     if (!t) return;
     const d = t.dataset;
     if (d.mxTab) return go(d.mxTab);
     if (d.mxClose !== undefined) return closeDrawer();
     if (d.mxTopic) return openDrawer(d.mxTopic, d.class != null ? d.class : st.className);
+    if (d.mxStudent) { drawer = { student: d.mxStudent }; render('update'); const dr = host.querySelector('.mx-drawer'); if (dr) { dr.classList.add('is-opening'); const b = dr.querySelector('[data-mx-close]'); if (b) b.focus({ preventScroll: true }); } if (doc) doc.body.classList.add('mx-lock'); return; }
     if (d.mxSet) {
       const v = d.value;
       if (d.mxSet === 'subject') { st.subject = v; st.className = ''; st.bookTopic = ''; st.reference = ''; }
       else if (d.mxSet === 'period') st.period = Number(v);
       else if (d.mxSet === 'bookTopic') st.bookTopic = v;
+      else if (d.mxSet === 'risk') riskFilter = v;
       else if (d.mxSet === 'weight') { st.weights[st.subject] = { ...(st.weights[st.subject] || {}), [d.topic]: Number(v) }; }
       save(); return render(d.mxSet === 'bookTopic' ? 'enter' : 'update');
     }
@@ -501,6 +576,8 @@
     const a = d.mxAction;
     if (a === 'dismiss') { error = ''; notice = ''; return render('update'); }
     if (a === 'print') return global.print && global.print();
+    if (a === 'groups-csv') { download('jaz-groups-' + st.subject.replace(/\s+/g, '-') + '.csv', C().groupsCSV(C().supportGroups(viewRows(), opts()))); return toast('Списки групп поддержки скачаны.'); }
+    if (a === 'ai-summary') return requestSummary();
     if (a === 'template') { download('jaz-template.csv', C().templateCSV(baseRows.slice(0, 30))); return toast('Шаблон скачан: первые строки — пример заполнения.'); }
     if (a === 'export') { download('jaz-data.csv', C().exportCSV(rows)); return toast('Данные выгружены в CSV.'); }
     if (a === 'plan-csv') { download('jaz-plan-' + st.subject.replace(/\s+/g, '-') + '.csv', C().planCSV(insights().plan)); return toast('План часов скачан.'); }
@@ -582,6 +659,7 @@
       if (doc && doc.addEventListener) doc.addEventListener('keydown', onKey);
     }
     navHost = doc && doc.getElementById ? doc.getElementById('method-nav') : null;
+    if (global.fetch) global.fetch('./api/status').then(r => r.ok ? r.json() : null).then(d => { const was = aiAvailable; aiAvailable = !!(d && d.ai); if (was !== aiAvailable && st.tab === 'report') render('update'); }).catch(() => {});
     render('enter');
   }
   function unmount() { if (doc && doc.body) doc.body.classList.remove('mx-lock'); drawer = null; }

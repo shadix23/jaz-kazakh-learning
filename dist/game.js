@@ -58,7 +58,7 @@
   }
 
   /* --------------------------------------------------------- game state */
-  let host = null, opts = {}, canvas = null, ctx = null, raf = 0, last = 0, listeners = [], game = null, screen = 'start', sprites = {}, scenery = null, resizeObs = null;
+  let host = null, opts = {}, canvas = null, ctx = null, canvas3d = null, barys = null, barysState = null, raf = 0, last = 0, listeners = [], game = null, screen = 'start', sprites = {}, scenery = null, resizeObs = null;
   const ZFAR = 95, F0 = 7;
 
   function on(target, type, fn, o) { target.addEventListener(type, fn, o); listeners.push([target, type, fn, o]); }
@@ -105,6 +105,7 @@
     canvas.width = Math.max(1, Math.round(r.width * dpr)); canvas.height = Math.max(1, Math.round(r.height * dpr));
     canvas.style.width = r.width + 'px'; canvas.style.height = r.height + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (barys) barys.resize(r.width, r.height, dpr);
     buildScenery(r.width, r.height);
   }
   function buildScenery(W, H) {
@@ -237,6 +238,12 @@
     const w = base.laneW * 0.62, img = sprite(g.pose), ratio = img.naturalWidth ? img.naturalHeight / img.naturalWidth : 0.91;
     // shadow
     ctx.fillStyle = 'rgba(10,20,40,.25)'; ctx.beginPath(); ctx.ellipse(base.x, base.y - 2, w * 0.36 * (1 - jumpH * 0.3), w * 0.09, 0, 0, 7); ctx.fill();
+    if (barys) {
+      const mode = g.over || g.paused ? 'idle' : t >= 0 ? 'jump' : g.poseT > 0 ? (g.pose === '05-celebrate' ? 'celebrate' : 'hit') : 'run';
+      barysState = { x: p.x, y: p.y - (t >= 0 ? 0 : bob * base.laneW * 0.2), size: base.laneW * 1.05, mode, jump: Math.max(0, t), rate: Math.max(1.4, (g.speed * g.slowmo) / 7.5), lean: g.lane - g.laneX, reduced: reduced() };
+      if (canvas3d) canvas3d.style.opacity = g.invuln > 0 && Math.floor(g.invuln * 12) % 2 ? '0.45' : '1';
+      return;
+    }
     if (g.invuln > 0 && Math.floor(g.invuln * 12) % 2) ctx.globalAlpha = 0.45;
     if (img.complete && img.naturalWidth) ctx.drawImage(img, p.x - w / 2, p.y - w * ratio, w, w * ratio);
     else { ctx.fillStyle = '#e8eef8'; ctx.beginPath(); ctx.arc(p.x, p.y - w * 0.4, w * 0.35, 0, 7); ctx.fill(); }
@@ -311,7 +318,14 @@
     const dt = Math.min(0.05, (now - (last || now)) / 1000); last = now;
     if (!ctx || !scenery) return;
     if (screen === 'run') update(dt);
+    if (!barys && canvas3d && global.JazBarys3D) { barys = global.JazBarys3D.create(canvas3d); if (barys) size(); }
+    barysState = null;
     drawWorld(dt);
+    if (barys) {
+      // On menus Barys stands in the middle lane, facing the player.
+      const st = barysState || (() => { const b = proj(0, 0.6, 0); return { x: b.x, y: b.y, size: b.laneW * 0.9, mode: 'idle' }; })();
+      barys.render({ ...st, t: now / 1000 });
+    }
   }
 
   /* ----------------------------------------------------------------- HUD */
@@ -463,12 +477,12 @@
     if (!container || !P) return;
     host = container; opts = { ...(options || {}) };
     const st = stats();
-    host.innerHTML = `<div class="g-stage"><canvas class="g-canvas" tabindex="0" aria-label="Барыс жолы ойыны. Сұрақ және жауаптар төмендегі карточкада."></canvas>
+    host.innerHTML = `<div class="g-stage"><canvas class="g-canvas" tabindex="0" aria-label="Барыс жолы ойыны. Сұрақ және жауаптар төмендегі карточкада."></canvas><canvas class="g-3d" aria-hidden="true"></canvas>
       <div class="g-top"><button type="button" class="g-icon-btn" data-g-action="exit" aria-label="Ойыннан шығу">${svg('back')}</button><strong>Барыс жолы</strong><div><button type="button" class="g-icon-btn" data-g-action="mute" aria-label="${st.muted ? 'Дыбысты қосу' : 'Дыбысты өшіру'}">${svg(st.muted ? 'mute' : 'sound')}</button></div></div>
       <div class="g-hud" hidden><div class="g-hud-row"><div class="g-hearts" data-g="hearts"></div><div class="g-hud-right"><span class="g-coins">${svg('coin')}<b data-g="coins">0</b></span><button type="button" class="g-icon-btn" data-g-action="pause" aria-label="Үзіліс">${svg('pause')}</button></div></div>
         <div class="g-question idle" aria-live="polite"></div><div class="g-combo" data-g="combo"></div><div class="g-score"><small>ұпай</small><b data-g="score">0</b></div></div>
       <div class="g-banner" aria-live="assertive"></div><div class="g-overlay"></div></div>`;
-    canvas = host.querySelector('canvas'); ctx = canvas.getContext('2d');
+    canvas = host.querySelector('.g-canvas'); ctx = canvas.getContext('2d'); canvas3d = host.querySelector('.g-3d');
     ['01-primary', '05-celebrate', '06-thinking', '12-rest', '04-wave'].forEach(sprite);
     size();
     if (global.ResizeObserver) { resizeObs = new ResizeObserver(size); resizeObs.observe(host.querySelector('.g-stage')); }
@@ -482,6 +496,8 @@
     for (const [t, type, fn, o] of listeners) t.removeEventListener(type, fn, o);
     listeners = [];
     if (resizeObs) resizeObs.disconnect(); resizeObs = null;
+    if (barys) barys.dispose();
+    barys = null; canvas3d = null; barysState = null;
     game = null; host = null; canvas = null; ctx = null; screen = 'start';
   }
 

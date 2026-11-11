@@ -121,6 +121,15 @@
   function subjectSwitch() {
     return `<div class="subject-switch" role="group" aria-label="Пәнді таңда">${P.SUBJECTS.map((s) => `<button data-action="subject" data-id="${esc(s.id)}" aria-pressed="${s.id === subject}">${icon(s.id === P.MATH ? 'calc' : 'book')}<span>${esc(s.kk)}</span></button>`).join('')}</div>`;
   }
+  function subjectCards() {
+    return `<section class="subject-cards" aria-label="Пәндер">${P.SUBJECTS.map((s) => {
+      const list = L.lessons.filter((l) => l.subject === s.id);
+      const done = list.filter((l) => progress.completedLessons.includes(l.id)).length;
+      const next = list.find((l) => !progress.completedLessons.includes(l.id)) || list[0];
+      const math = s.id === P.MATH;
+      return `<article class="subject-card ${math ? 'math' : 'kaz'}${s.id === subject ? ' current' : ''}"><div class="subject-card-top"><span class="subject-glyph">${math ? 'π' : 'Ә'}</span><div><h3>${esc(s.kk)}</h3><small>${done} / ${list.length} тақырып аяқталды</small></div></div><div class="meter"><span style="width:${done / list.length * 100}%"></span></div><p>Келесі: <strong>${esc(next.title)}</strong></p><div class="subject-card-actions"><button class="btn btn-primary" data-action="lesson" data-id="${next.id}">Сабақ ${icon('arrow')}</button><button class="btn btn-ghost" data-action="start-game-subject" data-id="${esc(s.id)}">${icon('run')}Ойын</button></div></article>`;
+    }).join('')}</section>`;
+  }
   function gamePromo() {
     const stats = window.JazGame?.stats() || { best: 0, coins: 0 };
     return `<section class="game-promo"><div class="game-promo-copy"><span class="game-tag">${icon('run')}Жаңа ойын</span><h2>Барыс жолы</h2><p>Үш жол, бір дұрыс жауап. Барыспен бірге жүгіріп, ${esc(subjectName(subject).toLowerCase())} тақырыптарын бекіт.</p><div class="game-promo-stats"><span>${icon('trophy')}Рекорд <b>${stats.best}</b></span><span>${icon('coin')}Тиын <b>${stats.coins}</b></span></div><button class="btn btn-white" data-action="start-game">Жүгіруді бастау ${icon('arrow')}</button></div><div class="game-promo-art" aria-hidden="true"><span class="lane l1"></span><span class="lane l2"></span><span class="lane l3"></span><img src="./assets/mascot-kit/04-wave.png" alt="" width="200" height="183"></div></section>`;
@@ -129,7 +138,7 @@
     return `<span class="barys-avatar ${extraClass}"><img src="./assets/mascot-kit/03-avatar.png" alt="" width="160" height="146"></span>`;
   }
   function heroMascot() {
-    return `<span class="hero-wipe" aria-hidden="true"></span><span class="banner-ornaments" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-visual"><span class="letter-chip first" aria-hidden="true">Ә</span><span class="letter-chip second" aria-hidden="true">Ң</span><button class="mascot-stage" data-action="mascot-hello" aria-label="Барыспен амандасу"><span class="mascot-shadow" aria-hidden="true"></span><img class="barys-character" data-state-poses src="./assets/mascot-kit/01-primary.png" alt="Көк шарфы мен қазақы тақиясы бар қар барысы" width="960" height="877" draggable="false"></button><span class="mascot-speech" aria-hidden="true">Сәлем! Мен — Барыс.</span></div>`;
+    return `<span class="hero-wipe" aria-hidden="true"></span><span class="banner-ornaments" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-visual"><span class="letter-chip first" aria-hidden="true">${subject === P.MATH ? 'π' : 'Ә'}</span><span class="letter-chip second" aria-hidden="true">${subject === P.MATH ? '×' : 'Ң'}</span><button class="mascot-stage" data-action="mascot-hello" aria-label="Барыспен амандасу"><span class="mascot-shadow" aria-hidden="true"></span><img class="barys-character" data-state-poses src="./assets/mascot-kit/01-primary.png" alt="Көк шарфы мен қазақы тақиясы бар қар барысы" width="960" height="877" draggable="false"></button><span class="mascot-speech" aria-hidden="true">Сәлем! Мен — Барыс.</span></div>`;
   }
   function lessonTile(lesson) {
     const complete = progress.completedLessons.includes(lesson.id);
@@ -146,6 +155,7 @@
     const nextLesson = lessons.find((lesson) => !progress.completedLessons.includes(lesson.id)) || lessons[0];
     const math = subject === P.MATH;
     return `<div class="route-enter"><section class="hero"><div class="hero-copy"><span class="eyebrow">${math ? '6-СЫНЫП · МАТЕМАТИКА' : '6-СЫНЫП · ҚАЗАҚ ТІЛІ'}</span><h1 data-type-title>${math ? 'Есепті түсін,<br>ойнап бекіт.' : 'Қазақша жазуды<br>әдетке айналдыр.'}</h1><p>${math ? 'Пропорциядан рационал сандарға дейін — сабақ пен ойын.' : 'Қысқа сабақтан баста. Ойыңды чатта жеткіз.'}</p><button class="btn btn-white" data-action="start-game">Барыс жолын бастау ${icon('arrow')}</button></div>${heroMascot()}</section>
+    <div class="section-heading"><h2>Пәндерің</h2><span class="section-meta">Мұғалімнің бағдарламасы бойынша</span></div>${subjectCards()}
     <div class="section-heading subject-heading"><h2>Бүгінгі жоспарың</h2>${subjectSwitch()}</div>
     <section class="daily-plan"><div class="plan-left"><div class="plan-cover"><img class="barys-mini" src="./assets/mascot-kit/07-reading.png" alt="" width="135" height="123"></div><h3>Аз-аздан.<br>Күн сайын.</h3><p>Бүгінгі мақсат <strong>${Math.min(todayXp(), 30)} / 30 XP</strong></p><p class="plan-count">${tasks.filter(Boolean).length} / 3 орындалды</p></div><div class="plan-tasks">
     <button class="task-row ${tasks[0] ? 'done' : ''}" data-action="lesson" data-id="${nextLesson.id}"><span class="task-step">${tasks[0] ? icon('check') : '01'}</span><span><strong>Бір сабақты орында</strong><small>${esc(nextLesson.title)} · ${nextLesson.size} тапсырма</small></span>${icon('chevron')}</button>
@@ -156,10 +166,15 @@
     <a class="history-strip" href="#progress"><span class="strip-icon">${icon('clock')}</span><span><strong>Өзгерісіңді байқа</strong><p>Ұпайларың, рекордтарың және түзеткен сөздерің бір жерде.</p></span>${icon('chevron')}</a></div>`;
   }
   function lessonsView() {
+    const order = [subject].concat(P.SUBJECTS.map((x) => x.id).filter((id) => id !== subject));
     const lessons = subjectLessons();
     const next = lessons.find((lesson) => !progress.completedLessons.includes(lesson.id)) || lessons[0];
-    const done = lessons.filter((lesson) => progress.completedLessons.includes(lesson.id)).length;
-    return `<div class="route-enter"><div class="page-intro subject-heading"><div><h1>Бір тақырып. Бір қадам.</h1><p>Сабақтар мұғалімнің бағдарламасымен бірдей. Әр жолы тапсырмалар жаңарады.</p></div>${subjectSwitch()}</div><section class="lesson-banner"><div><h2>${done ? `${done} / ${lessons.length} тақырып аяқталды` : 'Алғашқы тақырыптан бастайық.'}</h2><p>Таңда. Ойланып көр. Қате кетсе, түсіндірмені оқып, қайта байқап көр.</p><button class="btn btn-primary" data-action="lesson" data-id="${next.id}">${done === lessons.length ? 'Қайталап шығу' : 'Сабақты бастау'} ${icon('arrow')}</button></div><img src="./assets/lesson-stack.svg" alt="" width="210" height="140"></section><section class="lesson-grid all-lessons" aria-label="Барлық сабақтар">${lessons.map(lessonTile).join('')}</section></div>`;
+    const sections = order.map((id) => {
+      const list = L.lessons.filter((l) => l.subject === id);
+      const done = list.filter((l) => progress.completedLessons.includes(l.id)).length;
+      return `<div class="section-heading subject-section"><h2>${icon(id === P.MATH ? 'calc' : 'book')}${esc(subjectName(id))}</h2><span class="section-meta">${done} / ${list.length} тақырып</span></div><section class="lesson-grid all-lessons" aria-label="${esc(subjectName(id))}">${list.map(lessonTile).join('')}</section>`;
+    }).join('');
+    return `<div class="route-enter"><div class="page-intro subject-heading"><div><h1>Бір тақырып. Бір қадам.</h1><p>Сабақтар мұғалімнің бағдарламасымен бірдей: қазақ тілі мен математика. Әр жолы тапсырмалар жаңарады.</p></div>${subjectSwitch()}</div><section class="lesson-banner"><div><h2>Келесі сабақ: ${esc(next.title)}</h2><p>Таңда. Ойланып көр. Қате кетсе, түсіндірмені оқып, қайта байқап көр.</p><button class="btn btn-primary" data-action="lesson" data-id="${next.id}">Сабақты бастау ${icon('arrow')}</button></div><img src="./assets/lesson-stack.svg" alt="" width="210" height="140"></section>${sections}</div>`;
   }
   function chatView() {
     const s = activeScenario();
@@ -366,6 +381,7 @@
     else if (action === 'lesson') startLesson(control.dataset.id);
     else if (action === 'subject') { subject = control.dataset.id === P.MATH ? P.MATH : P.KAZ; saveStorage('jaz.subject.v1', subject); render(); }
     else if (action === 'start-game') startGame();
+    else if (action === 'start-game-subject') { subject = control.dataset.id === P.MATH ? P.MATH : P.KAZ; saveStorage('jaz.subject.v1', subject); try { const g = JSON.parse(localStorage.getItem('jaz.game.v1') || '{}'); localStorage.setItem('jaz.game.v1', JSON.stringify({ ...g, subject, topic: '' })); } catch {} startGame(); }
     else if (action === 'lesson-to-game') { $('#lesson-dialog').close(); lessonRun = null; startGame(control.dataset.id); }
     else if (action === 'start-chat') startChat(control.dataset.id);
     else if (action === 'try-correction') startChat('cinema', 'Салем! Кинога барамыз ба?');

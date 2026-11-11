@@ -57,3 +57,23 @@ body[data-page="game"] .app-footer,body[data-page="game"] #student-context{displ
   body[data-page="game"] .workspace{padding-bottom:12px}
   body[data-page="game"] .game-root{height:calc(100dvh - 112px)}
 }
+/* Both subjects visible on the home page */
+.subject-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:8px}
+.subject-card{display:grid;gap:10px;padding:20px;border-radius:22px;background:var(--white,#fff);border:1px solid var(--line,#e1e9f4);box-shadow:0 6px 20px -14px rgba(20,35,61,.35);transition:border-color 180ms ease,transform 200ms cubic-bezier(.23,1,.32,1)}
+.subject-card.current{border-color:var(--blue,#3f70f7)}
+@media (hover:hover) and (pointer:fine){.subject-card:hover{transform:translateY(-2px)}}
+.subject-card-top{display:flex;gap:12px;align-items:center}
+.subject-card h3{margin:0;font-size:19px}
+.subject-card small{color:var(--muted)}
+.subject-card p{margin:0;font-size:13px;color:var(--muted)}
+.subject-card p strong{color:var(--ink)}
+.subject-glyph{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;font-weight:900;font-size:22px;color:#fff;background:linear-gradient(135deg,#2f6fde,#4f8df5)}
+.subject-card.math .subject-glyph{background:linear-gradient(135deg,#f59e0b,#f97316)}
+.subject-card .meter{height:8px}
+.subject-card.math .meter span{background:#f59e0b}
+.subject-card-actions{display:flex;gap:8px;flex-wrap:wrap}
+.subject-card-actions .btn{min-height:42px}
+.subject-section h2{display:flex;align-items:center;gap:8px}
+.subject-section h2 .icon{width:22px;height:22px;color:var(--blue)}
+:root[data-theme="dark"] .subject-card{background:var(--surface);border-color:var(--line)}
+@media (max-width:760px){.subject-cards{grid-template-columns:1fr}}
