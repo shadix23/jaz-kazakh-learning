@@ -2,7 +2,7 @@
 
 Jaz! is a hackathon project for **Case 1 «Data-Driven Curriculum»**: an EdTech platform for school methodists that analyses test results by curriculum topic, finds hard topics, compares textbooks and recommends teaching hours. A learner trainer (Kazakh + Mathematics, 6th grade) produces live answers for the analytics.
 
-**Start with `docs/CODEX-HANDOFF.md`** (current state, rules, prioritised tasks). Then read `docs/CASE-ANALYSIS.md` and `docs/METHODIST-RESEARCH.md`: it states the user, the jury criteria and the methodology. Every change must keep the product oriented to that case.
+**Start with `docs/dev/HANDOFF.md`** (current state, rules, prioritised tasks). Then read `docs/CASE-ANALYSIS.md` and `docs/METHODIST-RESEARCH.md`: it states the user, the jury criteria and the methodology. Every change must keep the product oriented to that case.
 
 ## Run and test
 
