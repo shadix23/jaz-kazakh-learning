@@ -1,4 +1,4 @@
-// Optional AI features (Claude via the official SDK). Credentials stay on the server.
+// Optional server-only AI. Groq takes precedence and never falls back to paid providers.
 'use strict';
 /* ------------------------------------------------------------- AI mentor */
 let client = null, aiDisabledUntil = 0;
@@ -15,6 +15,47 @@ try {
 } catch (_) { client = null; }
 
 const MODEL = 'claude-opus-5-5';
+const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
+const GROQ_MODELS = ['openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'qwen/qwen3.8-27b'];
+
+async function generate(system, prompt, schema, name, maxTokens) {
+  if (!aiReady()) throw new Error('AI unavailable');
+  if (!process.env.GROQ_API_KEY) {
+    const response = await client.beta.messages.create({ model: MODEL, max_tokens: maxTokens,
+      output_config: { format: { type: 'json_schema', schema } }, system,
+      messages: [{ role: 'user', content: prompt }] });
+    if (response.stop_reason === 'refusal') throw new Error('AI refusal');
+    const block = response.content.find(item => item.type === 'text');
+    if (!block) throw new Error('AI empty response');
+    return JSON.parse(block.text);
+  }
+  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST', signal: AbortSignal.timeout(25000),
+    headers: { Authorization: `Bearer ${process.env.GROQ_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: GROQ_MODEL, max_completion_tokens: maxTokens, reasoning_effort: 'low',
+      messages: [{ role: 'system', content: system }, { role: 'user', content: prompt }],
+      response_format: { type: 'json_schema', json_schema: { name, strict: true, schema } } })
+  });
+  if (!response.ok) {
+    const error = new Error('Groq request failed');
+    error.status = response.status;
+    const retry = response.headers.get('retry-after');
+    const seconds = retry && /^\d+(\.\d+)?$/.test(retry) ? Number(retry) : (Date.parse(retry) - Date.now()) / 1000;
+    error.retryAfter = Number.isFinite(seconds) ? Math.max(1, Math.min(300, seconds)) : 60;
+    throw error;
+  }
+  const body = await response.json();
+  const choice = body?.choices?.[0];
+  if (choice?.finish_reason !== 'stop' || choice.message?.refusal || typeof choice.message?.content !== 'string') throw new Error('Groq incomplete response');
+  return JSON.parse(choice.message.content);
+}
+
+function validateCorrection(data) {
+  if (!data || typeof data.ok !== 'boolean' || typeof data.corrected !== 'string' || typeof data.reply !== 'string' || !Array.isArray(data.issues) || !data.issues.every(item => item && ['from', 'to', 'reason'].every(key => typeof item[key] === 'string'))) throw new Error('AI invalid correction');
+}
+function validateSummary(data) {
+  if (!data || typeof data.summary !== 'string' || !Array.isArray(data.actions) || !data.actions.every(item => typeof item === 'string') || !Array.isArray(data.caveats) || !data.caveats.every(item => typeof item === 'string')) throw new Error('AI invalid summary');
+}
 const SYSTEM = `You are "Барыс", a friendly Kazakh writing mentor inside a school practice app for Russian-speaking 6th-grade students (level A2) who learn Kazakh as a second language.
 The student writes a chat message inside a role-play scenario. Your job:
 1. Find every real mistake in the message: Kazakh letters typed as Russian ones (а/ә, к/қ, г/ғ, н/ң, о/ө, у/ұ/ү, и/і, х/һ), vowel harmony, case and plural suffixes, possessive endings, verb person endings, the question particle (ма/ме/ба/бе/па/пе, written separately), word order, capital letters and punctuation.
@@ -46,19 +87,8 @@ ${history.map(m => `${m.role === 'you' ? 'Student' : 'Mentor'}: ${String(m.text 
 
 Student's new message to check:
 <message>${text}</message>`;
-  const response = await client.beta.messages.create({
-    model: MODEL,
-    max_tokens: 4000,
-    betas: ['server-side-fallback-2026-07-01'],
-    fallbacks: 'default',
-    output_config: { effort: 'low', format: { type: 'json_schema', schema: SCHEMA } },
-    system: SYSTEM,
-    messages: [{ role: 'user', content: context }]
-  });
-  if (response.stop_reason === 'refusal') throw new Error('refusal');
-  const block = response.content.find(b => b.type === 'text');
-  if (!block) throw new Error('no text');
-  const data = JSON.parse(block.text);
+  const data = await generate(SYSTEM, context, SCHEMA, 'kazakh_correction', 1536);
+  validateCorrection(data);
   return { ok: !!data.ok, corrected: String(data.corrected || text), issues: (data.issues || []).slice(0, 12), reply: String(data.reply || ''), source: 'ai' };
 }
 
@@ -70,29 +100,21 @@ const SUMMARY_SYSTEM = `Ты — помощник школьного метод�
 Опирайся только на переданные цифры, ничего не выдумывай. Если сравнение учебников заблокировано или разница не подтверждена — так и скажи.`;
 const SUMMARY_SCHEMA = { type: 'object', additionalProperties: false, required: ['summary', 'actions', 'caveats'], properties: { summary: { type: 'string' }, actions: { type: 'array', items: { type: 'string' } }, caveats: { type: 'array', items: { type: 'string' } } } };
 async function summarize(body) {
-  const response = await client.beta.messages.create({
-    model: MODEL,
-    max_tokens: 6000,
-    betas: ['server-side-fallback-2026-07-01'],
-    fallbacks: 'default',
-    output_config: { effort: 'medium', format: { type: 'json_schema', schema: SUMMARY_SCHEMA } },
-    system: SUMMARY_SYSTEM,
-    messages: [{ role: 'user', content: 'Сводные данные (JSON):\n' + JSON.stringify(body).slice(0, 15000) }]
-  });
-  if (response.stop_reason === 'refusal') throw new Error('refusal');
-  const block = response.content.find(b => b.type === 'text');
-  if (!block) throw new Error('no text');
-  const data = JSON.parse(block.text);
+  const data = await generate(SUMMARY_SYSTEM, 'Сводные данные (JSON):\n' + JSON.stringify(body).slice(0, 15000), SUMMARY_SCHEMA, 'methodist_summary', 2500);
+  validateSummary(data);
   return { summary: String(data.summary || ''), actions: (data.actions || []).slice(0, 8).map(String), caveats: (data.caveats || []).slice(0, 4).map(String), source: 'ai' };
 }
 
 
-function aiReady() { return !!client && Date.now() > aiDisabledUntil; }
+function hasClient() { return process.env.GROQ_API_KEY ? GROQ_MODELS.includes(GROQ_MODEL) : !!client; }
+function aiReady() { return process.env.JAZ_AI !== 'off' && hasClient() && Date.now() > aiDisabledUntil; }
 function aiFailed(error) {
+  if ([401, 402, 403].includes(error?.status)) aiDisabledUntil = Date.now() + 300000;
+  if (error?.status === 429) aiDisabledUntil = Date.now() + Math.max(1, Math.min(300, Number(error.retryAfter) || 60)) * 1000;
   try {
     const mod = require('@anthropic-ai/sdk'); const A = mod.default || mod;
     if (error instanceof A.AuthenticationError || error instanceof A.PermissionDeniedError || /credentials|api key|apiKey/i.test(String(error && error.message))) aiDisabledUntil = Date.now() + 5 * 60 * 1000;
   } catch (_) {}
-  console.warn('[ai]', error && (error.status || ''), error && error.message);
+  console.warn('[ai] request failed', error?.status || 'unknown');
 }
-module.exports = { correct, summarize, aiReady, aiFailed, hasClient: () => !!client };
+module.exports = { correct, summarize, aiReady, aiFailed, hasClient };

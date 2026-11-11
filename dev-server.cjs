@@ -28,6 +28,6 @@ function createServer() {
 }
 
 if (require.main === module) {
-  createServer().listen(PORT, '127.0.0.1', () => console.log(`Jaz! Local: http://127.0.0.1:${PORT}  ·  API: on  ·  AI mentor: ${ai.hasClient() ? 'on (Claude)' : 'off — set ANTHROPIC_API_KEY to enable'}`));
+  createServer().listen(PORT, '127.0.0.1', () => console.log(`Jaz! Local: http://127.0.0.1:${PORT}  ·  API: on  ·  AI mentor: ${ai.hasClient() ? (process.env.GROQ_API_KEY ? 'on (Groq)' : 'on (Claude)') : 'off — set GROQ_API_KEY to enable'}`));
 }
 module.exports = { createServer };
