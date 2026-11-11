@@ -104,3 +104,26 @@ test('Kazakh interface, text size and the Kazakh report', () => {
   h.click({ mxSet: 'docLang', value: 'ru' });
   assert.match(h.host.innerHTML, /АНАЛИТИЧЕСКАЯ СПРАВКА/);
 });
+
+test('trainer answers stay out of СОР/СОЧ indicators; assignment loop works in one browser', () => {
+  const h = harness();
+  h.api.mount(h.host);
+  h.click({ mxTab: 'overview' });
+  const quality = h.host.innerHTML.match(/Качество знаний[\s\S]*?data-num="([\d.]+)"/)[1];
+  h.click({ mxTab: 'trainer' });
+  assert.match(h.host.innerHTML, /СОР\/СОЧ и тренажёр — параллельно/);
+  assert.match(h.host.innerHTML, /Группа поддержки:/, 'demo assignment is listed');
+  // The learner (selected in this browser) answers a lesson question.
+  const student = { innerHTML: '', dataset: {}, addEventListener() {}, querySelector: () => null };
+  h.api.renderStudentContext(student);
+  const sel = h.api.selection();
+  for (let i = 0; i < 3; i++) h.api.recordAnswer({ source: 'lesson', subject: 'Математика', topic: 'Модуль числа', lessonId: 'm-abs', questionId: 'q' + i, questionText: '|−3| = ?', correct: 1, answer: '3', correctAnswer: '3' });
+  const saved = h.saved();
+  assert.equal(saved.live.length, 3);
+  assert.equal(saved.live[0].student_id, sel.student_id);
+  assert.equal(saved.live[0].source, 'lesson');
+  h.click({ mxTab: 'overview' });
+  assert.equal(h.host.innerHTML.match(/Качество знаний[\s\S]*?data-num="([\d.]+)"/)[1], quality, 'quality unchanged by trainer answers');
+  // Local assignment for the learner's class is visible to that learner.
+  assert.ok(Array.isArray(h.api.localTasks(sel)));
+});

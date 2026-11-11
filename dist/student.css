@@ -78,3 +78,28 @@ body[data-page="game"] .app-footer,body[data-page="game"] #student-context{displ
 :root[data-theme="dark"] .subject-card{background:var(--surface);border-color:var(--line)}
 @media (max-width:760px){.subject-cards{grid-template-columns:1fr}}
 .lesson-passage{margin:6px 0 14px;padding:14px 16px;border-radius:14px;background:var(--pale,#eaf2ff);color:var(--ink);font-size:16px;line-height:1.6;border:0}
+/* Learner account and assignments from the teacher */
+.learner-account,.learner-join{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:14px 16px;margin:12px 0 18px;border-radius:16px;background:var(--white,#fff);border:1px solid var(--line,#e1e9f4);font-size:14px}
+.learner-account small,.learner-join small{display:block;color:var(--muted);font-size:12px}
+.learner-account .btn{margin-left:auto;min-height:40px}
+.la-avatar{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#e3f4e9;color:#15803d}
+.la-avatar .icon{width:20px;height:20px}
+.learner-join{display:grid;gap:8px}
+.lj-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.lj-row label{display:grid;gap:4px;font-weight:800;font-size:12px;color:var(--muted)}
+.lj-row input{min-height:44px;width:150px;padding:0 12px;border:1.5px solid var(--line);border-radius:12px;font:700 16px Nunito,sans-serif;color:var(--ink);background:var(--white,#fff)}
+.lj-row input:focus{outline:none;border-color:var(--blue)}
+.lj-row .btn{min-height:44px}
+.lj-error{color:#c02626;font-weight:700;margin:0}
+.tasks-card{margin:22px 0 8px;padding:20px;border-radius:22px;background:#fff8e6;border:1px solid #f6d58a}
+.tasks-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.tasks-head h2{margin:0;font-size:22px}
+.tasks-card .game-tag{background:#f59e0b;color:#fff}
+.tasks-card ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.tasks-card li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px;border-radius:16px;background:#fff}
+.task-glyph{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#fef3dc;font-weight:900;color:#b45309}
+.task-info{display:grid;gap:4px}.task-info small{color:var(--muted)}
+.tasks-card .mini-meter{height:6px}
+:root[data-theme="dark"] :is(.learner-account,.learner-join,.tasks-card li){background:var(--surface);border-color:var(--line)}
+:root[data-theme="dark"] .tasks-card{background:#3a2f1a;border-color:#6b5420}
+@media (max-width:560px){.tasks-card li{grid-template-columns:auto 1fr}.tasks-card li .btn{grid-column:1/-1}}
