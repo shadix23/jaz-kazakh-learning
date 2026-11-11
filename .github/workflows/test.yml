@@ -1,0 +1,23 @@
+name: tests
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Smoke test against a local server
+        run: |
+          PORT=4180 JAZ_STORE=memory node dev-server.cjs &
+          sleep 1
+          npm run smoke -- http://127.0.0.1:4180
