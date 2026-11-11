@@ -102,6 +102,7 @@ function aiFailed(error) {
     const mod = require('@anthropic-ai/sdk'); const A = mod.default || mod;
     if (error instanceof A.AuthenticationError || error instanceof A.PermissionDeniedError || /credentials|api key|apiKey/i.test(String(error && error.message))) aiDisabledUntil = Date.now() + 5 * 60 * 1000;
   } catch (_) {}
-  console.warn('[ai] request failed', error && error.status || 'unknown');
+  const message = String(error?.error?.error?.message || error?.error?.message || '').slice(0, 350).replace(/Bearer\s+\S+|(?:sk-|eyJ)[A-Za-z0-9._-]+/g, '[redacted]');
+  console.warn('[ai] request failed', error && error.status || 'unknown', message);
 }
 module.exports = { correct, summarize, aiReady, aiFailed, hasClient: () => !!client };
