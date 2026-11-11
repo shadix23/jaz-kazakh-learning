@@ -122,6 +122,36 @@
     return !!target && canonicalText(target) !== canonicalText(original) && canonicalText(candidate) === canonicalText(target);
   }
 
+  // Combine a model's answer with the rules engine: the model may miss a rule
+  // (e.g. plural harmony) or return ok=true while changing the text. The rules
+  // engine re-checks the model's corrected text and adds what it still finds.
+  function mergeAiCorrection(text, data) {
+    const original = String(text || '');
+    const reply = data && typeof data.reply === 'string' && data.reply ? data.reply : '';
+    let corrected = data && typeof data.corrected === 'string' && data.corrected.trim() ? data.corrected.trim() : original;
+    let issues = (data && Array.isArray(data.issues) ? data.issues : []).filter(function (i) { return i && typeof i.from === 'string' && typeof i.to === 'string' && i.from !== i.to; })
+      .map(function (i) { return { from: i.from, to: i.to, reason: String(i.reason || '') }; });
+    const extra = K.check(corrected);
+    const real = extra.issues.filter(function (i) { return i.type !== 'case' && i.type !== 'punct' && i.type !== 'spacing'; });
+    if (real.length) {
+      corrected = extra.corrected;
+      real.forEach(function (i) { if (!issues.some(function (x) { return x.from === i.from; })) issues.push({ from: i.from, to: i.to, reason: i.reason }); });
+    }
+    if (canonicalText(corrected) === canonicalText(original)) return { kind: 'recognized', reply: reply || 'Жақсы! Әңгімені жалғастырайық.', verified: true, source: 'ai' };
+    // Every changed word gets an explanation: from the rules engine when it knows the word, otherwise a neutral hint.
+    const strip = function (w) { return w.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, ''); };
+    const own = K.check(original).issues;
+    const a = original.split(/\s+/u), b = corrected.split(/\s+/u);
+    if (a.length === b.length) a.forEach(function (w, n) {
+      const from = strip(w), to = strip(b[n]);
+      if (!from || canonicalText(from) === canonicalText(to) || issues.some(function (x) { return canonicalText(x.from).indexOf(canonicalText(from)) >= 0; })) return;
+      const known = own.find(function (i) { return canonicalText(i.from) === canonicalText(from); });
+      issues.push({ from: from, to: to, reason: known ? known.reason : 'Түзетілген нұсқамен салыстыр.' });
+    });
+    if (!issues.length) issues.push({ from: original, to: corrected, reason: 'Түзетілген нұсқамен салыстыр.' });
+    return { kind: 'correction', corrected: corrected, issues: issues.slice(0, 12), reply: reply, source: real.length ? 'ai+rules' : 'ai' };
+  }
+
   function validDay(day) {
     if (typeof day !== 'string' || !/^\d{4}-\d{2}-\d{2}$/u.test(day)) return false;
     const parsed = new Date(day + 'T00:00:00.000Z');
@@ -198,5 +228,5 @@
     return sanitizeState({ events: state.events.concat(award) });
   }
 
-  return { scenarios: scenarios, lessons: lessons, assessMessage: assessMessage, verifyCorrection: verifyCorrection, normalizeText: normalizeText, initialState: initialState, sanitizeState: sanitizeState, reduceProgress: reduceProgress, getStreak: getStreak };
+  return { scenarios: scenarios, lessons: lessons, assessMessage: assessMessage, verifyCorrection: verifyCorrection, mergeAiCorrection: mergeAiCorrection, normalizeText: normalizeText, initialState: initialState, sanitizeState: sanitizeState, reduceProgress: reduceProgress, getStreak: getStreak };
 });

@@ -237,3 +237,14 @@ test('growth needs enough attempts: a few answers are reported as low data', () 
   assert.equal(g.verdict, 'few');
   assert.equal(g.growth, null);
 });
+
+test('analytics is subject-agnostic: a biology journal works end to end', () => {
+  const C = require('../dist/curriculum.js');
+  const tsv = 'Оқушы\tСынып\tБөлім\tБалл\tМакс. балл\tПән\nИванов Петр\t7А\tЖасуша\t3\t10\tБиология\nИванов Петр\t7А\tФотосинтез\t8\t10\tБиология\nСериков Алихан\t7А\tЖасуша\t9\t10\tБиология\nСериков Алихан\t7А\tФотосинтез\t4\t10\tБиология';
+  const { rows } = C.parseJournal(tsv);
+  assert.deepEqual(C.subjects(rows), ['Биология']);
+  assert.deepEqual(C.topics(rows).sort(), ['Жасуша', 'Фотосинтез']);
+  assert.ok(rows.every(r => /^У-/.test(r.student_id)), 'names are replaced by codes');
+  assert.equal(C.schoolMetrics(rows).total.n, 2);
+  assert.ok(C.topicStats(rows, { mastery: 70 }).every(t => t.lowData), 'tiny data is labelled');
+});

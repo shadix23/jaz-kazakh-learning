@@ -69,3 +69,14 @@ test('direct Anthropic compatibility is preserved only without a Groq key', asyn
   assert.equal((await h.ai.correct({ text: 'Салем!' })).source, 'ai');
   assert.equal(h.calls.length, 0); assert.equal(h.anthropic.length, 1);
 });
+test('study hint uses its own strict schema, short output and validates the reply', async () => {
+  const good = { reply: 'Ережені еске түсір.', steps: ['Мысалды қара.'] };
+  const h = load({ fetchResult: { ok: true, json: async () => ({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(good) } }] }) } });
+  const r = await h.ai.hint({ kind: 'rule', topic: 'Модуль числа', task: '|-7| = ?', question: 'Жауабын айтшы' });
+  assert.equal(r.reply, good.reply); assert.equal(r.source, 'ai');
+  assert.equal(h.calls[0].body.response_format.json_schema.name, 'study_hint');
+  assert.equal(h.calls[0].body.max_completion_tokens, 700);
+  assert.match(h.calls[0].body.messages[0].content, /Never give the final answer/);
+  const bad = load({ fetchResult: { ok: true, json: async () => ({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ reply: '', steps: [] }) } }] }) } });
+  await assert.rejects(bad.ai.hint({}));
+});

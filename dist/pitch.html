@@ -155,6 +155,8 @@ main{position:relative;z-index:2;overflow-x:clip}
 .links a{font-size:15px;font-weight:700;padding:12px 18px;border-radius:999px;background:var(--paper);border:1px solid var(--line);text-decoration:none;min-height:44px;display:inline-flex;align-items:center;gap:8px;transition:transform .16s var(--ease),background .2s var(--ease)}
 .site{margin-top:18px;font-size:clamp(16px,1.3vw,20px);font-weight:700;color:var(--ink2)}
 .site a{color:var(--accent-d)}
+.note.any{border-style:solid;border-color:#cddcff;background:#f3f7ff;color:var(--ink)}
+.note.any b{color:var(--accent-d)}
 .links a.main{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 10px 26px rgba(63,112,247,.28)}
 .links a:active{transform:scale(.97)}
 
@@ -253,7 +255,7 @@ footer{position:relative;z-index:2;padding:26px 20px 40px;text-align:center;font
     <div data-hero class="hero-in">
       <p class="kicker r">1-кейс · Data-Driven Curriculum</p>
       <h1 class="big r" style="--d:.1s">Jaz<span class="hl">!</span></h1>
-      <p class="lead r" style="--d:.25s">Мектеп әдіскерінің жұмыс орны: БЖБ/ТЖБ кестесінен — қиын тақырыптарға, қолдау топтарына, сағаттар мен анықтамаға бірнеше минутта. Оқушылар ойын арқылы жаттығады — әдіскер өсімді көреді.</p>
+      <p class="lead r" style="--d:.25s">Әдіскерге арналған платформа: кез келген пән бойынша БЖБ/ТЖБ нәтижесін талдайды, кімге көмек керегін көрсетеді, анықтаманы өзі жазады. Оқушыны оқуға бейімдейді — әдіскерге бақылауды жеңілдетеді.</p>
     </div>
     <div class="cue"><i></i><span>Айналдырыңыз немесе → басыңыз</span></div>
   </section>
@@ -335,6 +337,7 @@ footer{position:relative;z-index:2;padding:26px 20px 40px;text-align:center;font
             <li><i>5</i><span><b>Сағаттар мен КТЖ:</b> тақырып қажеттілігіне қарай түзету сағаттары.</span></li>
             <li><i>6</i><span><b>Анықтама:</b> қазақша немесе орысша — бірден Word-қа.</span></li>
           </ul>
+          <p class="note any" style="margin-top:14px"><b>Кез келген пән:</b> математика, қазақ тілі, биология, тарих — кесте бірдей (оқушы, сынып, бөлім, балл). Пән Jaz!-ға тәуелді емес.</p>
         </div>
         <div class="shot r" style="--d:.16s"><div class="chrome"><i></i><i></i><i></i></div><img src="assets/pitch/m-home.jpg" alt="Әдіскердің басты беті: алты міндет үлкен карточкалармен" loading="lazy"></div>
       </div>
@@ -361,18 +364,18 @@ footer{position:relative;z-index:2;padding:26px 20px 40px;text-align:center;font
       <div class="sl-head r"><h2 class="big">Геймификация</h2><span class="pg">Бет<b>06/10</b></span></div>
       <div class="cols even">
         <div class="r" style="--d:.08s">
-          <p class="statement">Оқушы ойнайды — <span class="hl">әдіскер өсімді көреді.</span></p>
+          <p class="statement">Оқушыны оқуға бейімдейді — <span class="hl">әдіскерге бақылауды жеңілдетеді.</span></p>
           <ul class="feat">
             <li><i>1</i><span><b>«Барыс жолы»</b> — 3D-жүгіріс: қар барысы жүгіреді, оқушы бағдарлама тақырыбы бойынша жауап таңдайды.</span></li>
             <li><i>2</i><span><b>Қазақша чат</b> қатені табады, ережені түсіндіреді және өзі түзетуге мүмкіндік береді.</span></li>
-            <li><i>3</i><span><b>XP, серия, белгілер</b> — 6-сыныптың 15 тақырыбы: қазақ тілі және математика.</span></li>
+            <li><i>3</i><span><b>Барыс-көмекші</b> (чиби) сабақ бойынша кеңес береді: ереже, мысал, неден бастау — бірақ жауапты айтпайды.</span></li>
             <li><i>4</i><span><b>Топқа бір басумен тапсырма:</b> сынып коды → оқушы тапсырманы телефонынан көреді → жауаптар әдіскерге келеді.</span></li>
-            <li><i>5</i><span><b>Жаттықтырғыштағы өсім БЖБ-дан бөлек.</b> Ойын ресми бағаға әсер етпейді.</span></li>
+            <li><i>5</i><span><b>Жаттықтырғыштағы өсім БЖБ-дан бөлек.</b> Ойын ресми бағаға әсер етпейді. XP, серия, белгілер ынталандырады.</span></li>
           </ul>
         </div>
         <div class="phones r" style="--d:.16s">
           <div class="phone"><img src="assets/pitch/s-game.jpg" alt="«Барыс жолы» ойыны: қазақ тілі бойынша сұрақ" loading="lazy"></div>
-          <div class="phone"><img src="assets/pitch/s-chat.jpg" alt="Чат қазақ тіліндегі сөйлемдегі қатені түзетеді" loading="lazy"></div>
+          <div class="phone"><img src="assets/pitch/s-helper.jpg" alt="Барыс-көмекші сабақ бойынша ережені түсіндіреді" loading="lazy"></div>
         </div>
       </div>
     </div>
@@ -425,7 +428,7 @@ footer{position:relative;z-index:2;padding:26px 20px 40px;text-align:center;font
       <div class="road r" style="--d:.08s">
         <div class="card now"><span class="when">Қазір</span><h3>Прототип</h3><ul><li>6-сынып: қазақ тілі және математика, 15 тақырып</li><li>Әдіскер кабинеті, анықтама kk/ru</li><li>Бэкенд: сынып кодтары, тапсырмалар</li></ul></div>
         <div class="card"><span class="when">Пилот · 1 тоқсан</span><h3>1–3 мектеп</h3><ul><li>Нақты ТЖБ (аты-жөнісіз)</li><li>Әдіскер уақытын «дейін/кейін» өлшеу</li><li>Шектерді білім бөлімімен тексеру</li></ul></div>
-        <div class="card"><span class="when">1-жыл</span><h3>Бүкіл мектеп</h3><ul><li>5–11-сыныптардың барлық пәні</li><li>МЖМБС оқу мақсаттары</li><li>Рөлдер: мұғалім, әдіскер, оқу ісінің меңгерушісі</li></ul></div>
+        <div class="card"><span class="when">1-жыл</span><h3>Бүкіл мектеп</h3><ul><li>5–11-сыныптардың барлық пәні (аналитика дайын, жаттықтырғышқа — сұрақтар банкі)</li><li>МЖМБС оқу мақсаттары</li><li>Рөлдер: мұғалім, әдіскер, оқу ісінің меңгерушісі</li></ul></div>
         <div class="card"><span class="when">2-жыл</span><h3>Аудан мен облыс</h3><ul><li>Білім бөліміне мектептер бойынша жиынтық</li><li>Электрондық журналдардан импорт (серіктестік арқылы)</li><li>Тоқсандарды салыстыру, динамика</li></ul></div>
       </div>
       <div class="model r" style="--d:.16s"><span>Модель: мектепке жазылым</span><span>Білім бөліміне лицензия</span><span>Браузерде, орнатусыз</span><span>Бұлт: Vercel + Redis</span></div>

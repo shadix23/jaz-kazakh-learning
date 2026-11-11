@@ -143,3 +143,17 @@ test('sanitization rebuilds totals, rejects malformed stored entries and dedupli
   assert.equal(state.events.length, 1);
   assert.equal(state.level, 1);
 });
+
+test('AI corrections are double-checked by the rules engine', () => {
+  const L = require('../dist/learning.js');
+  // The model fixed one letter but missed plural harmony and claimed ok=true.
+  const r = L.mergeAiCorrection('Біз кітаптер оқыдық, бірақ үйде уақыт жок.', { ok: true, corrected: 'Біз кітаптер оқыдық, бірақ үйде уақыт жоқ.', issues: [], reply: 'Жақсы.' });
+  assert.equal(r.kind, 'correction');
+  assert.equal(r.corrected, 'Біз кітаптар оқыдық, бірақ үйде уақыт жоқ.');
+  assert.deepEqual(r.issues.map(i => i.to), ['кітаптар', 'жоқ']);
+  assert.ok(r.issues.every(i => i.reason.length > 5));
+  // A correct message stays a correct message.
+  assert.equal(L.mergeAiCorrection('Сәлем! Қалың қалай?', { ok: true, corrected: 'Сәлем! Қалың қалай?', issues: [], reply: 'Жақсы.' }).kind, 'recognized');
+  // Garbage from the model never breaks the chat.
+  assert.equal(L.mergeAiCorrection('Сәлем!', null).kind, 'recognized');
+});

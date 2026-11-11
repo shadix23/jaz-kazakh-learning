@@ -115,7 +115,8 @@ function create(canvas) {
   function render(s) {
     const mode = s.mode || 'run';
     // Facing: away from camera while running, towards it when idle/celebrating.
-    const targetYaw = mode === 'idle' ? 0.35 : mode === 'celebrate' ? Math.PI * 2 : Math.PI + 0.62;
+    // Running: straight down the road (back to the camera), turning slightly only while changing lanes.
+    const targetYaw = mode === 'idle' ? 0.35 : mode === 'celebrate' ? Math.PI * 2 : Math.PI - Math.max(-0.45, Math.min(0.45, (s.lean || 0) * 0.5));
     yaw += (targetYaw - yaw) * 0.12;
     if (mode !== 'celebrate' && yaw > Math.PI * 1.9) yaw -= Math.PI * 2;
     tilt += ((s.lean || 0) * -0.35 - tilt) * 0.2;
