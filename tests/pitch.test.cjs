@@ -1,24 +1,10 @@
-// The scroll-story pitch page must only reference files that exist in dist/ and reuse the game's Barys model.
+// The pitch is kept in the repo (docs/pitch), not on the site. Its statistics must cite sources.
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
-const dist = path.join(__dirname, '..', 'dist');
-const html = fs.readFileSync(path.join(dist, 'pitch.html'), 'utf8');
-
-test('pitch importmap and module imports point to vendored files', () => {
-  const map = JSON.parse(html.match(/<script type="importmap">([\s\S]*?)<\/script>/)[1]).imports;
-  assert.ok(fs.existsSync(path.join(dist, map.three)), 'three is vendored');
-  for (const m of html.matchAll(/from '(three\/addons\/[^']+|\.\/[^']+)'/g)) {
-    const rel = m[1].startsWith('three/addons/') ? m[1].replace('three/addons/', map['three/addons/']) : m[1];
-    assert.ok(fs.existsSync(path.join(dist, rel)), `${m[1]} exists`);
-  }
-});
-
-test('barys3d.js exports the model and pose for the pitch', () => {
-  const src = fs.readFileSync(path.join(dist, 'barys3d.js'), 'utf8');
-  assert.match(src, /export \{ buildLeopard, pose \}/);
-});
+const dir = path.join(__dirname, '..', 'docs', 'pitch');
+const html = fs.readFileSync(path.join(dir, 'pitch.html'), 'utf8');
 
 test('pitch slides: ten numbered pages and every statistic has a source link', () => {
   const pages = [...html.matchAll(/<span class="pg">Бет<b>(\d\d)\/10<\/b><\/span>/g)].map(m => m[1]);
@@ -27,17 +13,16 @@ test('pitch slides: ten numbered pages and every statistic has a source link', (
   assert.ok(stats.length >= 4, 'evidence cards present');
   for (const m of stats) assert.match(m[1], /class="src">[\s\S]*<a href="https:\/\//, 'each statistic cites a source');
   assert.match(html, /болжам/, 'the cost estimate is labelled as an assumption');
-  assert.match(html, /Shadil Nurmukhammed/);
-  assert.match(html, /Amangeldiev Kaisar/);
 });
 
-test('pitch screenshots and downloads exist', () => {
-  for (const m of html.matchAll(/(?:src|href)="((?:assets\/pitch|downloads)\/[^"]+)"/g)) assert.ok(fs.existsSync(path.join(dist, m[1])), m[1]);
-  for (const m of html.matchAll(/url\((assets\/pitch\/[^)]+)\)/g)) assert.ok(fs.existsSync(path.join(dist, m[1])), m[1]);
+test('pitch files exist and are not served by the site', () => {
+  for (const f of ['Jaz-pitch.pdf', 'Jaz-pitch.pptx']) assert.ok(fs.existsSync(path.join(dir, f)), f);
+  for (const m of html.matchAll(/(?:src)="(assets\/pitch\/[^"]+)"/g)) assert.ok(fs.existsSync(path.join(dir, m[1])), m[1]);
+  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'dist', 'pitch.html')));
+  assert.doesNotMatch(fs.readFileSync(path.join(__dirname, '..', 'dist', 'index.html'), 'utf8'), /pitch/);
 });
 
-test('links from the pitch open the right app mode', () => {
-  assert.match(html, /href="(?:\.|https:\/\/jaz-kazakh-learning\.vercel\.app)\/\?mode=method"/);
-  assert.match(html, /href="(?:\.|https:\/\/jaz-kazakh-learning\.vercel\.app)\/\?mode=student"/);
-  assert.match(fs.readFileSync(path.join(dist, 'app.js'), 'utf8'), /get\('mode'\)/);
+test('no long dashes in the site text', () => {
+  const dist = path.join(__dirname, '..', 'dist');
+  for (const f of fs.readdirSync(dist).filter(f => /\.(js|html|css)$/.test(f))) assert.doesNotMatch(fs.readFileSync(path.join(dist, f), 'utf8'), /[—–]/, f);
 });

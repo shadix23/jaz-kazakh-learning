@@ -1,5 +1,5 @@
 /* ======================================================================
-   Jaz! Методист — design system (Operate surface)
+   Jaz! Методист - design system (Operate surface)
    Palette: UI UX Pro Max «Analytics Dashboard» (blue data, amber accent,
    neutral slate). Type: one sans family, fixed scale 12/13/15/18/22/26.
    Motion: Emil Kowalski curves; UI ≤ 300 ms; data morph is the one
@@ -554,8 +554,3 @@ body[data-mode="method"] .mx-nav{display:flex;flex-direction:column}
 @media (max-width:860px){.mx-asg-grid{grid-template-columns:1fr 1fr}}
 @media print{body[data-mode="method"] .mx-codes{font-size:20pt}}
 .mx-growth{min-width:860px}.mx-growth td:nth-child(3){min-width:200px}.mx-growth td:nth-child(4){min-width:120px;white-space:nowrap}.mx-growth td:nth-child(6){white-space:nowrap}
-
-/* Link to the scroll-story pitch (methodist mode only) */
-.pitch-link{display:none}
-body[data-mode="method"] .pitch-link{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;margin:12px 6px 4px;padding:10px 14px;border:1px solid var(--mx-line);border-radius:12px;color:var(--mx-blue-ink);font-size:14px;font-weight:600;background:transparent;transition:background .2s cubic-bezier(.23,1,.32,1)}
-body[data-mode="method"] .pitch-link:hover{background:var(--mx-blue-soft)}

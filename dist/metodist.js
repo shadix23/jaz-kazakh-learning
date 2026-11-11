@@ -1,5 +1,5 @@
 /*
- * Jaz! Методист — рабочее место методиста.
+ * Jaz! Методист - рабочее место методиста.
  * Обзор → Темы → Учебники → Часы → Отчёт → Данные.
  * Rendering is string templates; animations are progressive (CSS + small JS tweens).
  */
@@ -13,11 +13,11 @@
   const raf = global.requestAnimationFrame ? global.requestAnimationFrame.bind(global) : fn => setTimeout(fn, 16);
 
   const TABS = [
-    { id: 'home', label: 'Главная', title: 'Здравствуйте! Что нужно сделать?', sub: 'Выберите задачу — система проведёт по шагам. Нажмите «?» рядом с любым словом, чтобы увидеть объяснение.', icon: 'M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z' },
+    { id: 'home', label: 'Главная', title: 'Здравствуйте! Что нужно сделать?', sub: 'Выберите задачу - система проведёт по шагам. Нажмите «?» рядом с любым словом, чтобы увидеть объяснение.', icon: 'M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z' },
     { id: 'overview', label: 'Обзор', title: 'Сводка для решения', sub: 'Главное о результатах, учебниках и часах на одном экране.', icon: 'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z' },
     { id: 'topics', label: 'Темы', title: 'Где возникают затруднения', sub: 'Освоение тем по классам и разбор заданий с типичными ошибками.', icon: 'M4 4h16v16H4zM4 9.3h16M4 14.6h16M9.3 4v16M14.6 4v16' },
-    { id: 'students', label: 'Ученики', title: 'Ученики и группы поддержки', sub: 'Кому и по какой теме нужна помощь — готовые списки для дополнительных занятий.', icon: 'M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM22 19v-1a4 4 0 0 0-3-3.9M16 4.1a3 3 0 0 1 0 5.8' },
-    { id: 'trainer', label: 'Тренажёр', title: 'Тренажёр и задания', sub: 'Рост по тренажёру — отдельно от СОР/СОЧ. Задания группам поддержки и коды классов для учеников.', icon: 'M13 2L4 14h7l-1 8 9-12h-7z' },
+    { id: 'students', label: 'Ученики', title: 'Ученики и группы поддержки', sub: 'Кому и по какой теме нужна помощь - готовые списки для дополнительных занятий.', icon: 'M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM22 19v-1a4 4 0 0 0-3-3.9M16 4.1a3 3 0 0 1 0 5.8' },
+    { id: 'trainer', label: 'Тренажёр', title: 'Тренажёр и задания', sub: 'Рост по тренажёру - отдельно от СОР/СОЧ. Задания группам поддержки и коды классов для учеников.', icon: 'M13 2L4 14h7l-1 8 9-12h-7z' },
     { id: 'books', label: 'Учебники', title: 'Эффективность учебников', sub: 'Сравнение прироста с учётом учителя: вывод только там, где данные позволяют.', icon: 'M5 4h10a4 4 0 0 1 4 4v12H9a4 4 0 0 1-4-4zM5 16a4 4 0 0 1 4-4h10' },
     { id: 'hours', label: 'Часы', title: 'Распределение учебных часов', sub: 'Программа → рекомендация. Сумма часов сохраняется, каждое изменение обосновано.', icon: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2' },
     { id: 'report', label: 'Отчёт', title: 'Отчёт для педсовета', sub: 'Одна страница: печать или сохранение в PDF.', icon: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6' },
@@ -26,11 +26,11 @@
   const STATUS = { risk: 'Зона риска', watch: 'Наблюдать', ok: 'Освоено', missing: 'Нет данных' };
   // Interface language for the main screens and the official report (ru / kk).
   const KK = {
-    'tab.home': ['Басты бет', 'Сәлеметсіз бе! Не істейміз?', 'Тапсырманы таңдаңыз — жүйе қадам-қадаммен көрсетеді. Түсініксіз сөздің жанындағы «?» белгісін басыңыз.'],
-    'tab.overview': ['Қорытынды', 'Шешім қабылдауға арналған жиынтық', 'Үлгерім, білім сапасы, тақырыптар мен сағаттар — бір бетте.'],
+    'tab.home': ['Басты бет', 'Сәлеметсіз бе! Не істейміз?', 'Тапсырманы таңдаңыз - жүйе қадам-қадаммен көрсетеді. Түсініксіз сөздің жанындағы «?» белгісін басыңыз.'],
+    'tab.overview': ['Қорытынды', 'Шешім қабылдауға арналған жиынтық', 'Үлгерім, білім сапасы, тақырыптар мен сағаттар - бір бетте.'],
     'tab.topics': ['Тақырыптар', 'Қай жерде қиындық бар', 'Тақырыптарды сыныптар бойынша меңгеру және тапсырмалардағы жиі қателер.'],
-    'tab.students': ['Оқушылар', 'Оқушылар және қолдау топтары', 'Кімге және қай тақырыптан көмек керек — қосымша сабақтарға дайын тізімдер.'],
-    'tab.trainer': ['Жаттықтырғыш', 'Жаттықтырғыш және тапсырмалар', 'Жаттықтырғыштағы өсім — БЖБ/ТЖБ-дан бөлек. Қолдау топтарына тапсырмалар және оқушыларға сынып кодтары.'],
+    'tab.students': ['Оқушылар', 'Оқушылар және қолдау топтары', 'Кімге және қай тақырыптан көмек керек - қосымша сабақтарға дайын тізімдер.'],
+    'tab.trainer': ['Жаттықтырғыш', 'Жаттықтырғыш және тапсырмалар', 'Жаттықтырғыштағы өсім - БЖБ/ТЖБ-дан бөлек. Қолдау топтарына тапсырмалар және оқушыларға сынып кодтары.'],
     'tab.books': ['Оқулықтар', 'Оқулықтардың тиімділігі', 'Мұғалімді ескере отырып салыстыру: қорытынды тек деректер жеткілікті болғанда.'],
     'tab.hours': ['Сағаттар', 'Оқу сағаттарын бөлу', 'Вариативтік және түзету сағаттары: әр өзгерістің негіздемесі бар.'],
     'tab.report': ['Анықтама', 'Педагогикалық кеңеске анықтама', 'Талдау анықтамасы: Word-қа жүктеу немесе басып шығару.'],
@@ -46,22 +46,22 @@
   const statusText = s => (st.lang === 'kk' ? STATUS_KK[s] : STATUS[s]);
   const SUBJECT_KK = { 'Казахский язык': 'Қазақ тілі', 'Математика': 'Математика' };
   const subjectText = s => (st.lang === 'kk' && SUBJECT_KK[s]) || s;
-  const LEGEND_KK = { good: '≥ 80% — меңгерілді', mid: '60–80% — қайталау', low: '< 60% — қиындық' };
+  const LEGEND_KK = { good: '≥ 80% - меңгерілді', mid: '60-80% - қайталау', low: '< 60% - қиындық' };
   const tabText = (tab, i) => st.lang === 'kk' && KK['tab.' + tab.id] ? KK['tab.' + tab.id][i] : [tab.label, tab.title, tab.sub][i];
   // Plain-language explanations for the terms methodists meet in the reports.
   const HELP = {
-    progress: ['Успеваемость', 'Доля учеников без «2»: получили 3, 4 или 5. Оценка выставляется по проценту баллов: от 40% — «3», от 65% — «4», от 85% — «5» (по умолчанию; пороги меняются в разделе «Данные»).'],
+    progress: ['Успеваемость', 'Доля учеников без «2»: получили 3, 4 или 5. Оценка выставляется по проценту баллов: от 40% - «3», от 65% - «4», от 85% - «5» (по умолчанию; пороги меняются в разделе «Данные»).'],
     quality: ['Качество знаний', 'Доля учеников, получивших «4» и «5» (65% баллов и выше).'],
-    levels: ['Уровни', 'Низкий — меньше 40% баллов, средний — от 40 до 84%, высокий — 85% и выше. Так же считают в справках по СОР и СОЧ.'],
+    levels: ['Уровни', 'Низкий - меньше 40% баллов, средний - от 40 до 84%, высокий - 85% и выше. Так же считают в справках по СОР и СОЧ.'],
     mastery: ['«Освоено»', 'Ученик освоил тему, если набрал по ней не меньше выбранного порога (обычно 70% баллов).'],
     gain: ['Прирост', 'На сколько процентных пунктов результат выше входной диагностики. Если входной диагностики нет, сравниваются итоговые результаты.'],
-    pp: ['п.п. (процентный пункт)', 'Разница между процентами: было 60%, стало 70% — это +10 п.п.'],
-    ci: ['Надёжность вывода (95% интервал)', 'Диапазон, в котором с высокой вероятностью лежит настоящая разница. Если он целиком выше или ниже нуля — разница не случайна. Если включает ноль — делать вывод рано.'],
+    pp: ['п.п. (процентный пункт)', 'Разница между процентами: было 60%, стало 70% - это +10 п.п.'],
+    ci: ['Надёжность вывода (95% интервал)', 'Диапазон, в котором с высокой вероятностью лежит настоящая разница. Если он целиком выше или ниже нуля - разница не случайна. Если включает ноль - делать вывод рано.'],
     core: ['«Ядро» группы', 'Ученики, набравшие по теме 40% и меньше. Им дополнительные занятия нужны в первую очередь.'],
     risk: ['Зона риска', 'Тема, которую не освоили 40% учеников и больше.'],
     lowdata: ['Мало данных', 'Меньше 10 учеников или 30 ответов: выводы ненадёжны, нужен ещё один срез.'],
-    separate: ['Почему тренажёр отдельно', 'Тренажёр — это тренировка: ученик может ошибаться и пробовать снова. Поэтому его ответы не входят в успеваемость, качество и справку по СОР/СОЧ. Рост считается внутри тренажёра: первые попытки ученика по теме против последних. Подтверждает рост следующий СОР/СОЧ.'],
-    growth: ['Рост в тренажёре', 'Средняя разница между точностью последней трети попыток ученика и первой трети, в процентных пунктах. Считается для учеников, сделавших по теме не меньше 6 заданий. «Подтверждён» — если весь 95% интервал выше нуля.'],
+    separate: ['Почему тренажёр отдельно', 'Тренажёр - это тренировка: ученик может ошибаться и пробовать снова. Поэтому его ответы не входят в успеваемость, качество и справку по СОР/СОЧ. Рост считается внутри тренажёра: первые попытки ученика по теме против последних. Подтверждает рост следующий СОР/СОЧ.'],
+    growth: ['Рост в тренажёре', 'Средняя разница между точностью последней трети попыток ученика и первой трети, в процентных пунктах. Считается для учеников, сделавших по теме не меньше 6 заданий. «Подтверждён» - если весь 95% интервал выше нуля.'],
     reserve: ['Вариативные и коррекционные часы', 'Часы сверх обязательной сетки, которые школа может направить на повторение трудных тем. Сетка часов программы не меняется.']
   };
   const helpBtn = key => `<button type="button" class="mx-help" data-mx-help="${key}" aria-label="Что это: ${esc(HELP[key][0])}">?</button>`;
@@ -78,9 +78,9 @@
   const memo = new Map();
   const prevBars = new Map(), prevNums = new Map(), prevSeg = new Map();
 
-  // Summative layer (СОР/СОЧ, imported or demo) — the only source of school indicators.
+  // Summative layer (СОР/СОЧ, imported or demo) - the only source of school indicators.
   function setRows(next) { baseRows = next; rows = baseRows; demoTrainer = null; version++; memo.clear(); }
-  // Formative layer (trainer: lessons, game, assignments) — analysed separately.
+  // Formative layer (trainer: lessons, game, assignments) - analysed separately.
   let demoTrainer = null, serverRows = [], serverAssignments = [], syncInfo = { at: null, error: '' };
   function addLive(row) { if (liveRows.some(r => r.id === row.id)) return; liveRows.push(row); version++; memo.clear(); }
   function demoLayer() { if (st.source !== 'demo') return { rows: [], assignments: [] }; if (!demoTrainer) demoTrainer = C().buildTrainer(baseRows); return demoTrainer; }
@@ -145,7 +145,7 @@
       if (saved.selection && typeof saved.selection.class === 'string') selection = saved.selection;
       if (st.source === 'csv') {
         try { setRows(typeof saved.csv === 'string' && saved.csv.trim() ? C().parseCSV(saved.csv) : []); return; }
-        catch (_) { notice = 'Сохранённый CSV не прочитан — загружены демо-данные.'; st.source = 'demo'; }
+        catch (_) { notice = 'Сохранённый CSV не прочитан - загружены демо-данные.'; st.source = 'demo'; }
       }
     }
     setRows(C().build(st.scenario));
@@ -153,12 +153,12 @@
 
   /* ------------------------------------------------------------ formatting */
   const fmt = {
-    pct: v => Number.isFinite(v) ? (Math.round(v * 10) / 10).toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + '%' : '—',
-    pct0: v => Number.isFinite(v) ? Math.round(v) + '%' : '—',
-    int: v => Number.isFinite(v) ? Math.round(v).toLocaleString('ru-RU') : '—',
-    pp: v => Number.isFinite(v) ? C().fmtSigned(v) + ' п.п.' : '—',
-    signed: v => Number.isFinite(v) ? C().fmtSigned(v) : '—',
-    hours: v => Number.isFinite(v) ? Math.round(v) + ' ч' : '—'
+    pct: v => Number.isFinite(v) ? (Math.round(v * 10) / 10).toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + '%' : '-',
+    pct0: v => Number.isFinite(v) ? Math.round(v) + '%' : '-',
+    int: v => Number.isFinite(v) ? Math.round(v).toLocaleString('ru-RU') : '-',
+    pp: v => Number.isFinite(v) ? C().fmtSigned(v) + ' п.п.' : '-',
+    signed: v => Number.isFinite(v) ? C().fmtSigned(v) : '-',
+    hours: v => Number.isFinite(v) ? Math.round(v) + ' ч' : '-'
   };
   const num = (key, value, kind, cls = '') => `<b class="mx-num ${cls}" data-num="${Number.isFinite(value) ? value : ''}" data-fmt="${kind}" data-key="${esc(key)}">${fmt[kind](value)}</b>`;
   const clip = v => `inset(0 ${(100 - v).toFixed(2)}% 0 0 round 99px)`;
@@ -205,7 +205,7 @@
     if (navHost.style) navHost.style.zoom = Math.min(st.zoom, 1.1); // the sidebar has a fixed width
     if (!navHost.dataset.ready) {
       if (!navHost.dataset.bound) { navHost.dataset.bound = '1'; navHost.addEventListener('click', onClick); }
-      navHost.innerHTML = `<span class="mx-nav-pill" aria-hidden="true"></span>${TABS.map(tb => `<button type="button" class="mx-nav-item" data-mx-tab="${tb.id}">${icon(tb.icon)}<span>${tabText(tb, 0)}</span></button>`).join('')}<div class="mx-nav-foot"><strong>Data-Driven Curriculum</strong><span>${st.lang === 'kk' ? 'Тест нәтижелерінен — оқулықтар мен сағаттар туралы шешімге.' : 'От результатов тестов — к решениям об учебниках и часах.'}</span></div>`;
+      navHost.innerHTML = `<span class="mx-nav-pill" aria-hidden="true"></span>${TABS.map(tb => `<button type="button" class="mx-nav-item" data-mx-tab="${tb.id}">${icon(tb.icon)}<span>${tabText(tb, 0)}</span></button>`).join('')}<div class="mx-nav-foot"><strong>Data-Driven Curriculum</strong><span>${st.lang === 'kk' ? 'Тест нәтижелерінен - оқулықтар мен сағаттар туралы шешімге.' : 'От результатов тестов - к решениям об учебниках и часах.'}</span></div>`;
       navHost.dataset.ready = '1';
     }
     navHost.querySelectorAll('[data-mx-tab]').forEach(b => { const on = b.dataset.mxTab === st.tab; b.classList.toggle('active', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
@@ -214,7 +214,7 @@
   }
 
   function emptyUI(text) {
-    return `<div class="mx-empty mx-in"><span class="mx-empty-art" aria-hidden="true"><i></i><i></i><i></i></span><h3>${rows.length ? 'Нет ответов по выбранным фильтрам' : 'Начните с данных'}</h3><p>${esc(text || (rows.length ? 'Выберите другой класс или период.' : 'Скачайте шаблон CSV, заполните и загрузите — аналитика появится автоматически.'))}</p>${rows.length ? '' : '<button type="button" class="mx-btn primary" data-mx-tab="data">Перейти к данным</button>'}</div>`;
+    return `<div class="mx-empty mx-in"><span class="mx-empty-art" aria-hidden="true"><i></i><i></i><i></i></span><h3>${rows.length ? 'Нет ответов по выбранным фильтрам' : 'Начните с данных'}</h3><p>${esc(text || (rows.length ? 'Выберите другой класс или период.' : 'Скачайте шаблон CSV, заполните и загрузите - аналитика появится автоматически.'))}</p>${rows.length ? '' : '<button type="button" class="mx-btn primary" data-mx-tab="data">Перейти к данным</button>'}</div>`;
   }
 
   /* ---------------------------------------------------------------- home */
@@ -223,7 +223,7 @@
     { tab: 'overview', n: 2, icon: 'M4 20V10m6 10V4m6 16v-7m5 7H2', ru: ['Посмотреть итоги', 'Успеваемость, качество знаний, оценки и уровни по каждому классу.'], kk: ['Қорытындыны көру', 'Әр сынып бойынша үлгерім, білім сапасы, бағалар мен деңгейлер.'] },
     { tab: 'topics', n: 3, icon: 'M12 4l9 16H3zM12 10v4M12 17v.5', ru: ['Найти трудные темы', 'Какие разделы не освоены и какие ошибки повторяются у учеников.'], kk: ['Қиын тақырыптарды табу', 'Қай бөлімдер меңгерілмеген және қандай қателер қайталанады.'] },
     { tab: 'students', n: 4, icon: 'M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z', ru: ['Составить группы поддержки', 'Готовые списки учеников по темам для дополнительных занятий.'], kk: ['Қолдау топтарын құру', 'Қосымша сабақтарға тақырыптар бойынша дайын тізімдер.'] },
-    { tab: 'report', n: 5, icon: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6', ru: ['Подготовить справку', 'Аналитическая справка по итогам СОР/СОЧ на русском или казахском — в Word.'], kk: ['Анықтама дайындау', 'БЖБ/ТЖБ қорытындысы бойынша талдау анықтамасы — Word форматында.'] },
+    { tab: 'report', n: 5, icon: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6', ru: ['Подготовить справку', 'Аналитическая справка по итогам СОР/СОЧ на русском или казахском - в Word.'], kk: ['Анықтама дайындау', 'БЖБ/ТЖБ қорытындысы бойынша талдау анықтамасы - Word форматында.'] },
     { tab: 'hours', n: 6, icon: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2', ru: ['Распределить часы', 'Куда направить вариативные и коррекционные часы. Черновик КТП.'], kk: ['Сағаттарды бөлу', 'Вариативтік және түзету сағаттарын қайда бағыттау. ҚТЖ жобасы.'] }
   ];
   function homeUI() {
@@ -238,7 +238,7 @@
     const steps = st.lang === 'kk' ? ['Деректерді жүктеңіз', 'Қорытындыны қараңыз', 'Анықтаманы жүктеңіз'] : ['Загрузите результаты', 'Посмотрите итоги и трудные темы', 'Скачайте справку для педсовета'];
     return `<section class="mx-home-steps" aria-label="Как это работает">${steps.map((x, i) => `<div><b>${i + 1}</b><span>${esc(x)}</span></div>`).join('<i aria-hidden="true">→</i>')}</section>
       <section class="mx-tasks">${HOME_TASKS.map(task => { const [title, desc] = task[st.lang] || task.ru; return `<button type="button" class="mx-task" data-mx-tab="${task.tab}"><span class="mx-task-icon">${icon(task.icon)}</span><span class="mx-task-text"><strong>${esc(title)}</strong><span>${esc(desc)}</span>${status[task.tab] ? `<em>${esc(status[task.tab])}</em>` : ''}</span><span class="mx-task-go">${icon(I.arrow)}</span></button>`; }).join('')}</section>
-      <section class="mx-home-help"><span class="mx-help static">?</span><p>${st.lang === 'kk' ? 'Кез келген терминнің жанындағы «?» белгісін басыңыз — қарапайым түсіндірме шығады. Мәтінді үлкейту үшін жоғарыдағы «A+» батырмасын басыңыз.' : 'Нажмите «?» рядом с любым термином — появится объяснение простыми словами. Чтобы увеличить текст, нажмите «A+» вверху.'}</p></section>`;
+      <section class="mx-home-help"><span class="mx-help static">?</span><p>${st.lang === 'kk' ? 'Кез келген терминнің жанындағы «?» белгісін басыңыз - қарапайым түсіндірме шығады. Мәтінді үлкейту үшін жоғарыдағы «A+» батырмасын басыңыз.' : 'Нажмите «?» рядом с любым термином - появится объяснение простыми словами. Чтобы увеличить текст, нажмите «A+» вверху.'}</p></section>`;
   }
 
   // Classic school indicators: успеваемость, качество знаний, marks and levels per class.
@@ -265,7 +265,7 @@
     if (!data.length) return emptyUI();
     const ins = insights(), k = ins.kpi;
     const met = metricsUI(data);
-    const kpis = met.strip + card(K('Итоги по классам', 'Сыныптар бойынша қорытынды'), `<p class="mx-lead">${K(`Как в справке по СОР/СОЧ: оценка ставится по проценту баллов (${st.scale[0]}% — «3», ${st.scale[1]}% — «4», ${st.scale[2]}% — «5»; пороги меняются в «Данных»).`, `БЖБ/ТЖБ анықтамасындағыдай: баға балл пайызымен қойылады (${st.scale[0]}% — «3», ${st.scale[1]}% — «4», ${st.scale[2]}% — «5»; шектер «Деректер» бөлімінде өзгереді).`)}</p>${met.table}`, '', 2);
+    const kpis = met.strip + card(K('Итоги по классам', 'Сыныптар бойынша қорытынды'), `<p class="mx-lead">${K(`Как в справке по СОР/СОЧ: оценка ставится по проценту баллов (${st.scale[0]}% - «3», ${st.scale[1]}% - «4», ${st.scale[2]}% - «5»; пороги меняются в «Данных»).`, `БЖБ/ТЖБ анықтамасындағыдай: баға балл пайызымен қойылады (${st.scale[0]}% - «3», ${st.scale[1]}% - «4», ${st.scale[2]}% - «5»; шектер «Деректер» бөлімінде өзгереді).`)}</p>${met.table}`, '', 2);
     const topicsList = `<ul class="mx-topic-bars">${ins.stats.map((s, i) => `<li class="mx-in" style="--i:${6 + i}"><button type="button" data-mx-topic="${esc(s.topic)}" class="mx-topic-row"><span class="mx-topic-name"><i class="mx-dot tone-${s.status}"></i>${esc(s.topic)}</span>${bar('ov:' + s.topic, 100 * s.masteredShare, s.status === 'risk' ? 'low' : s.status === 'watch' ? 'mid' : 'good')}<span class="mx-topic-val">${num('ovn:' + s.topic, 100 * s.notMasteredShare, 'pct0')}<small>не освоили</small></span></button></li>`).join('')}</ul>`;
     const decisions = ins.decisions.length ? `<ol class="mx-decisions">${ins.decisions.map((d, i) => `<li class="tone-${d.tone}"><span class="mx-dec-icon">${icon(d.kind === 'book' ? I.book : d.kind === 'hours' ? I.clock : I.topic)}</span><p>${esc(d.text)}</p></li>`).join('')}</ol>` : '<p class="mx-muted">Существенных проблем не найдено.</p>';
     const books = ins.books;
@@ -296,9 +296,9 @@
     }).join('')}</tr>`).join('')}</tbody></table></div>`;
     const legend = `<div class="mx-legend wide">${C().THRESHOLDS.map(t => `<span><i class="mx-sw tone-${t.key}"></i>${esc(st.lang === 'kk' ? LEGEND_KK[t.key] : t.label)}</span>`).join('')}<span><i class="mx-sw is-low"></i>${K('мало данных (&lt; 10 учеников или 30 ответов)', 'дерек аз (&lt; 10 оқушы немесе 30 жауап)')}</span></div>`;
     const items = stats.flatMap(s => C().itemStats(data, s.topic).filter(q => q.flags.length).map(q => ({ ...q, topic: s.topic }))).sort((a, b) => b.errorRate - a.errorRate).slice(0, 6);
-    const itemList = items.length ? `<ul class="mx-items">${items.map((q, i) => `<li class="mx-in" style="--i:${4 + i}"><button type="button" data-mx-topic="${esc(q.topic)}" data-class="${esc(st.className)}"><span class="mx-item-top"><strong>${esc(q.text)}</strong>${q.flags.map(flagPill).join('')}</span><span class="mx-item-meta">${esc(q.topic)} · верно ${fmt.pct0(q.p)}${q.wrong[0] ? ` · частый неверный ответ «${esc(q.wrong[0].answer)}» — ${fmt.pct0(100 * q.wrong[0].share)}` : ''}</span></button></li>`).join('')}</ul>` : '<p class="mx-muted">Проблемных заданий не найдено.</p>';
-    return `${card(K('Тема × класс', 'Тақырып × сынып'), `<p class="mx-lead">${K('Средний результат учеников (доля верных). Нажмите на ячейку — откроется разбор темы.', 'Оқушылардың орташа нәтижесі (дұрыс жауап үлесі). Ұяшықты басыңыз — тақырып талдауы ашылады.')}</p>${legend}${heat}`, '', 2)}
-      ${card('Задания, требующие внимания', `<p class="mx-lead">Трудные задания, задания с плохой различающей способностью и устойчивые ошибки — материал для методобъединения.</p>${itemList}`, '', 3)}`;
+    const itemList = items.length ? `<ul class="mx-items">${items.map((q, i) => `<li class="mx-in" style="--i:${4 + i}"><button type="button" data-mx-topic="${esc(q.topic)}" data-class="${esc(st.className)}"><span class="mx-item-top"><strong>${esc(q.text)}</strong>${q.flags.map(flagPill).join('')}</span><span class="mx-item-meta">${esc(q.topic)} · верно ${fmt.pct0(q.p)}${q.wrong[0] ? ` · частый неверный ответ «${esc(q.wrong[0].answer)}» - ${fmt.pct0(100 * q.wrong[0].share)}` : ''}</span></button></li>`).join('')}</ul>` : '<p class="mx-muted">Проблемных заданий не найдено.</p>';
+    return `${card(K('Тема × класс', 'Тақырып × сынып'), `<p class="mx-lead">${K('Средний результат учеников (доля верных). Нажмите на ячейку - откроется разбор темы.', 'Оқушылардың орташа нәтижесі (дұрыс жауап үлесі). Ұяшықты басыңыз - тақырып талдауы ашылады.')}</p>${legend}${heat}`, '', 2)}
+      ${card('Задания, требующие внимания', `<p class="mx-lead">Трудные задания, задания с плохой различающей способностью и устойчивые ошибки - материал для методобъединения.</p>${itemList}`, '', 3)}`;
   }
   function flagPill(flag) { return ({ hard: pill('low', 'Трудное'), weak: pill('watch', 'Плохо различает'), misconception: pill('info', 'Типичная ошибка') })[flag] || ''; }
 
@@ -309,7 +309,7 @@
     const ok = form.filter(r => r.correct).length;
     return `<div class="mx-live-kpis"><div>${num('lv:n', form.length, 'int')}<span>ответов</span></div><div>${num('lv:acc', 100 * ok / form.length, 'pct0')}<span>точность</span></div><div>${num('lv:s', new Set(form.map(r => r.student_id)).size, 'int')}<span>учеников</span></div></div>
       ${growth.length ? `<ul class="mx-live-topics">${growth.slice(0, 4).map(g => `<li><span>${esc(g.topic)}</span>${dumbbell(g.early, g.late)}<b>${esc(fmt.signed(g.growth))}</b></li>`).join('')}</ul>` : ''}
-      <p class="mx-foot">${icon(I.info)} Тренажёр — формирующие данные: в успеваемость и справку не входят.${st.source === 'demo' ? ' В демо история тренажёра синтетическая.' : ''}</p>`;
+      <p class="mx-foot">${icon(I.info)} Тренажёр - формирующие данные: в успеваемость и справку не входят.${st.source === 'demo' ? ' В демо история тренажёра синтетическая.' : ''}</p>`;
   }
 
   /* -------------------------------------------------------------- trainer */
@@ -317,7 +317,7 @@
   const practiceTopic = topic => (global.JazPractice && global.JazPractice.TOPICS.find(x => x.topic === topic)) || null;
   const GROWTH = { up: ['Рост подтверждён', 'good'], down: ['Снижение', 'risk'], flat: ['Рост не подтверждён', 'neutral'], few: ['Мало данных', 'watch'] };
   function dumbbell(early, late) {
-    if (early == null || late == null) return '<span class="mx-muted">—</span>';
+    if (early == null || late == null) return '<span class="mx-muted">-</span>';
     const x = v => 4 + v * 1.92, up = late >= early;
     return `<svg class="mx-dumb" viewBox="0 0 200 24" role="img" aria-label="Начало ${Math.round(early)}%, сейчас ${Math.round(late)}%"><line x1="4" x2="196" y1="12" y2="12" class="mx-dumb-track"/><line x1="${x(early)}" x2="${x(late)}" y1="12" y2="12" class="mx-dumb-line ${up ? 'up' : 'down'}"/><circle cx="${x(early)}" cy="12" r="5" class="mx-dumb-a"/><circle cx="${x(late)}" cy="12" r="6" class="mx-dumb-b ${up ? 'up' : 'down'}"/></svg><small>${Math.round(early)}% → ${Math.round(late)}%</small>`;
   }
@@ -334,14 +334,14 @@
       <article class="mx-kpi"><span>Точность в тренажёре</span>${num('tr:acc', acc, 'pct0')}<small>не путать с баллами СОР/СОЧ</small>${bar('tr:acc', acc || 0, toneOfScore(acc))}</article>
       <article class="mx-kpi"><span>Задания группам</span>${num('tr:g', asgs.length, 'int')}<small>${asgs.reduce((n, a) => n + (a.students.length || 0), 0)} учеников назначено</small>${bar('tr:g', Math.min(100, asgs.length * 20), 'good')}</article>
     </div>`;
-    const table = `<div class="mx-table-wrap"><table class="mx-table mx-growth"><thead><tr><th>Тема</th><th>СОР/СОЧ, средний %</th><th>Тренажёр: начало → сейчас ${helpBtn('growth')}</th><th>Рост</th><th>Учеников</th><th>Вывод</th></tr></thead><tbody>${growth.map(g => `<tr><th scope="row">${esc(g.topic)}</th><td>${g.sorAll == null ? '—' : `${bar('gs:' + g.topic, g.sorAll, toneOfScore(g.sorAll))}<small>${fmt.pct0(g.sorAll)}${g.sorPracticing != null ? ` · у занимающихся ${fmt.pct0(g.sorPracticing)}` : ''}</small>`}</td><td>${dumbbell(g.early, g.late)}</td><td>${g.growth == null ? '—' : `<b>${esc(fmt.pp(g.growth))}</b><small>${g.lo == null ? '' : `ДИ ${fmt.signed(g.lo)} … ${fmt.signed(g.hi)}`}</small>`}</td><td>${g.measured} / ${g.students}</td><td>${pill(GROWTH[g.verdict][1], GROWTH[g.verdict][0])}</td></tr>`).join('')}</tbody></table></div>`;
+    const table = `<div class="mx-table-wrap"><table class="mx-table mx-growth"><thead><tr><th>Тема</th><th>СОР/СОЧ, средний %</th><th>Тренажёр: начало → сейчас ${helpBtn('growth')}</th><th>Рост</th><th>Учеников</th><th>Вывод</th></tr></thead><tbody>${growth.map(g => `<tr><th scope="row">${esc(g.topic)}</th><td>${g.sorAll == null ? '-' : `${bar('gs:' + g.topic, g.sorAll, toneOfScore(g.sorAll))}<small>${fmt.pct0(g.sorAll)}${g.sorPracticing != null ? ` · у занимающихся ${fmt.pct0(g.sorPracticing)}` : ''}</small>`}</td><td>${dumbbell(g.early, g.late)}</td><td>${g.growth == null ? '-' : `<b>${esc(fmt.pp(g.growth))}</b><small>${g.lo == null ? '' : `ДИ ${fmt.signed(g.lo)} … ${fmt.signed(g.hi)}`}</small>`}</td><td>${g.measured} / ${g.students}</td><td>${pill(GROWTH[g.verdict][1], GROWTH[g.verdict][0])}</td></tr>`).join('')}</tbody></table></div>`;
     const classes = C().classes(subjectRows());
     const topicsWithContent = C().topicStats(subjectRows(), opts()).map(x => x.topic).filter(practiceTopic);
     const asgList = asgs.length ? `<ul class="mx-asg">${asgs.map(a => {
       const pr = C().assignmentProgress(a, formative(), subjectRows());
       const src = a.demo ? 'демо' : a.server ? 'сервер школы' : 'этот браузер';
       return `<li><div class="mx-asg-head"><div><strong>${esc(a.title || a.topic)}</strong><small>${esc(a.cls)} · ${a.students.length || 'весь класс'} уч. · ${esc(String(a.createdAt).slice(0, 10))} · ${src}</small></div>${a.demo ? '' : `<button type="button" class="mx-icon-btn" data-mx-action="asg-delete" data-id="${esc(a.id)}" aria-label="Удалить задание">${icon(I.close)}</button>`}</div>
-        <div class="mx-asg-grid"><div><span>Начали</span><b>${pr.started} / ${pr.target}</b>${bar('as:' + a.id, pr.target ? 100 * pr.started / pr.target : 0, 'info')}</div><div><span>СОР до задания</span><b>${fmt.pct0(pr.sorBefore)}</b></div><div><span>Тренажёр: начало → сейчас</span>${dumbbell(pr.early, pr.late)}</div><div><span>Рост</span><b>${pr.growth == null || pr.lo == null ? '—' : esc(fmt.pp(pr.growth))}</b><small>${pr.lo == null ? 'мало данных: нужно ≥ 2 учеников с 4+ ответами' : `ДИ ${fmt.signed(pr.lo)} … ${fmt.signed(pr.hi)}`}</small></div></div></li>`;
+        <div class="mx-asg-grid"><div><span>Начали</span><b>${pr.started} / ${pr.target}</b>${bar('as:' + a.id, pr.target ? 100 * pr.started / pr.target : 0, 'info')}</div><div><span>СОР до задания</span><b>${fmt.pct0(pr.sorBefore)}</b></div><div><span>Тренажёр: начало → сейчас</span>${dumbbell(pr.early, pr.late)}</div><div><span>Рост</span><b>${pr.growth == null || pr.lo == null ? '-' : esc(fmt.pp(pr.growth))}</b><small>${pr.lo == null ? 'мало данных: нужно ≥ 2 учеников с 4+ ответами' : `ДИ ${fmt.signed(pr.lo)} … ${fmt.signed(pr.hi)}`}</small></div></div></li>`;
     }).join('')}</ul>` : '<p class="mx-muted">Заданий пока нет. Создайте задание ниже или в разделе «Ученики» → группы поддержки.</p>';
     const form2 = `<div class="mx-asg-form"><h3>Новое задание</h3><div class="mx-controls">
       <label class="mx-select"><span>Класс</span><select data-mx-asg="cls">${classes.map(c => `<option>${esc(c)}</option>`).join('')}</select></label>
@@ -352,14 +352,14 @@
       ${topicsWithContent.length ? '' : '<p class="mx-foot">' + icon(I.info) + ' В тренажёре нет заданий по темам этих данных. Задания можно назначать по 15 темам программы тренажёра.</p>'}</div>`;
     const adm = global.JazSync && global.JazSync.admin();
     const connect = !apiInfo.api
-      ? `<div class="mx-callout tone-watch">${icon(I.info)}<div><strong>Сервер недоступен — всё работает в этом браузере</strong><p>Задания и ответы видны, если ученик и методист работают на одном компьютере. Чтобы ученики занимались со своих телефонов, разверните проект на Vercel (инструкция: DEPLOY.md в репозитории).</p></div></div>`
+      ? `<div class="mx-callout tone-watch">${icon(I.info)}<div><strong>Сервер недоступен - всё работает в этом браузере</strong><p>Задания и ответы видны, если ученик и методист работают на одном компьютере. Чтобы ученики занимались со своих телефонов, разверните проект на Vercel (инструкция: DEPLOY.md в репозитории).</p></div></div>`
       : !adm
-        ? `<p class="mx-lead">Создайте пространство школы: система выдаст 6-значный код каждому классу. Ученик вводит код класса и свой код — и его ответы приходят сюда с любого устройства. Фамилии не нужны.</p><div class="mx-controls"><label class="mx-select"><span>Название</span><input type="text" data-mx-wsname value="${esc('Школа')}"></label><button type="button" class="mx-btn primary big" data-mx-action="ws-create">${icon(I.check)}Создать коды классов</button></div>`
+        ? `<p class="mx-lead">Создайте пространство школы: система выдаст 6-значный код каждому классу. Ученик вводит код класса и свой код - и его ответы приходят сюда с любого устройства. Фамилии не нужны.</p><div class="mx-controls"><label class="mx-select"><span>Название</span><input type="text" data-mx-wsname value="${esc('Школа')}"></label><button type="button" class="mx-btn primary big" data-mx-action="ws-create">${icon(I.check)}Создать коды классов</button></div>`
         : `<div class="mx-table-wrap"><table class="mx-table mx-codes"><thead><tr><th>Класс</th><th>Код для учеников</th><th>Учеников в списке</th></tr></thead><tbody>${Object.entries(adm.classes || {}).map(([c, v]) => `<tr><th scope="row">${esc(c)}</th><td><b class="mx-code">${esc(v.code)}</b></td><td>${v.students}</td></tr>`).join('')}</tbody></table></div>
           <div class="mx-actions"><button type="button" class="mx-btn primary big" data-mx-action="sync">${icon(I.reset)}Получить ответы учеников</button><button type="button" class="mx-btn" data-mx-action="ws-roster">Обновить список учеников</button><button type="button" class="mx-btn" data-mx-action="print">${icon(I.print)}Печать кодов</button><button type="button" class="mx-btn" data-mx-action="ws-disconnect">Отключить</button></div>
           <p class="mx-foot">${icon(I.info)} ${syncInfo.at ? 'Обновлено: ' + esc(syncInfo.at) + '. ' : ''}${syncInfo.error ? 'Ошибка: ' + esc(syncInfo.error) + '. ' : ''}Пространство: ${esc(adm.name || '')} · хранилище: ${esc(apiInfo.store || '')}.</p>`;
     return `${kpis}
-      ${card('СОР/СОЧ и тренажёр — параллельно ' + helpBtn('separate'), `<p class="mx-lead">Слева — итоговые результаты СОР/СОЧ (официальные данные). Справа — рост в тренажёре по тем же темам. Тренажёр не влияет на успеваемость и справку; подтверждает рост следующий СОР/СОЧ.${demo ? ' История тренажёра в демо — синтетическая.' : ''}</p>${table}`, '', 2)}
+      ${card('СОР/СОЧ и тренажёр - параллельно ' + helpBtn('separate'), `<p class="mx-lead">Слева - итоговые результаты СОР/СОЧ (официальные данные). Справа - рост в тренажёре по тем же темам. Тренажёр не влияет на успеваемость и справку; подтверждает рост следующий СОР/СОЧ.${demo ? ' История тренажёра в демо - синтетическая.' : ''}</p>${table}`, '', 2)}
       ${card('Задания группам поддержки', asgList + form2, '', 3)}
       ${card('Подключение учеников', connect, '', 4)}`;
   }
@@ -420,11 +420,11 @@
     </div>`;
     const groupList = groups.length ? `<ul class="mx-groups">${groups.slice(0, 8).map(g => `<li><details><summary><span class="mx-g-topic"><strong>${esc(g.topic)}</strong><small>${K(`не освоили ${g.count} из ${g.total} · ядро ${g.core} (≤ 40%)`, `${g.total} оқушының ${g.count}-і меңгермеген · ядро ${g.core} (≤ 40%)`)}</small></span><span class="mx-g-classes">${g.groups.map(c => `<span class="mx-class-chip">${esc(c.cls)} · ${c.core.length || c.size}</span>`).join('')}</span></summary><div class="mx-g-body">${g.groups.map(c => `<div><b>${esc(c.cls)}</b><span>${c.core.length ? 'ядро: ' + c.core.map(esc).join(', ') : 'ядра нет'}</span><small>все не освоившие (${c.size}): ${c.students.map(esc).join(', ')}</small>${practiceTopic(g.topic) ? `<button type="button" class="mx-btn mx-assign" data-mx-action="asg-group" data-topic="${esc(g.topic)}" data-cls="${esc(c.cls)}">${icon(I.check)}Назначить ${c.core.length ? 'ядру' : 'группе'} в тренажёре</button>` : ''}</div>`).join('')}</div></details></li>`).join('')}</ul>` : '<p class="mx-muted">Все темы освоены.</p>';
     const table = `<div class="mx-controls">${seg('risk', 'risk', [['high', 'Высокий'], ['medium', 'Средний'], ['all', 'Все']], riskFilter)}<span class="mx-chip">${list.length} учеников</span></div>
-      <div class="mx-table-wrap"><table class="mx-table mx-students"><thead><tr><th>Код</th><th>Класс</th><th>Темы</th><th>Не освоено</th><th>Результат</th><th>Прирост</th><th>Тренажёр</th></tr></thead><tbody>${list.slice(0, 40).map(p => `<tr><th scope="row"><button type="button" class="mx-link" data-mx-student="${esc(p.id)}">${esc(p.id)}</button></th><td>${esc(p.cls)}</td><td><span class="mx-dots">${topics.map(t => { const v = p.topics[t]; return `<i class="tone-${!v ? 'none' : v.mastered ? 'good' : v.score <= 40 ? 'low' : 'mid'}" title="${esc(t)}: ${v ? fmt.pct0(v.score) : '—'}"></i>`; }).join('')}</span></td><td>${p.weak.length} / ${p.covered}</td><td>${fmt.pct0(p.score)}</td><td>${fmt.pp(p.gain)}</td><td>${(() => { const n = formativeSubject().filter(r => r.student_id === p.id).length; return n ? n + ' отв.' : '—'; })()}</td></tr>`).join('')}</tbody></table></div>${list.length > 40 ? `<p class="mx-foot">Показаны первые 40. Полный список — в CSV групп.</p>` : ''}`;
+      <div class="mx-table-wrap"><table class="mx-table mx-students"><thead><tr><th>Код</th><th>Класс</th><th>Темы</th><th>Не освоено</th><th>Результат</th><th>Прирост</th><th>Тренажёр</th></tr></thead><tbody>${list.slice(0, 40).map(p => `<tr><th scope="row"><button type="button" class="mx-link" data-mx-student="${esc(p.id)}">${esc(p.id)}</button></th><td>${esc(p.cls)}</td><td><span class="mx-dots">${topics.map(t => { const v = p.topics[t]; return `<i class="tone-${!v ? 'none' : v.mastered ? 'good' : v.score <= 40 ? 'low' : 'mid'}" title="${esc(t)}: ${v ? fmt.pct0(v.score) : '-'}"></i>`; }).join('')}</span></td><td>${p.weak.length} / ${p.covered}</td><td>${fmt.pct0(p.score)}</td><td>${fmt.pp(p.gain)}</td><td>${(() => { const n = formativeSubject().filter(r => r.student_id === p.id).length; return n ? n + ' отв.' : '-'; })()}</td></tr>`).join('')}</tbody></table></div>${list.length > 40 ? `<p class="mx-foot">Показаны первые 40. Полный список - в CSV групп.</p>` : ''}`;
     return `${kpis}
-      ${card(K('Группы поддержки по темам', 'Тақырыптар бойынша қолдау топтары'), `<p class="mx-lead">${K('Для каждой трудной темы — кто не освоил её в каждом классе. «Ядро» (≤ 40% верных) — первые кандидаты на дополнительные занятия из резерва часов.', 'Әр қиын тақырып бойынша — әр сыныпта кім меңгермеген. «Ядро» (≤ 40% дұрыс) — резерв сағаттардан қосымша сабаққа бірінші үміткерлер.')}</p>${groupList}<div class="mx-actions"><button type="button" class="mx-btn primary" data-mx-action="groups-csv">${icon(I.download)}Скачать списки групп (CSV)</button><button type="button" class="mx-btn" data-mx-tab="hours">${icon(I.clock)}Связать с планом часов</button></div>`, '', 3)}
-      ${card('Ученики в зоне риска', `<p class="mx-lead">Квадраты — темы программы: зелёный — освоено, янтарный — повторить, красный — ≤ 40%. Нажмите на код, чтобы открыть профиль.</p>${table}`, '', 4)}
-      <p class="mx-foot">${icon(I.info)} Только псевдонимные коды. Риск — сигнал для внимания методиста и учителя, а не оценка ученика.</p>`;
+      ${card(K('Группы поддержки по темам', 'Тақырыптар бойынша қолдау топтары'), `<p class="mx-lead">${K('Для каждой трудной темы - кто не освоил её в каждом классе. «Ядро» (≤ 40% верных) - первые кандидаты на дополнительные занятия из резерва часов.', 'Әр қиын тақырып бойынша - әр сыныпта кім меңгермеген. «Ядро» (≤ 40% дұрыс) - резерв сағаттардан қосымша сабаққа бірінші үміткерлер.')}</p>${groupList}<div class="mx-actions"><button type="button" class="mx-btn primary" data-mx-action="groups-csv">${icon(I.download)}Скачать списки групп (CSV)</button><button type="button" class="mx-btn" data-mx-tab="hours">${icon(I.clock)}Связать с планом часов</button></div>`, '', 3)}
+      ${card('Ученики в зоне риска', `<p class="mx-lead">Квадраты - темы программы: зелёный - освоено, янтарный - повторить, красный - ≤ 40%. Нажмите на код, чтобы открыть профиль.</p>${table}`, '', 4)}
+      <p class="mx-foot">${icon(I.info)} Только псевдонимные коды. Риск - сигнал для внимания методиста и учителя, а не оценка ученика.</p>`;
   }
   function studentDrawerUI() {
     const data = viewRows();
@@ -433,9 +433,9 @@
     const topics = C().topicStats(data, opts()).map(t => t.topic);
     const live = liveRows.filter(r => r.student_id === p.id && r.subject === st.subject);
     const body = `<div class="mx-mini-kpis"><div><span>Результат</span>${num('sd:s', p.score, 'pct0')}</div><div><span>Не освоено</span>${num('sd:w', p.weak.length, 'int')}<small>из ${p.covered} тем</small></div><div><span>Прирост</span>${num('sd:g', p.gain, 'pp')}</div></div>
-      <h3>Темы</h3><ul class="mx-class-bars mx-topic-mini">${topics.map(t => { const v = p.topics[t]; return `<li><span title="${esc(t)}">${esc(t)}</span>${bar('sdt:' + t, v ? v.score : 0, v ? toneOfScore(v.score) : 'none')}<b>${v ? fmt.pct0(v.score) : '—'}</b></li>`; }).join('')}</ul>
-      <h3>СОР/СОЧ и тренажёр</h3>${(() => { const tr = C().studentTrainer(formativeSubject(), p.id); return tr.length ? `<ul class="mx-class-bars mx-topic-mini">${tr.map(x => `<li><span title="${esc(x.topic)}">${esc(x.topic)}</span>${dumbbell(x.early, x.late)}<b>${p.topics[x.topic] ? fmt.pct0(p.topics[x.topic].score) : '—'}</b></li>`).join('')}</ul><p class="mx-foot">${icon(I.info)} Справа — результат СОР/СОЧ по теме, полоса — точность в тренажёре: начало → сейчас.</p>` : '<p class="mx-muted">В тренажёре пока не занимался.</p>'; })()}
-      <h3>Что сделать</h3><ul class="mx-todo">${p.weak.length ? p.weak.slice(0, 3).map(t => `<li>Включить в группу поддержки по теме «${esc(t)}»${p.topics[t].score <= 40 ? ' (ядро группы)' : ''}.</li>`).join('') + `${practiceTopic(p.weak[0]) ? `<li><button type="button" class="mx-btn mx-assign" data-mx-action="asg-group" data-topic="${esc(p.weak[0])}" data-cls="${esc(p.cls)}">${icon(I.check)}Назначить группе «${esc(p.weak[0])}» в тренажёре</button></li>` : ''}` : '<li>Все темы освоены — можно давать задания повышенной сложности.</li>'}</ul>`;
+      <h3>Темы</h3><ul class="mx-class-bars mx-topic-mini">${topics.map(t => { const v = p.topics[t]; return `<li><span title="${esc(t)}">${esc(t)}</span>${bar('sdt:' + t, v ? v.score : 0, v ? toneOfScore(v.score) : 'none')}<b>${v ? fmt.pct0(v.score) : '-'}</b></li>`; }).join('')}</ul>
+      <h3>СОР/СОЧ и тренажёр</h3>${(() => { const tr = C().studentTrainer(formativeSubject(), p.id); return tr.length ? `<ul class="mx-class-bars mx-topic-mini">${tr.map(x => `<li><span title="${esc(x.topic)}">${esc(x.topic)}</span>${dumbbell(x.early, x.late)}<b>${p.topics[x.topic] ? fmt.pct0(p.topics[x.topic].score) : '-'}</b></li>`).join('')}</ul><p class="mx-foot">${icon(I.info)} Справа - результат СОР/СОЧ по теме, полоса - точность в тренажёре: начало → сейчас.</p>` : '<p class="mx-muted">В тренажёре пока не занимался.</p>'; })()}
+      <h3>Что сделать</h3><ul class="mx-todo">${p.weak.length ? p.weak.slice(0, 3).map(t => `<li>Включить в группу поддержки по теме «${esc(t)}»${p.topics[t].score <= 40 ? ' (ядро группы)' : ''}.</li>`).join('') + `${practiceTopic(p.weak[0]) ? `<li><button type="button" class="mx-btn mx-assign" data-mx-action="asg-group" data-topic="${esc(p.weak[0])}" data-cls="${esc(p.cls)}">${icon(I.check)}Назначить группе «${esc(p.weak[0])}» в тренажёре</button></li>` : ''}` : '<li>Все темы освоены - можно давать задания повышенной сложности.</li>'}</ul>`;
     return `<div class="mx-drawer-backdrop" data-mx-close></div><aside class="mx-drawer" role="dialog" aria-modal="true" aria-labelledby="mx-drawer-title"><header><div><h2 id="mx-drawer-title">${esc(p.id)}</h2><p class="mx-drawer-sub">${esc(p.cls)} · ${esc(p.teacher)} · ${esc(p.book)} · ${RISK[p.risk]}</p></div><button type="button" class="mx-icon-btn" data-mx-close aria-label="Закрыть">${icon(I.close)}</button></header><div class="mx-drawer-body">${body}</div></aside>`;
   }
 
@@ -457,17 +457,17 @@
         <div><span>Не освоили</span>${num('dr:not', 100 * s.notMasteredShare, 'pct0')}<small>${s.notMastered} из ${s.n}</small></div>
         <div><span>Прирост</span>${num('dr:gain', s.gain, 'pp')}</div>
       </div>
-      ${s.lowData ? `<div class="mx-callout tone-watch">${icon(I.warn)}<p>Мало данных — интерпретируйте осторожно.</p></div>` : ''}
+      ${s.lowData ? `<div class="mx-callout tone-watch">${icon(I.warn)}<p>Мало данных - интерпретируйте осторожно.</p></div>` : ''}
       <h3>Классы</h3>
       <ul class="mx-class-bars">${perClass.map(p => `<li class="${p.c === drawer.className ? 'is-current' : ''}"><span>${esc(p.c)}</span>${bar('drc:' + p.c, p.score, toneOfScore(p.score))}<b>${fmt.pct0(p.score)}</b></li>`).join('')}</ul>
       <h3>Задания</h3>
-      <ul class="mx-q">${s.questions.map(q => `<li><div class="mx-q-head"><strong>${esc(q.text)}</strong><span>${fmt.pct0(q.p)} верно</span></div>${bar('drq:' + q.id, q.p, toneOfScore(q.p))}<div class="mx-q-meta">${q.correctAnswer ? `<span class="ok">${icon(I.check)}${esc(q.correctAnswer)}</span>` : ''}${q.wrong.map(w => `<span class="bad">${esc(w.answer)} · ${fmt.pct0(100 * w.share)}</span>`).join('')}</div><div class="mx-q-foot">${q.flags.map(flagPill).join('')}<span class="mx-muted">различает: ${q.discrimination == null ? '—' : q.discrimination.toFixed(2).replace('.', ',')}</span></div></li>`).join('')}</ul>
+      <ul class="mx-q">${s.questions.map(q => `<li><div class="mx-q-head"><strong>${esc(q.text)}</strong><span>${fmt.pct0(q.p)} верно</span></div>${bar('drq:' + q.id, q.p, toneOfScore(q.p))}<div class="mx-q-meta">${q.correctAnswer ? `<span class="ok">${icon(I.check)}${esc(q.correctAnswer)}</span>` : ''}${q.wrong.map(w => `<span class="bad">${esc(w.answer)} · ${fmt.pct0(100 * w.share)}</span>`).join('')}</div><div class="mx-q-foot">${q.flags.map(flagPill).join('')}<span class="mx-muted">различает: ${q.discrimination == null ? '-' : q.discrimination.toFixed(2).replace('.', ',')}</span></div></li>`).join('')}</ul>
       <h3>Что сделать</h3>
       <ul class="mx-todo">
         ${(() => { const q = s.questions.find(x => x.wrong[0] && x.total >= 10); return q ? `<li>Разобрать с учителями ошибку «${esc(q.wrong[0].answer)}» в задании ${esc(quote(q.text))}.</li>` : ''; })()}
         ${plan && plan.delta > 0 ? `<li>Добавить ${plan.delta} ч к теме (план: ${plan.base} → ${plan.recommended} ч).</li>` : ''}
-        ${worse.map(b => `<li>В классах с «${esc(b.book)}» прирост ниже на ${esc(fmt.pp(Math.abs(b.diff)))} — дать дополнительные материалы.</li>`).join('')}
-        ${s.status === 'ok' ? '<li>Тема освоена — достаточно поддерживающего повторения.</li>' : ''}
+        ${worse.map(b => `<li>В классах с «${esc(b.book)}» прирост ниже на ${esc(fmt.pp(Math.abs(b.diff)))} - дать дополнительные материалы.</li>`).join('')}
+        ${s.status === 'ok' ? '<li>Тема освоена - достаточно поддерживающего повторения.</li>' : ''}
       </ul>`;
     return `<div class="mx-drawer-backdrop" data-mx-close></div><aside class="mx-drawer" role="dialog" aria-modal="true" aria-labelledby="mx-drawer-title"><header><div><h2 id="mx-drawer-title">${esc(drawer.topic)}</h2><p class="mx-drawer-sub">${esc(st.subject)} · ${drawer.className ? 'класс ' + esc(drawer.className) : 'вся параллель'}</p></div><button type="button" class="mx-icon-btn" data-mx-close aria-label="Закрыть">${icon(I.close)}</button></header><div class="mx-drawer-body">${body}</div></aside>`;
   }
@@ -499,17 +499,17 @@
     if (st.reference && !books.includes(st.reference)) st.reference = '';
     const res = C().compareBooks(data, { topic: st.bookTopic || null, reference: st.reference || null });
     const controls = `<div class="mx-controls">${select('bookTopic', [['', 'Все темы (с учётом темы)']].concat(topics.map(t => [t, t])), st.bookTopic, 'Тема')}${select('reference', [['', 'Авто (самый массовый)']].concat(books.map(b => [b, b])), st.reference, 'База сравнения')}<span class="mx-chip">Сравнение по всей параллели</span></div>`;
-    const design = `<div class="mx-table-wrap"><table class="mx-table mx-design"><thead><tr><th>Учитель</th>${books.map(b => `<th>${esc(b)}</th>`).join('')}</tr></thead><tbody>${res.design.map(d => `<tr><th scope="row">${esc(d.teacher)}</th>${d.cells.map(c => `<td>${c.classes.length ? c.classes.map(cl => `<span class="mx-class-chip">${esc(cl)}</span>`).join('') + `<small>n ${c.n}</small>` : '<span class="mx-muted">—</span>'}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const design = `<div class="mx-table-wrap"><table class="mx-table mx-design"><thead><tr><th>Учитель</th>${books.map(b => `<th>${esc(b)}</th>`).join('')}</tr></thead><tbody>${res.design.map(d => `<tr><th scope="row">${esc(d.teacher)}</th>${d.cells.map(c => `<td>${c.classes.length ? c.classes.map(cl => `<span class="mx-class-chip">${esc(cl)}</span>`).join('') + `<small>n ${c.n}</small>` : '<span class="mx-muted">-</span>'}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
     const designNote = res.state === 'blocked' || res.state === 'partial'
       ? `<div class="mx-callout tone-risk">${icon(I.warn)}<div><strong>Почему вывод ${res.state === 'blocked' ? 'заблокирован' : 'частичный'}</strong><p>${esc(res.why)}</p><strong>Что исправит</strong><ul>${res.fixes.map(f => `<li>${esc(f)}</li>`).join('')}</ul></div></div>`
       : res.state === 'single' ? `<div class="mx-callout tone-watch">${icon(I.info)}<p>${esc(res.why)}</p></div>`
-      : `<div class="mx-callout tone-good">${icon(I.check)}<p>Учебники связаны через общих учителей — разницу можно оценить внутри учителей.</p></div>`;
+      : `<div class="mx-callout tone-good">${icon(I.check)}<p>Учебники связаны через общих учителей - разницу можно оценить внутри учителей.</p></div>`;
     let result = '';
     if (res.state === 'ok' || res.state === 'partial') {
       result = card(st.bookTopic ? 'Разница прироста · ' + esc(st.bookTopic) : 'Разница прироста · все темы', `
-        <p class="mx-lead">Насколько прирост «результат − входная диагностика» отличается от «${esc(res.reference)}», при одинаковом учителе${st.bookTopic ? '' : ' и теме'}. Отрезок — 95% интервал, серая полоса — ±${C().DEFAULTS.meaningful} п.п. (практически незаметная разница).</p>
+        <p class="mx-lead">Насколько прирост «результат − входная диагностика» отличается от «${esc(res.reference)}», при одинаковом учителе${st.bookTopic ? '' : ' и теме'}. Отрезок - 95% интервал, серая полоса - ±${C().DEFAULTS.meaningful} п.п. (практически незаметная разница).</p>
         ${forest(res, 'bk')}
-        <div class="mx-table-wrap"><table class="mx-table"><thead><tr><th>Учебник</th><th>Учеников</th><th>Классы</th><th>Результат</th><th>Прирост (сырой)</th><th>Разница с учётом учителя</th><th>Вывод</th></tr></thead><tbody>${res.books.map(b => `<tr><th scope="row">${esc(b.book)}</th><td>${b.n}</td><td>${b.classes.map(esc).join(', ')}</td><td>${fmt.pct(b.rawScore)}</td><td>${fmt.pp(b.rawGain)}</td><td>${b.reference ? '—' : b.comparable ? `${fmt.pp(b.diff)}<small>ДИ ${fmt.signed(b.lo)} … ${fmt.signed(b.hi)}</small>` : '—'}</td><td>${pill(b.verdict === 'better' ? 'good' : b.verdict === 'worse' ? 'risk' : b.verdict === 'incomparable' ? 'watch' : 'neutral', VERDICT[b.verdict] || '')}</td></tr>`).join('')}</tbody></table></div>
+        <div class="mx-table-wrap"><table class="mx-table"><thead><tr><th>Учебник</th><th>Учеников</th><th>Классы</th><th>Результат</th><th>Прирост (сырой)</th><th>Разница с учётом учителя</th><th>Вывод</th></tr></thead><tbody>${res.books.map(b => `<tr><th scope="row">${esc(b.book)}</th><td>${b.n}</td><td>${b.classes.map(esc).join(', ')}</td><td>${fmt.pct(b.rawScore)}</td><td>${fmt.pp(b.rawGain)}</td><td>${b.reference ? '-' : b.comparable ? `${fmt.pp(b.diff)}<small>ДИ ${fmt.signed(b.lo)} … ${fmt.signed(b.hi)}</small>` : '-'}</td><td>${pill(b.verdict === 'better' ? 'good' : b.verdict === 'worse' ? 'risk' : b.verdict === 'incomparable' ? 'watch' : 'neutral', VERDICT[b.verdict] || '')}</td></tr>`).join('')}</tbody></table></div>
         ${res.notes.map(n => `<p class="mx-foot">${icon(I.info)} ${esc(n)}</p>`).join('')}
         <p class="mx-foot">${icon(I.info)} Это наблюдаемая связь, а не доказанная причина: классы не распределялись между учебниками случайно.</p>`, '', 4);
     }
@@ -517,9 +517,9 @@
     if (!st.bookTopic && (res.state === 'ok' || res.state === 'partial')) {
       const per = topics.map(t => ({ t, r: C().compareBooks(data, { topic: t, reference: res.reference, reps: 200 }) }));
       const others = books.filter(b => b !== res.reference);
-      matrix = card('Учебник × тема', `<p class="mx-lead">Разница прироста с «${esc(res.reference)}» по каждой теме. Обводка — разница подтверждена (95% ДИ не включает 0). Нажмите на тему, чтобы открыть подробное сравнение.</p><div class="mx-table-wrap"><table class="mx-table mx-bt"><thead><tr><th>Тема</th>${others.map(b => `<th>${esc(b)}</th>`).join('')}</tr></thead><tbody>${per.map(({ t, r }, i) => `<tr><th scope="row"><button type="button" class="mx-link" data-mx-set="bookTopic" data-value="${esc(t)}">${esc(t)}</button></th>${others.map(b => { const x = r.books.find(y => y.book === b); if (!x || x.diff == null) return '<td><span class="mx-muted">—</span></td>'; const sig = x.lo > 0 || x.hi < 0; const a = Math.min(1, Math.abs(x.diff) / 20); return `<td><span class="mx-div mx-pop ${x.diff >= 0 ? 'pos' : 'neg'}${sig ? ' is-sig' : ''}" style="--a:${a.toFixed(2)};--i:${i}">${esc(fmt.signed(x.diff))}</span></td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`, '', 5);
+      matrix = card('Учебник × тема', `<p class="mx-lead">Разница прироста с «${esc(res.reference)}» по каждой теме. Обводка - разница подтверждена (95% ДИ не включает 0). Нажмите на тему, чтобы открыть подробное сравнение.</p><div class="mx-table-wrap"><table class="mx-table mx-bt"><thead><tr><th>Тема</th>${others.map(b => `<th>${esc(b)}</th>`).join('')}</tr></thead><tbody>${per.map(({ t, r }, i) => `<tr><th scope="row"><button type="button" class="mx-link" data-mx-set="bookTopic" data-value="${esc(t)}">${esc(t)}</button></th>${others.map(b => { const x = r.books.find(y => y.book === b); if (!x || x.diff == null) return '<td><span class="mx-muted">-</span></td>'; const sig = x.lo > 0 || x.hi < 0; const a = Math.min(1, Math.abs(x.diff) / 20); return `<td><span class="mx-div mx-pop ${x.diff >= 0 ? 'pos' : 'neg'}${sig ? ' is-sig' : ''}" style="--a:${a.toFixed(2)};--i:${i}">${esc(fmt.signed(x.diff))}</span></td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`, '', 5);
     }
-    const method = `<details class="mx-details mx-in" style="--i:6"><summary>Как считается сравнение</summary><ol><li>Для каждого ученика по теме: прирост = доля верных ответов − входная диагностика.</li><li>Модель наименьших квадратов: прирост ~ учебник + учитель${st.bookTopic ? '' : ' + тема'}. Разница учебников оценивается внутри одного учителя.</li><li>Если учебник используется только «своими» учителями, вывод блокируется и система предлагает, какой класс перевести.</li><li>95% интервал — ${res.reps || 400} повторов бутстрэпа: ученики пересэмплируются внутри своих классов.</li><li>«Больше/меньше прирост» — только если интервал не включает 0 и разница ≥ ${C().DEFAULTS.meaningful} п.п.</li></ol></details>`;
+    const method = `<details class="mx-details mx-in" style="--i:6"><summary>Как считается сравнение</summary><ol><li>Для каждого ученика по теме: прирост = доля верных ответов − входная диагностика.</li><li>Модель наименьших квадратов: прирост ~ учебник + учитель${st.bookTopic ? '' : ' + тема'}. Разница учебников оценивается внутри одного учителя.</li><li>Если учебник используется только «своими» учителями, вывод блокируется и система предлагает, какой класс перевести.</li><li>95% интервал - ${res.reps || 400} повторов бутстрэпа: ученики пересэмплируются внутри своих классов.</li><li>«Больше/меньше прирост» - только если интервал не включает 0 и разница ≥ ${C().DEFAULTS.meaningful} п.п.</li></ol></details>`;
     return `${controls}${card('Кто по какому учебнику работает', `${design}${designNote}`, '', 3)}${result}${matrix}${method}`;
   }
 
@@ -547,7 +547,7 @@
     </div>`;
     return `${summary}${plan.note ? `<div class="mx-callout tone-watch mx-in" style="--i:2">${icon(I.info)}<p>${esc(plan.note)}</p></div>` : ''}
       ${card('План по темам', `<ul class="mx-hours">${items}</ul><div class="mx-actions"><button type="button" class="mx-btn primary" data-mx-action="plan-csv">${icon(I.download)}Скачать план (CSV)</button><button type="button" class="mx-btn primary" data-mx-action="ktp-csv">${icon(I.download)}Черновик КТП (CSV)</button><button type="button" class="mx-btn" data-mx-action="reset-program">${icon(I.reset)}Сбросить программу</button><button type="button" class="mx-btn" data-mx-tab="report">${icon(I.print)}В отчёт</button></div>`, '', 3, `<span class="mx-legend"><span><i class="mx-sw tone-neutral"></i>программа</span><span><i class="mx-sw tone-info"></i>рекомендация</span></span>`)}
-      <details class="mx-details mx-in" style="--i:10"><summary>Как считается рекомендация</summary><ol><li>Сетка часов программы сохраняется; меняется только распределение резерва и (по желанию) часов освоенных тем.</li><li>Потребность темы = доля не освоивших × часы темы × важность (1–3).</li><li>Резерв и перенесённые часы делятся пропорционально потребности, не больше +50% к теме, целыми часами (метод наибольших остатков).</li><li>Темы с малым числом данных не меняются — нужен дополнительный срез.</li><li>Это правило приоритизации, а не прогноз прироста баллов.</li></ol></details>`;
+      <details class="mx-details mx-in" style="--i:10"><summary>Как считается рекомендация</summary><ol><li>Сетка часов программы сохраняется; меняется только распределение резерва и (по желанию) часов освоенных тем.</li><li>Потребность темы = доля не освоивших × часы темы × важность (1-3).</li><li>Резерв и перенесённые часы делятся пропорционально потребности, не больше +50% к теме, целыми часами (метод наибольших остатков).</li><li>Темы с малым числом данных не меняются - нужен дополнительный срез.</li><li>Это правило приоритизации, а не прогноз прироста баллов.</li></ol></details>`;
   }
   function reasonExtra(p) {
     if (!p.stats || p.delta <= 0) return '';
@@ -555,7 +555,7 @@
     const q = C().itemStats(data, p.topic).find(x => x.wrong.length && x.total >= 10);
     const cmp = C().compareBooks(subjectRows(), { topic: p.topic, reps: 200 });
     const worse = (cmp.books || []).filter(b => b.verdict === 'worse').map(b => b.book);
-    return (q ? ' Частая ошибка: «' + esc(q.wrong[0].answer) + '» в задании ' + esc(quote(short(q.text, 40))) + '.' : '') + (worse.length ? ' Слабее результаты у: ' + worse.map(esc).join(', ') + ' — нужны доп. материалы.' : '');
+    return (q ? ' Частая ошибка: «' + esc(q.wrong[0].answer) + '» в задании ' + esc(quote(short(q.text, 40))) + '.' : '') + (worse.length ? ' Слабее результаты у: ' + worse.map(esc).join(', ') + ' - нужны доп. материалы.' : '');
   }
 
   /* -------------------------------------------------------------- report */
@@ -566,9 +566,9 @@
     const data = viewRows();
     const ins = insights(), m = C().schoolMetrics(data, { scale: st.scale }), plan = ins.plan;
     const dates = data.map(r => r.date).sort();
-    const fmtD = d => d ? d.split('-').reverse().join('.') : '—';
+    const fmtD = d => d ? d.split('-').reverse().join('.') : '-';
     const subjectKk = { 'Математика': 'Математика', 'Казахский язык': 'Қазақ тілі' }[st.subject] || st.subject;
-    const pct = v => v == null ? '—' : Math.round(v) + '%';
+    const pct = v => v == null ? '-' : Math.round(v) + '%';
     const achieved = ins.stats.filter(x => !x.lowData && x.status === 'ok');
     const hard = ins.stats.filter(x => !x.lowData && x.status !== 'ok').sort((x, y) => y.notMasteredShare - x.notMasteredShare);
     const groups = C().supportGroups(data, opts());
@@ -580,7 +580,7 @@
     const errorOf = topic => { const p = ins.problems.find(x => x.topic === topic); return p && p.item && p.item.wrong[0] ? L(` Типичная ошибка: «${p.item.wrong[0].answer}» в задании «${p.item.text}».`, ` Жиі қате: «${p.item.text}» тапсырмасында «${p.item.wrong[0].answer}».`) : ''; };
     const recs = [];
     if (hard[0]) recs.push(L(`Провести коррекционную работу по разделам: ${hard.slice(0, 3).map(x => '«' + x.topic + '»').join(', ')}.`, `Мына бөлімдер бойынша түзету жұмысын жүргізу: ${hard.slice(0, 3).map(x => '«' + x.topic + '»').join(', ')}.`));
-    if (groups[0]) recs.push(L(`Организовать группы поддержки; в первую очередь — ${groups[0].core} учащихся с результатом ≤ 40% по разделу «${groups[0].topic}».`, `Қолдау топтарын құру; бірінші кезекте — «${groups[0].topic}» бөлімі бойынша нәтижесі ≤ 40% ${groups[0].core} оқушы.`));
+    if (groups[0]) recs.push(L(`Организовать группы поддержки; в первую очередь - ${groups[0].core} учащихся с результатом ≤ 40% по разделу «${groups[0].topic}».`, `Қолдау топтарын құру; бірінші кезекте - «${groups[0].topic}» бөлімі бойынша нәтижесі ≤ 40% ${groups[0].core} оқушы.`));
     recs.push(L('Обсудить типичные ошибки на заседании методического объединения, включить задания на эти ошибки в формативное оценивание.', 'Жиі қателерді әдістемелік бірлестік отырысында талқылау, оларға арналған тапсырмаларды қалыптастырушы бағалауға енгізу.'));
     const adds = plan.rows.filter(p => p.delta > 0);
     if (adds.length) recs.push(L(`Направить вариативные/коррекционные часы: ${adds.map(p => '+' + p.delta + ' ч «' + p.topic + '»').join(', ')}.`, `Вариативтік/түзету сағаттарын бағыттау: ${adds.map(p => '+' + p.delta + ' сағ. «' + p.topic + '»').join(', ')}.`));
@@ -588,17 +588,17 @@
     return `<div style="font-family:'Times New Roman',serif;font-size:13pt;line-height:1.4;color:#000">
       <p style="text-align:center;font-weight:bold;margin:0">${L('АНАЛИТИЧЕСКАЯ СПРАВКА', 'ТАЛДАУ АНЫҚТАМАСЫ')}</p>
       <p style="text-align:center;margin:0 0 12pt">${L('по итогам суммативного оценивания', 'жиынтық бағалау қорытындысы бойынша')}</p>
-      <p><b>${L('Предмет', 'Пән')}:</b> ${esc(kk ? subjectKk : st.subject)}. <b>${L('Классы', 'Сыныптар')}:</b> ${esc(st.className || m.classes.map(c => c.cls).join(', '))}. <b>${L('Период', 'Кезең')}:</b> ${fmtD(dates[0])} – ${fmtD(dates[dates.length - 1])}. <b>${L('Количество учащихся', 'Оқушылар саны')}:</b> ${m.total.n}.</p>
+      <p><b>${L('Предмет', 'Пән')}:</b> ${esc(kk ? subjectKk : st.subject)}. <b>${L('Классы', 'Сыныптар')}:</b> ${esc(st.className || m.classes.map(c => c.cls).join(', '))}. <b>${L('Период', 'Кезең')}:</b> ${fmtD(dates[0])} - ${fmtD(dates[dates.length - 1])}. <b>${L('Количество учащихся', 'Оқушылар саны')}:</b> ${m.total.n}.</p>
       <p><b>${L('Цель', 'Мақсаты')}:</b> ${L('анализ уровня достижения целей обучения по разделам учебной программы, выявление затруднений и планирование коррекционной работы.', 'оқу бағдарламасының бөлімдері бойынша оқу мақсаттарына жету деңгейін талдау, қиындықтарды анықтау және түзету жұмысын жоспарлау.')}</p>
       <p style="font-weight:bold;margin-top:12pt">1. ${L('Итоги по классам', 'Сыныптар бойынша қорытынды')}</p>
-      <table style="border-collapse:collapse;width:100%;font-size:11pt"><tr><th style="${th}">${L('Класс', 'Сынып')}</th><th style="${th}">${L('Учащихся', 'Оқушы')}</th><th style="${th}">${L('Средний %', 'Орташа %')}</th><th style="${th}">${L('Низкий (0–39%)', 'Төмен (0–39%)')}</th><th style="${th}">${L('Средний (40–84%)', 'Орта (40–84%)')}</th><th style="${th}">${L('Высокий (85–100%)', 'Жоғары (85–100%)')}</th><th style="${th}">${L('Успеваемость', 'Үлгерім')}</th><th style="${th}">${L('Качество', 'Сапа')}</th></tr>
+      <table style="border-collapse:collapse;width:100%;font-size:11pt"><tr><th style="${th}">${L('Класс', 'Сынып')}</th><th style="${th}">${L('Учащихся', 'Оқушы')}</th><th style="${th}">${L('Средний %', 'Орташа %')}</th><th style="${th}">${L('Низкий (0-39%)', 'Төмен (0-39%)')}</th><th style="${th}">${L('Средний (40-84%)', 'Орта (40-84%)')}</th><th style="${th}">${L('Высокий (85-100%)', 'Жоғары (85-100%)')}</th><th style="${th}">${L('Успеваемость', 'Үлгерім')}</th><th style="${th}">${L('Качество', 'Сапа')}</th></tr>
       ${m.classes.concat([{ cls: L('Итого', 'Барлығы'), ...m.total }]).map(c => `<tr><td style="${cell}">${esc(c.cls)}</td><td style="${cell}">${c.n}</td><td style="${cell}">${pct(c.avg)}</td><td style="${cell}">${c.levels.low}</td><td style="${cell}">${c.levels.mid}</td><td style="${cell}">${c.levels.high}</td><td style="${cell}">${pct(100 * c.progress)}</td><td style="${cell}">${pct(100 * c.quality)}</td></tr>`).join('')}</table>
       <p style="font-weight:bold;margin-top:12pt">2. ${L('Разделы, успешно освоенные учащимися', 'Оқушылар жақсы меңгерген бөлімдер')}</p>
       <p>${achieved.length ? achieved.map(x => `«${esc(x.topic)}» (${pct(x.score)})`).join('; ') + '.' : L('Разделов с высоким уровнем освоения нет.', 'Жоғары деңгейде меңгерілген бөлімдер жоқ.')}</p>
       <p style="font-weight:bold;margin-top:12pt">3. ${L('Разделы, вызвавшие затруднения', 'Қиындық туғызған бөлімдер')}</p>
       ${hard.length ? `<ul>${hard.map(x => `<li>«${esc(x.topic)}»: ${L('не освоили', 'меңгермеген')} ${Math.round(100 * x.notMasteredShare)}% (${x.notMastered} ${L('из', '/')} ${x.n}).${esc(errorOf(x.topic))}</li>`).join('')}</ul>` : `<p>${L('Существенных затруднений не выявлено.', 'Елеулі қиындықтар анықталмады.')}</p>`}
       <p style="font-weight:bold;margin-top:12pt">4. ${L('Учебники', 'Оқулықтар')}</p>
-      <p>${books && (books.state === 'ok' || books.state === 'partial') ? books.books.map(bk => bk.reference ? L(`«${esc(bk.book)}» — база сравнения`, `«${esc(bk.book)}» — салыстыру негізі`) : `«${esc(bk.book)}»: ${bk.diff == null ? '—' : (bk.diff > 0 ? '+' : '') + Math.round(bk.diff * 10) / 10 + L(' п.п.', ' п.т.')} (${esc((kk ? VERDICT_KK : VERDICT)[bk.verdict] || '')})`).join('; ') + L('. Сравнение учитывает учителя; это связь, а не доказанная причина.', '. Салыстыру мұғалімді ескереді; бұл байланыс, дәлелденген себеп емес.') : esc(books && books.why ? books.why : L('Сравнение учебников по этим данным невозможно.', 'Бұл деректер бойынша оқулықтарды салыстыру мүмкін емес.'))}</p>
+      <p>${books && (books.state === 'ok' || books.state === 'partial') ? books.books.map(bk => bk.reference ? L(`«${esc(bk.book)}» - база сравнения`, `«${esc(bk.book)}» - салыстыру негізі`) : `«${esc(bk.book)}»: ${bk.diff == null ? '-' : (bk.diff > 0 ? '+' : '') + Math.round(bk.diff * 10) / 10 + L(' п.п.', ' п.т.')} (${esc((kk ? VERDICT_KK : VERDICT)[bk.verdict] || '')})`).join('; ') + L('. Сравнение учитывает учителя; это связь, а не доказанная причина.', '. Салыстыру мұғалімді ескереді; бұл байланыс, дәлелденген себеп емес.') : esc(books && books.why ? books.why : L('Сравнение учебников по этим данным невозможно.', 'Бұл деректер бойынша оқулықтарды салыстыру мүмкін емес.'))}</p>
       <p style="font-weight:bold;margin-top:12pt">5. ${L('Выводы и рекомендации', 'Қорытынды және ұсыныстар')}</p>
       ${ai ? `<p>${esc(ai.summary)}</p>` : ''}
       <ol>${(ai && ai.actions && ai.actions.length ? ai.actions : recs).map(x => `<li>${esc(x)}</li>`).join('')}</ol>
@@ -619,7 +619,7 @@
       <button type="button" class="mx-btn primary big" data-mx-action="word">${icon(I.download)}${K('Скачать справку (Word)', 'Анықтаманы жүктеу (Word)')}</button>
       <button type="button" class="mx-btn big" data-mx-action="print">${icon(I.print)}${K('Печать / PDF', 'Басып шығару / PDF')}</button>
       <button type="button" class="mx-btn" data-mx-action="ai-summary"${aiAvailable && !aiBusy ? '' : ' disabled'} title="${aiAvailable ? 'Отправляются только сводные цифры, без кодов учеников' : 'ИИ доступен, если на сервере задан ANTHROPIC_API_KEY'}">${icon(I.info)}${aiBusy ? K('Формулирую выводы…', 'Қорытынды жазылуда…') : ai ? K('Обновить выводы ИИ', 'ЖИ қорытындысын жаңарту') : K('Выводы с помощью ИИ', 'ЖИ көмегімен қорытынды')}</button>${aiAvailable ? '' : `<span class="mx-chip">${K('ИИ выключен: на сервере нет ключа', 'ЖИ өшірулі: серверде кілт жоқ')}</span>`}</div>
-      <p class="mx-lead">${K('Справка составлена автоматически по выбранному предмету, классу и периоду. Перед подписью проверьте выводы.', 'Анықтама таңдалған пән, сынып және кезең бойынша автоматты түрде жасалды. Қол қоймас бұрын қорытындыны тексеріңіз.')} ${ai ? K('Раздел «Выводы» дополнен ИИ — это черновик.', '«Қорытынды» бөлімін ЖИ толықтырды — бұл жоба.') : ''}</p>
+      <p class="mx-lead">${K('Справка составлена автоматически по выбранному предмету, классу и периоду. Перед подписью проверьте выводы.', 'Анықтама таңдалған пән, сынып және кезең бойынша автоматты түрде жасалды. Қол қоймас бұрын қорытындыны тексеріңіз.')} ${ai ? K('Раздел «Выводы» дополнен ИИ - это черновик.', '«Қорытынды» бөлімін ЖИ толықтырды - бұл жоба.') : ''}</p>
       <article class="mx-report mx-doc">${spravkaHTML(lang)}</article>`;
   }
   function downloadWord(lang) {
@@ -642,7 +642,7 @@
       </div></div>
       ${imp.error ? `<div class="mx-alert" role="alert">${icon(I.warn)}<p><b>Таблицу не удалось прочитать.</b> ${esc(imp.error)}</p></div>` : ''}
       ${pv ? `<div class="mx-step"><b>2</b><div><h3>Проверьте, что всё распознано верно</h3>
-        <div class="mx-callout tone-good">${icon(I.check)}<div><strong>${pv.format === 'journal' ? 'Журнал СОР/СОЧ (баллы по разделам)' : 'Подробная таблица (ответы по заданиям)'}${imp.name ? ' · ' + esc(imp.name) : ''}</strong><p>${pv.students} учеников · классы: ${esc(pv.classes.join(', '))} · разделов: ${pv.topics.length} · предмет: ${esc(pv.subjects.join(', '))}</p>${pv.renamed ? `<p>Фамилии заменены кодами для ${pv.renamed} строк — личные данные не сохраняются.</p>` : ''}</div></div>
+        <div class="mx-callout tone-good">${icon(I.check)}<div><strong>${pv.format === 'journal' ? 'Журнал СОР/СОЧ (баллы по разделам)' : 'Подробная таблица (ответы по заданиям)'}${imp.name ? ' · ' + esc(imp.name) : ''}</strong><p>${pv.students} учеников · классы: ${esc(pv.classes.join(', '))} · разделов: ${pv.topics.length} · предмет: ${esc(pv.subjects.join(', '))}</p>${pv.renamed ? `<p>Фамилии заменены кодами для ${pv.renamed} строк - личные данные не сохраняются.</p>` : ''}</div></div>
         ${pv.format === 'journal' && pv.noSubject ? `<label class="mx-select mx-subject-input"><span>Предмет</span><input type="text" list="mx-subjects" data-mx-import-subject value="${esc(imp.subject || st.subject)}"><datalist id="mx-subjects">${subjects.map(x => `<option value="${esc(x)}">`).join('')}</datalist></label>` : ''}
         <div class="mx-table-wrap"><table class="mx-table"><thead><tr><th>Ученик</th><th>Класс</th><th>Раздел</th><th>Результат</th></tr></thead><tbody>${pv.sample.map(x => `<tr><td>${esc(x.student)}</td><td>${esc(x.cls)}</td><td>${esc(x.topic)}</td><td>${fmt.pct0(x.score)}</td></tr>`).join('')}</tbody></table></div>
       </div></div>
@@ -660,7 +660,7 @@
         noSubject = !/(предмет|пән|subject)/u.test(heads);
         const r = C().parseJournal(text, { subject: imp.subject || st.subject }); parsed = r.rows; renamed = r.renamed;
       } else if (format === 'answers') parsed = C().parseCSV(text);
-      else throw new Error(format === 'empty' ? 'Поле пустое — вставьте таблицу или выберите файл.' : 'Не нашли нужные колонки. Нужны: Ученик, Класс, Раздел, Балл, Макс. балл. Скачайте «Шаблон журнала СОР/СОЧ» — в нём правильные заголовки.');
+      else throw new Error(format === 'empty' ? 'Поле пустое - вставьте таблицу или выберите файл.' : 'Не нашли нужные колонки. Нужны: Ученик, Класс, Раздел, Балл, Макс. балл. Скачайте «Шаблон журнала СОР/СОЧ» - в нём правильные заголовки.');
       const units = C().studentTopic(parsed);
       imp.preview = { format, rows: parsed, renamed, noSubject, students: new Set(parsed.map(x => x.student_id)).size, classes: C().unique(parsed, 'class'), topics: C().unique(parsed, 'topic'), subjects: C().unique(parsed, 'subject'), sample: units.slice(0, 6).map(u => ({ student: u.student, cls: u.cls, topic: u.topic, score: u.score })) };
     } catch (e) { imp.error = String(e.message || e); }
@@ -683,22 +683,22 @@
       const stats = C().topicStats(r, { mastery: st.mastery });
       const dates = r.map(x => x.date).sort();
       const checks = [
-        [cmp.state === 'ok', cmp.state === 'ok' ? 'Учебники связаны через общих учителей — сравнение возможно' : cmp.state === 'single' ? 'Один учебник — сравнение невозможно' : 'Учебник и учитель смешаны — сравнение ограничено'],
+        [cmp.state === 'ok', cmp.state === 'ok' ? 'Учебники связаны через общих учителей - сравнение возможно' : cmp.state === 'single' ? 'Один учебник - сравнение невозможно' : 'Учебник и учитель смешаны - сравнение ограничено'],
         [!stats.some(t => t.lowData), stats.some(t => t.lowData) ? 'Темы с малым числом данных: ' + stats.filter(t => t.lowData).map(t => t.topic).join(', ') : 'По всем темам достаточно данных'],
-        [r.every(x => x.question_text), r.every(x => x.question_text) ? 'Тексты заданий есть' : 'Нет текстов части заданий — в разборе будут только коды'],
-        [r.some(x => x.answer), r.some(x => x.answer) ? 'Неверные ответы указаны — анализ ошибок доступен' : 'Нет колонки answer — типичные ошибки не определяются']
+        [r.every(x => x.question_text), r.every(x => x.question_text) ? 'Тексты заданий есть' : 'Нет текстов части заданий - в разборе будут только коды'],
+        [r.some(x => x.answer), r.some(x => x.answer) ? 'Неверные ответы указаны - анализ ошибок доступен' : 'Нет колонки answer - типичные ошибки не определяются']
       ];
-      return `<article class="mx-q-card mx-in" style="--i:4"><h3>${esc(s)}</h3><dl><div><dt>Учеников</dt><dd>${new Set(r.map(x => x.student_id)).size}</dd></div><div><dt>Классов</dt><dd>${C().unique(r, 'class').length}</dd></div><div><dt>Учителей</dt><dd>${C().unique(r, 'teacher').length}</dd></div><div><dt>Учебников</dt><dd>${C().unique(r, 'textbook').length}</dd></div><div><dt>Тем</dt><dd>${stats.length}</dd></div><div><dt>Период</dt><dd>${dates[0] || '—'} — ${dates[dates.length - 1] || '—'}</dd></div></dl><ul class="mx-checks">${checks.map(([ok, t]) => `<li class="${ok ? 'ok' : 'warn'}">${icon(ok ? I.check : I.warn)}${esc(t)}</li>`).join('')}</ul></article>`;
+      return `<article class="mx-q-card mx-in" style="--i:4"><h3>${esc(s)}</h3><dl><div><dt>Учеников</dt><dd>${new Set(r.map(x => x.student_id)).size}</dd></div><div><dt>Классов</dt><dd>${C().unique(r, 'class').length}</dd></div><div><dt>Учителей</dt><dd>${C().unique(r, 'teacher').length}</dd></div><div><dt>Учебников</dt><dd>${C().unique(r, 'textbook').length}</dd></div><div><dt>Тем</dt><dd>${stats.length}</dd></div><div><dt>Период</dt><dd>${dates[0] || '-'} - ${dates[dates.length - 1] || '-'}</dd></div></dl><ul class="mx-checks">${checks.map(([ok, t]) => `<li class="${ok ? 'ok' : 'warn'}">${icon(ok ? I.check : I.warn)}${esc(t)}</li>`).join('')}</ul></article>`;
     }).join('');
-    const cols = [['student_id', 'Код ученика (без ФИО)'], ['class', 'Класс'], ['teacher', 'Учитель (можно код)'], ['subject', 'Предмет'], ['textbook', 'Учебник'], ['topic', 'Тема программы'], ['question_id', 'Код задания'], ['correct', '1 — верно, 0 — неверно'], ['pretest', 'Входная диагностика по теме, 0–100'], ['date', 'Дата, ГГГГ-ММ-ДД'], ['question_text', 'Текст задания (необязательно)'], ['answer', 'Ответ ученика (необязательно)'], ['correct_answer', 'Верный ответ (необязательно)']];
-    const scaleCard = card('Пороги оценок', `<p class="mx-lead">Процент баллов, с которого ставится оценка. По умолчанию 40 / 65 / 85 — сверьте с инструкцией вашего отдела образования.</p><div class="mx-controls">${[['«3» от', 0], ['«4» от', 1], ['«5» от', 2]].map(([l, i]) => `<label class="mx-select"><span>${l}</span><input type="number" min="1" max="99" step="1" value="${st.scale[i]}" data-mx-scale="${i}" class="mx-num-input">%</label>`).join('')}<button type="button" class="mx-btn" data-mx-action="scale-reset">По умолчанию</button></div>`, '', 2);
+    const cols = [['student_id', 'Код ученика (без ФИО)'], ['class', 'Класс'], ['teacher', 'Учитель (можно код)'], ['subject', 'Предмет'], ['textbook', 'Учебник'], ['topic', 'Тема программы'], ['question_id', 'Код задания'], ['correct', '1 - верно, 0 - неверно'], ['pretest', 'Входная диагностика по теме, 0-100'], ['date', 'Дата, ГГГГ-ММ-ДД'], ['question_text', 'Текст задания (необязательно)'], ['answer', 'Ответ ученика (необязательно)'], ['correct_answer', 'Верный ответ (необязательно)']];
+    const scaleCard = card('Пороги оценок', `<p class="mx-lead">Процент баллов, с которого ставится оценка. По умолчанию 40 / 65 / 85 - сверьте с инструкцией вашего отдела образования.</p><div class="mx-controls">${[['«3» от', 0], ['«4» от', 1], ['«5» от', 2]].map(([l, i]) => `<label class="mx-select"><span>${l}</span><input type="number" min="1" max="99" step="1" value="${st.scale[i]}" data-mx-scale="${i}" class="mx-num-input">%</label>`).join('')}<button type="button" class="mx-btn" data-mx-action="scale-reset">По умолчанию</button></div>`, '', 2);
     return `${card('Загрузить результаты СОР/СОЧ', importUI(), '', 1)}${scaleCard}${card('Источник данных', `<p class="mx-lead">${st.source === 'csv' ? `Загружены данные школы: ${fmt.int(baseRows.length)} ответов.` : `Демо-школа: 6 классов, 3 учителя и 3 учебника по каждому предмету. Данные синтетические и подписаны так везде.`}${liveRows.length ? ` Плюс ${liveRows.length} живых ответов из тренажёра ученика.` : ''}</p>
       <div class="mx-controls">${select('scenario', [['clean', 'Демо: учителя ведут разные учебники'], ['confounded', 'Демо: у каждого учителя один учебник']], st.source === 'csv' ? '' : st.scenario, 'Демо-сценарий')}</div>
       <div class="mx-actions"><button type="button" class="mx-btn" data-mx-action="export">${icon(I.download)}Экспорт текущих данных</button>${st.source === 'csv' || liveRows.length ? `<button type="button" class="mx-btn" data-mx-action="demo">${icon(I.reset)}Вернуть демо-данные</button>` : ''}</div>
-      <p class="mx-foot">${icon(I.info)} Данные хранятся только в этом браузере. Не вводите ФИО — достаточно кодов учеников.${storageError ? ' Браузер не дал сохранить данные: после перезагрузки они пропадут.' : ''}</p>`, '', 2)}
+      <p class="mx-foot">${icon(I.info)} Данные хранятся только в этом браузере. Не вводите ФИО - достаточно кодов учеников.${storageError ? ' Браузер не дал сохранить данные: после перезагрузки они пропадут.' : ''}</p>`, '', 2)}
       <div class="mx-grid two">${quality}</div>
       ${card('Формат CSV', `<div class="mx-table-wrap"><table class="mx-table"><thead><tr><th>Колонка</th><th>Что означает</th></tr></thead><tbody>${cols.map(([c, d]) => `<tr><td><code>${c}</code></td><td>${d}</td></tr>`).join('')}</tbody></table></div>`, '', 5)}
-      ${card('Живые ответы из тренажёра', liveRows.length || pending.length ? `<ul class="mx-live">${pending.slice(-6).reverse().map(p => `<li><span class="mx-dot tone-${p.linked ? 'good' : 'watch'}"></span><span>${esc(p.questionText || p.questionId)}</span><small>${p.correct ? 'верно' : 'неверно'} · ${esc(p.date)}${p.linked ? ' · ' + esc(p.context.class) + ' / ' + esc(p.context.student_id) : ' · не привязан к ученику'}</small></li>`).join('')}</ul>` : '<p class="mx-muted">Переключитесь в режим «Ученик», выберите класс и код ученика и пройдите урок — ответы появятся здесь и в аналитике по казахскому языку.</p>', '', 6)}`;
+      ${card('Живые ответы из тренажёра', liveRows.length || pending.length ? `<ul class="mx-live">${pending.slice(-6).reverse().map(p => `<li><span class="mx-dot tone-${p.linked ? 'good' : 'watch'}"></span><span>${esc(p.questionText || p.questionId)}</span><small>${p.correct ? 'верно' : 'неверно'} · ${esc(p.date)}${p.linked ? ' · ' + esc(p.context.class) + ' / ' + esc(p.context.student_id) : ' · не привязан к ученику'}</small></li>`).join('')}</ul>` : '<p class="mx-muted">Переключитесь в режим «Ученик», выберите класс и код ученика и пройдите урок - ответы появятся здесь и в аналитике по казахскому языку.</p>', '', 6)}`;
   }
 
   /* -------------------------------------------------------------- render */
@@ -808,7 +808,7 @@
       toast('Выводы ИИ добавлены в отчёт.');
     } catch (_) {
       if (String(_ && _.message) === '503') aiAvailable = false;
-      notice = 'ИИ сейчас недоступен — в отчёте остаются автоматические выводы по правилам.';
+      notice = 'ИИ сейчас недоступен - в отчёте остаются автоматические выводы по правилам.';
     }
     aiBusy = false; render('update');
   }
@@ -844,7 +844,7 @@
       const parsed = C().parseCSV(text);
       liveRows = []; pending = []; setRows(parsed); st.source = 'csv'; st.className = ''; st.program = {}; st.weights = {}; error = '';
       const subjects = C().subjects(parsed); if (subjects.length) st.subject = subjects[0];
-      notice = parsed.length ? `Загружено ${parsed.length} ответов из «${name}».` : 'Файл содержит только заголовок — данных пока нет.';
+      notice = parsed.length ? `Загружено ${parsed.length} ответов из «${name}».` : 'Файл содержит только заголовок - данных пока нет.';
       save(); render('enter');
     } catch (e) { error = e.message; render('update'); }
   }
@@ -898,7 +898,7 @@
     if (a === 'scale-reset') { st.scale = [40, 65, 85]; save(); version++; memo.clear(); return render('update'); }
     if (a === 'groups-csv') { download('jaz-groups-' + st.subject.replace(/\s+/g, '-') + '.csv', C().groupsCSV(C().supportGroups(viewRows(), opts()))); return toast('Списки групп поддержки скачаны.'); }
     if (a === 'ai-summary') return requestSummary();
-    if (a === 'template') { download('jaz-template.csv', C().templateCSV(baseRows.slice(0, 30))); return toast('Шаблон скачан: первые строки — пример заполнения.'); }
+    if (a === 'template') { download('jaz-template.csv', C().templateCSV(baseRows.slice(0, 30))); return toast('Шаблон скачан: первые строки - пример заполнения.'); }
     if (a === 'export') { download('jaz-data.csv', C().exportCSV(rows)); return toast('Данные выгружены в CSV.'); }
     if (a === 'plan-csv') { download('jaz-plan-' + st.subject.replace(/\s+/g, '-') + '.csv', C().planCSV(insights().plan)); return toast('План часов скачан.'); }
     if (a === 'reset-program') { delete st.program[st.subject]; delete st.weights[st.subject]; memo.clear(); save(); toast('Программа восстановлена.'); return render('update'); }
@@ -943,7 +943,7 @@
     studentHost = container;
     if (!C()) { container.innerHTML = ''; return; }
     const available = studentRows();
-    if (!available.length) { container.innerHTML = '<p class="met-student-note">Казақ тілі бойынша деректер жоқ — жауаптар талдауға қосылмайды.</p>'; return; }
+    if (!available.length) { container.innerHTML = '<p class="met-student-note">Казақ тілі бойынша деректер жоқ - жауаптар талдауға қосылмайды.</p>'; return; }
     const classes = C().unique(available, 'class');
     if (selection && !available.some(r => r.class === selection.class && (!selection.student_id || r.student_id === selection.student_id))) selection = null;
     if (!selection && st.source === 'demo') selection = { class: available[0].class, student_id: available[0].student_id };

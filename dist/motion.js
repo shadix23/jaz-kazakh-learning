@@ -1,5 +1,5 @@
 /* Approximate reference timings: mascot pop ~280ms, title starts ~300ms,
-   curved hero reveal ~700ms, cards separated by ~80–100ms.
+   curved hero reveal ~700ms, cards separated by ~80-100ms.
    Nav sliding and character reactions are original adaptations. */
 (() => {
   'use strict';
@@ -42,6 +42,8 @@
 
   function typeTitle(title) {
     if (title.dataset.typeReady === 'true') return;
+    // Translate first (global «Қаз | Рус» switch): after splitting into letters the dictionary cannot match.
+    if (window.JazI18n) window.JazI18n.apply(title);
     const label = title.getAttribute('aria-label') || title.innerText.replace(/\s+/gu, ' ').trim();
     const original = [...title.childNodes];
     let index = 0;

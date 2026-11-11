@@ -111,7 +111,7 @@ test('trainer answers stay out of СОР/СОЧ indicators; assignment loop work
   h.click({ mxTab: 'overview' });
   const quality = h.host.innerHTML.match(/Качество знаний[\s\S]*?data-num="([\d.]+)"/)[1];
   h.click({ mxTab: 'trainer' });
-  assert.match(h.host.innerHTML, /СОР\/СОЧ и тренажёр — параллельно/);
+  assert.match(h.host.innerHTML, /СОР\/СОЧ и тренажёр - параллельно/);
   assert.match(h.host.innerHTML, /Группа поддержки:/, 'demo assignment is listed');
   // The learner (selected in this browser) answers a lesson question.
   const student = { innerHTML: '', dataset: {}, addEventListener() {}, querySelector: () => null };

@@ -1,5 +1,5 @@
 /*
- * Jaz! sync client — links the learner trainer and the methodist across devices
+ * Jaz! sync client - links the learner trainer and the methodist across devices
  * through the backend (server/api.js). Without a server (static hosting, offline)
  * everything keeps working inside one browser; learner answers wait in a queue
  * and are sent when the server becomes reachable.

@@ -2,7 +2,7 @@
 
 ---
 
-You are continuing the project **Jaz!** in this repository — a hackathon solution for Case 1 «Data-Driven Curriculum» (EdTech platform for school methodists in Kazakhstan + a learner trainer that feeds formative data).
+You are continuing the project **Jaz!** in this repository - a hackathon solution for Case 1 «Data-Driven Curriculum» (EdTech platform for school methodists in Kazakhstan + a learner trainer that feeds formative data).
 
 1. Read `docs/CODEX-HANDOFF.md` completely, then `AGENTS.md`, `docs/CASE-ANALYSIS.md`, `docs/METHODIST-RESEARCH.md`, `DEPLOY.md`.
 2. Run `npm install` and `npm test` (58 tests must pass), then start `PORT=4180 node dev-server.cjs` and run `npm run smoke -- http://127.0.0.1:4180`.

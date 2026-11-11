@@ -2,13 +2,13 @@
 
 Текущий сайт: **https://jaz-kazakh-learning.vercel.app**. Проект `reforest2/jaz-kazakh-learning` связан с веткой `main`. Upstash Redis `jaz-school-data` подключён к production; бесплатный тариф, автоматическое повышение тарифа отключено. Проверка `npm run smoke -- https://jaz-kazakh-learning.vercel.app` прошла, `/api/status` возвращает `store: redis`, `ai: false`.
 
-Проект готов к Vercel без сборки: статические файлы из `dist/`, бэкенд — одна серверная функция `api/index.js` (все `/api/*` переписываются на неё в `vercel.json`).
+Проект готов к Vercel без сборки: статические файлы из `dist/`, бэкенд - одна серверная функция `api/index.js` (все `/api/*` переписываются на неё в `vercel.json`).
 
 ## 1. Импорт (2 минуты)
 
 1. Войдите на [vercel.com](https://vercel.com) через GitHub.
 2. **Add New → Project → Import** репозиторий `jaz-kazakh-learning`.
-3. Framework Preset: **Other**. Build Command — пусто, Output Directory — `dist` (уже указано в `vercel.json`).
+3. Framework Preset: **Other**. Build Command - пусто, Output Directory - `dist` (уже указано в `vercel.json`).
 4. **Deploy**. Сайт откроется по адресу вида `https://jaz-kazakh-learning.vercel.app`.
 
 Без базы данных сайт работает полностью, кроме связи устройств: на Vercel без хранилища API хранит данные только в памяти функции (сбрасываются).
@@ -16,8 +16,8 @@
 ## 2. Хранилище для связи ученика и методиста (бесплатно)
 
 1. В проекте Vercel: **Storage → Marketplace → Upstash (Redis) → Create** и подключите базу к проекту.
-2. Vercel сам добавит переменные `KV_REST_API_URL` и `KV_REST_API_TOKEN` (или `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`) — API подхватывает любую пару.
-3. **Redeploy**. Проверка: откройте `https://<ваш-домен>/api/status` — должно быть `"store":"redis"`.
+2. Vercel сам добавит переменные `KV_REST_API_URL` и `KV_REST_API_TOKEN` (или `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`) - API подхватывает любую пару.
+3. **Redeploy**. Проверка: откройте `https://<ваш-домен>/api/status` - должно быть `"store":"redis"`.
 
 ## 3. ИИ (по желанию)
 
@@ -25,7 +25,7 @@
 
 ## 4. Свой домен (.dev или любой другой)
 
-**Settings → Domains → Add** — например `jaz.dev` (домен покупается у регистратора; `.dev` требует HTTPS, Vercel выдаёт сертификат автоматически).
+**Settings → Domains → Add** - например `jaz.dev` (домен покупается у регистратора; `.dev` требует HTTPS, Vercel выдаёт сертификат автоматически).
 
 ## Как пользоваться после деплоя
 
@@ -40,6 +40,6 @@
 
 ```bash
 npm install
-npm start          # http://127.0.0.1:4174, данные API — server/.data/db.json
+npm start          # http://127.0.0.1:4174, данные API - server/.data/db.json
 npm test           # 58+ тестов, включая сквозной сценарий API
 ```

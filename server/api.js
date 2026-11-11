@@ -1,4 +1,4 @@
-// Jaz! backend API — one handler used by the local dev server and by the Vercel function.
+// Jaz! backend API - one handler used by the local dev server and by the Vercel function.
 //
 // A school workspace links the methodist and the learners across devices:
 //   methodist creates a workspace with a roster → gets an admin key and a 6-digit code per class;

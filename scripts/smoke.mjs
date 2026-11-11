@@ -14,12 +14,12 @@ async function call(method, path, body, headers = {}) {
 console.log(`Smoke test: ${base}`);
 const page = await fetch(base + '/');
 ok(page.ok && /Jaz!/.test(await page.text()), 'main page is served');
-for (const f of ['/curriculum.js', '/metodist.js', '/sync.js', '/game.js', '/barys3d.js', '/vendor/three.module.min.js', '/pitch.html', '/vendor/addons/RoundedBoxGeometry.js', '/downloads/Jaz-pitch.pdf']) {
+for (const f of ['/curriculum.js', '/metodist.js', '/sync.js', '/game.js', '/barys3d.js', '/vendor/three.module.min.js']) {
   const r = await fetch(base + f); ok(r.ok, `static ${f}`);
 }
 const status = await call('GET', '/api/status');
 ok(status.status === 200 && status.data && status.data.api === true, `API status (store: ${status.data && status.data.store}, ai: ${status.data && status.data.ai})`);
-if (status.data && status.data.store === 'memory' && !base.includes('127.0.0.1') && !base.includes('localhost')) console.log('  ! store is "memory" in production — connect Upstash Redis (see DEPLOY.md)');
+if (status.data && status.data.store === 'memory' && !base.includes('127.0.0.1') && !base.includes('localhost')) console.log('  ! store is "memory" in production - connect Upstash Redis (see DEPLOY.md)');
 
 const ws = await call('POST', '/api/workspaces', { name: 'smoke-test', roster: { '6А': ['S-0001'] } });
 ok(ws.status === 200 && ws.data && /^\d{6}$/.test(ws.data.classes['6А'].code), 'workspace with a class code');

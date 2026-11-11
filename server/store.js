@@ -1,7 +1,7 @@
 // Storage adapter for the Jaz! backend.
 // - Upstash Redis / Vercel KV over REST when UPSTASH_REDIS_REST_URL + _TOKEN
-//   (or KV_REST_API_URL + KV_REST_API_TOKEN) are set — works on Vercel serverless.
-// - JSON file (server/.data/db.json) locally — persists between restarts.
+//   (or KV_REST_API_URL + KV_REST_API_TOKEN) are set - works on Vercel serverless.
+// - JSON file (server/.data/db.json) locally - persists between restarts.
 // - In-memory when JAZ_STORE=memory (tests).
 // Interface: get(key) → value | null, set(key, value), push(listKey, item), list(listKey) → items.
 'use strict';
