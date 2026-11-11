@@ -1,8 +1,12 @@
 (function (root, factory) {
-  const api = factory();
+  const req = name => typeof require === 'function' ? require(name) : null;
+  const K = root.JazKazakh || req('./kazakh.js');
+  if (!root.JazKazakh && K) root.JazKazakh = K;
+  const P = root.JazPractice || req('./practice.js');
+  const api = factory(K, P);
   if (typeof module === 'object' && module.exports) module.exports = api;
   else root.JazLearning = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (K, P) {
   'use strict';
 
   const scenarios = [
@@ -12,41 +16,11 @@
     { id: 'gaming', title: 'Командаға қосыл', persona: 'Данияр', icon: 'gaming', task: 'Командаласыңмен ойын уақытын келіс.', opening: 'Сәлем! Бүгін бірге ойнаймыз ба? Қай уақытта қосыла аласың? 🎮', suggestions: ['Сәлем! Бірге ойнайық.', 'Сағат сегізде қосыламын.', 'Сен не истеп жатсын?'] }
   ];
 
-  const lessons = [
-    { id: 'letters', title: 'Әр әріп маңызды', description: 'Ә, і, қ, ғ әріптерін орнымен қолдан.', xp: 20, duration: '3 минут', questions: [
-      { id: 'letters-1', prompt: 'Досыңа қалай амандасасың?', options: ['Салем!', 'Сәлем!', 'Сэлем!'], answerIndex: 1, explanation: '«Сәлем» сөзінде ә әрпі жазылады.' },
-      { id: 'letters-2', prompt: 'Дұрыс жазылған сөзді таңда.', options: ['жаксы', 'жақсы', 'жақсыы'], answerIndex: 1, explanation: '«Жақсы» сөзінде қ әрпі қолданылады.' },
-      { id: 'letters-3', prompt: 'Қай сөйлем дұрыс жазылған?', options: ['Бугін күн жақсы.', 'Бүгин күн жақсы.', 'Бүгін күн жақсы.'], answerIndex: 2, explanation: '«Бүгін» сөзінде ү және і әріптері жазылады.' }
-    ] },
-    { id: 'ng', title: 'Н мен Ң', description: 'Айырмасын байқап, дұрыс жаз.', xp: 20, duration: '3 минут', questions: [
-      { id: 'ng-1', prompt: 'Қай сұрақ дұрыс жазылған?', options: ['Сен қайда барасын?', 'Сен қайда барасың?', 'Сен қайда барасын.'], answerIndex: 1, explanation: '«Сен» деп сөйлегенде «барасың» тұлғасында ң жазылады.' },
-      { id: 'ng-2', prompt: 'Сөйлемді толықтыр: «Бұл — ... кітабым».', options: ['менің', 'менін', 'меним'], answerIndex: 0, explanation: 'Ілік септіктегі дұрыс тұлға — «менің».' },
-      { id: 'ng-3', prompt: 'Досыңның суретін мақта.', options: ['Суретін әдемі!', 'Суретің әдемі!', 'Суретин әдемі!'], answerIndex: 1, explanation: '«Сенің суретің» дегенде тәуелдік жалғауы ң әрпімен жазылады.' }
-    ] },
-    { id: 'questions', title: 'Сұрақ қоя біл', description: 'Сұраулық шылау мен сұрақ белгісі.', xp: 20, duration: '2 минут', questions: [
-      { id: 'questions-1', prompt: 'Сұрақты дұрыс жаз.', options: ['Бүгін кездесемізбе?', 'Бүгін кездесеміз бе?', 'Бүгін кездесеміз бе.'], answerIndex: 1, explanation: 'Сұраулық «бе» бөлек жазылады. Сұрақ соңына сұрақ белгісі қойылады.' },
-      { id: 'questions-2', prompt: 'Досыңды ойынға шақыр.', options: ['Бірге ойнаймызба?', 'Бірге ойнаймыз ба?', 'Бірге ойнаймыз па?'], answerIndex: 1, explanation: 'Бұл сөйлемде сұраулық шылау «ба» түрінде бөлек жазылады.' },
-      { id: 'questions-3', prompt: 'Қай нұсқа сұраулы сөйлем?', options: ['Кешке келесің бе?', 'Кешке келесің.', 'Кешке кел!'], answerIndex: 0, explanation: '«Келесің бе?» сұрақты білдіреді.' }
-    ] },
-    { id: 'endings', title: 'Қайда барамыз?', description: 'Киноға, мектепке, саябаққа.', xp: 20, duration: '3 минут', questions: [
-      { id: 'endings-1', prompt: 'Қай нұсқа дұрыс?', options: ['Кинога барамын.', 'Киноға барамын.', 'Киноке барамын.'], answerIndex: 1, explanation: '«Кино» сөзіне -ға жалғауы жалғанады: киноға.' },
-      { id: 'endings-2', prompt: 'Сөйлемді толықтыр: «Мен ... барамын».', options: ['мектепға', 'мектепке', 'мектепге'], answerIndex: 1, explanation: '«Мектеп» сөзіне -ке жалғанады: мектепке.' },
-      { id: 'endings-3', prompt: 'Кездесетін орынды дұрыс жаз.', options: ['Саябаққа барайық.', 'Саябақға барайық.', 'Саябақке барайық.'], answerIndex: 0, explanation: '«Саябақ» сөзіне -қа жалғанады: саябаққа.' }
-    ] }
-  ];
-
-  const fixes = {
-    'салем': ['сәлем', '«Сәлем» сөзінде ә әрпі жазылады.'],
-    'калай': ['қалай', '«Қалай» сөзінде қ әрпі жазылады.'],
-    'жаксы': ['жақсы', '«Жақсы» сөзінде қ әрпі жазылады.'],
-    'кинога': ['киноға', '«Кино» сөзіне -ға жалғауы жалғанады: киноға.'],
-    'истеп': ['істеп', '«Істеп» сөзінде і әрпі жазылады.'],
-    'жатсын': ['жатырсың', 'Бұл жаттығудағы «сен не істеп жатырсың?» сұрағында «жатырсың» тұлғасы қолданылады.'],
-    'бугин': ['бүгін', '«Бүгін» сөзінде ү және і әріптері жазылады.'],
-    'сенин': ['сенің', '«Сенің» сөзінің соңында ң әрпі жазылады.'],
-    'менин': ['менің', '«Менің» сөзінің соңында ң әрпі жазылады.'],
-    'сурак': ['сұрақ', '«Сұрақ» сөзінде ұ және қ әріптері жазылады.']
-  };
+  // Lessons are the curriculum topics (same names as in the methodist analytics).
+  // Questions are generated fresh for every run by JazPractice.
+  const lessons = P.TOPICS.map(function (t) {
+    return { id: t.id, subject: t.subject, topic: t.topic, title: t.kk, description: t.desc, xp: 20, duration: '3 минут', size: 5 };
+  });
 
   // A finite practice vocabulary, not a general-purpose grammar checker.
   const commonPhrases = [
@@ -93,10 +67,13 @@
     return replies[scenarioId] || (turn % 2 ? 'Жақсы! Әңгімемізді жалғастырайық.' : 'Сәлем! Бүгінгі жоспарың қандай?');
   }
 
+  // Offline assessment. The rules engine (JazKazakh) repairs Kazakh letters typed
+  // with Russian ones, suffix harmony, the question particle, capital letters and
+  // punctuation. Words it does not know are never marked wrong.
   function assessMessage(text, options) {
     options = options || {};
     const scenario = scenarioFor(options.scenarioId);
-    const base = { kind: 'unverified', corrected: null, issues: [], reply: '', suggestedReplies: scenario.suggestions.slice(), verified: false };
+    const base = { kind: 'unverified', corrected: null, issues: [], reply: '', suggestedReplies: scenario.suggestions.slice(), verified: false, unknown: [] };
     if (typeof text !== 'string' || !text.trim()) return Object.assign(base, { reply: 'Алдымен қысқа хабарлама жазып көр.' });
     if (text.length > 500) return Object.assign(base, { reply: 'Бір хабарламаға 500 таңбаға дейін жаз. Ойыңды бірнеше хабарламаға бөліп көр.' });
     if (/[<>]/u.test(text)) return Object.assign(base, { reply: 'Жаттығуды кәдімгі мәтінмен жалғастырайық. Қысқа хабарлама жазып көр.' });
@@ -108,41 +85,41 @@
         suggestedReplies: ['Болып жатыр енді.', 'Ойымды басқаша айтайын.']
       });
     }
-    const issues = [];
-    const corrected = text.normalize('NFC').replace(/[\p{L}]+/gu, function (word, offset) {
-      const key = normalizeText(word);
-      if (!Object.prototype.hasOwnProperty.call(fixes, key)) return word;
-      const fix = fixes[key];
-      // The imperative "жатсын" can be valid outside this second-person question.
-      const prefix = canonicalText(text.normalize('NFC').slice(0, offset + word.length));
-      if (normalizeText(word) === 'жатсын' && !/(?:^| )сен не (?:істеп|истеп) жатсын$/u.test(prefix)) return word;
-      const replacement = preserveCase(word, fix[0]);
-      issues.push({ from: word, to: replacement, reason: fix[1] });
-      return replacement;
-    });
-    if (issues.length) {
+    const checked = K.check(text);
+    // Only lexical/grammar issues ask the learner to rewrite; tiny style fixes alone do not.
+    const real = checked.issues.filter(function (i) { return i.type !== 'case' && i.type !== 'punct' && i.type !== 'spacing'; });
+    if (real.length) {
       return Object.assign(base, {
-        kind: 'correction', corrected: corrected,
-        issues: issues, verified: true,
+        kind: 'correction', corrected: checked.corrected, issues: checked.issues, verified: true,
         reply: 'Ойың түсінікті! Белгіленген сөздерді өзің түзетіп, хабарламаны қайта жіберіп көр.'
       });
     }
     const allowed = commonPhrases.concat(scenarioPhrases[scenario.id]);
-    if (allowed.includes(canonical)) {
+    const turn = Number.isFinite(options.turn) ? options.turn : 0;
+    if (allowed.includes(canonical) || (checked.total && checked.coverage >= 0.6)) {
       return Object.assign(base, {
-        kind: 'recognized', verified: true,
-        reply: nextReply(scenario.id, text, Number.isFinite(options.turn) ? options.turn : 0),
+        kind: 'recognized', verified: true, issues: checked.issues, corrected: checked.issues.length ? checked.corrected : null,
+        reply: (checked.issues.length ? 'Жақсы жаздың! Кішкене кеңес: ' + checked.issues.map(function (i) { return i.reason; }).join(' ') + ' ' : '') + nextReply(scenario.id, text, turn),
         suggestedReplies: scenarioPhrases[scenario.id].slice(0, 3).map(function (value) { return value[0].toLocaleUpperCase('kk-KZ') + value.slice(1) + '.'; })
       });
     }
+    const unknown = text.normalize('NFC').match(/[\p{L}-]+/gu).filter(function (w) { return K.analyse(w).status === 'unknown'; });
+    const words = text.normalize('NFC').match(/[\p{L}-]+/gu) || [];
+    if (words.length && !/[әғқңөұүһі]/iu.test(text) && unknown.length / words.length > 0.6) {
+      return Object.assign(base, { unknown: unknown, reply: 'Бұл хабарлама орысша сияқты. Ойыңды қазақша жазып көр — қате болса, бірге түзетеміз.' });
+    }
     return Object.assign(base, {
-      reply: 'Бұл еркін хабарламаны толық тексере алмаймын. Оны қате деп бағаламаймын. Төмендегі жаттығу үлгілерінің бірін қолданып көр немесе қысқа хабарлама жаз.'
+      unknown: unknown,
+      reply: 'Бұл хабарламада мен тексере алмайтын сөздер бар (' + unknown.slice(0, 4).join(', ') + '). Оларды қате деп бағаламаймын. ' + nextReply(scenario.id, text, turn)
     });
   }
 
-  function verifyCorrection(original, candidate) {
-    const assessment = assessMessage(original);
-    return assessment.kind === 'correction' && typeof candidate === 'string' && candidate.length <= 500 && canonicalText(candidate) === canonicalText(assessment.corrected);
+  // A rewrite is accepted when it matches the expected corrected text
+  // (from the rules engine or from the server-side model).
+  function verifyCorrection(original, candidate, expected) {
+    if (typeof candidate !== 'string' || candidate.length > 500) return false;
+    const target = typeof expected === 'string' && expected ? expected : (function () { const a = assessMessage(original); return a.kind === 'correction' ? a.corrected : null; })();
+    return !!target && canonicalText(target) !== canonicalText(original) && canonicalText(candidate) === canonicalText(target);
   }
 
   function validDay(day) {
@@ -173,6 +150,9 @@
         if (!scenarios.some(function (scenario) { return scenario.id === scenarioId; }) || typeof entry.text !== 'string' || entry.text.length > 500 || !entry.text || entry.xp !== 10) continue;
         if (entry.id !== 'practice:' + scenarioId + ':' + entry.day + ':' + canonicalText(entry.text)) continue;
         events.push({ id: entry.id, type: 'practice', scenarioId: scenarioId, text: entry.text, day: entry.day, xp: 10 });
+      } else if (entry.type === 'game') {
+        if (typeof entry.runId !== 'string' || entry.id !== 'game:' + entry.runId || !Number.isInteger(entry.xp) || entry.xp < 1 || entry.xp > 60) continue;
+        events.push({ id: entry.id, type: 'game', runId: entry.runId, day: entry.day, xp: entry.xp, correct: Number(entry.correct) || 0 });
       } else continue;
       seen.add(entry.id);
     }
@@ -204,11 +184,15 @@
       award = { id: 'lesson:' + event.lessonId, type: 'lesson', lessonId: event.lessonId, day: event.day, xp: 20 };
     } else if (event.type === 'message' || event.type === 'correction') {
       if (!scenarios.some(function (scenario) { return scenario.id === event.scenarioId; }) || typeof event.text !== 'string' || event.text.length > 500) return state;
-      if (event.type === 'message' && assessMessage(event.text, { scenarioId: event.scenarioId }).kind !== 'recognized') return state;
-      if (event.type === 'correction' && !verifyCorrection(event.original, event.text)) return state;
+      if (event.type === 'message' && event.verified !== true && assessMessage(event.text, { scenarioId: event.scenarioId }).kind !== 'recognized') return state;
+      if (event.type === 'correction' && !verifyCorrection(event.original, event.text, event.expected)) return state;
       const canonical = canonicalText(event.text);
       if (!canonical) return state;
       award = { id: 'practice:' + event.scenarioId + ':' + event.day + ':' + canonical, type: 'practice', scenarioId: event.scenarioId, text: canonical, day: event.day, xp: 10 };
+    } else if (event.type === 'game') {
+      const xp = P.runXp({ correct: event.correct });
+      if (typeof event.runId !== 'string' || !event.runId || event.runId.length > 60 || !xp) return state;
+      award = { id: 'game:' + event.runId, type: 'game', runId: event.runId, day: event.day, xp: xp, correct: event.correct };
     } else return state;
     if (state.events.some(function (entry) { return entry.id === award.id; })) return state;
     return sanitizeState({ events: state.events.concat(award) });
