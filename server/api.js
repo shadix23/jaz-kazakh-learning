@@ -75,7 +75,7 @@ function send(res, status, data) {
 }
 
 const routes = {
-  'GET /api/status': async () => ({ api: true, ai: ai.aiReady(), store: db().kind }),
+  'GET /api/status': async (req) => ({ api: true, ai: ai.aiReady(req), store: db().kind }),
 
   // Methodist: create a school workspace from the roster (class → student codes).
   'POST /api/workspaces': async (req) => {
@@ -155,9 +155,9 @@ const routes = {
     await db().set('asg:' + w.id, list); return { ok: true };
   },
 
-  // Optional AI (needs ANTHROPIC_API_KEY on the server).
-  'POST /api/correct': async (req) => { if (!ai.aiReady()) fail(503, 'ai unavailable'); try { return await ai.correct(await readBody(req)); } catch (e) { ai.aiFailed(e); fail(502, 'ai failed'); } },
-  'POST /api/summary': async (req) => { if (!ai.aiReady()) fail(503, 'ai unavailable'); try { return await ai.summarize(await readBody(req)); } catch (e) { ai.aiFailed(e); fail(502, 'ai failed'); } }
+  // Optional AI: direct Claude credentials or request-scoped Vercel AI Gateway OIDC.
+  'POST /api/correct': async (req) => { if (!ai.aiReady(req)) fail(503, 'ai unavailable'); try { return await ai.correct(await readBody(req), req); } catch (e) { ai.aiFailed(e); fail(502, 'ai failed'); } },
+  'POST /api/summary': async (req) => { if (!ai.aiReady(req)) fail(503, 'ai unavailable'); try { return await ai.summarize(await readBody(req), req); } catch (e) { ai.aiFailed(e); fail(502, 'ai failed'); } }
 };
 
 async function handle(req, res, pathOverride) {
