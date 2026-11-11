@@ -290,7 +290,7 @@
   function render() {
     renderNavigation(); updateStats();
     document.body.dataset.mode = appMode;
-    document.documentElement.lang = appMode === 'method' ? 'ru' : 'kk';
+    document.documentElement.lang = window.JazI18n ? window.JazI18n.lang : 'kk';
     for (const button of document.querySelectorAll('.mode-switch button')) button.setAttribute('aria-pressed', String(button.dataset.action === `mode-${appMode}`));
     $('#student-context').hidden = appMode !== 'student';
     if (appMode === 'method') {
@@ -501,5 +501,11 @@
   route = nav.some((item) => item.id === location.hash.slice(1)) ? location.hash.slice(1) : 'home';
   applyTheme();
   window.JazAssistant?.mount(); window.JazAssistant?.setContext(assistantContext);
+  // Global «Қаз | Рус» switch: the methodist uses its own Kazakh/Russian texts, the rest is translated by JazI18n.
+  if (window.JazI18n) {
+    window.JazMetodist?.setLang(window.JazI18n.lang);
+    window.JazI18n.onChange((lang) => { window.JazMetodist?.setLang(lang); render(); });
+    window.JazI18n.init();
+  }
   render();
 })();

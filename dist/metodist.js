@@ -196,7 +196,8 @@
     return `<button type="button" class="mx-source tone-${st.source === 'csv' ? 'good' : 'info'}" data-mx-tab="data"><i></i>${label}${liveRows.length ? ` · +${liveRows.length} ${t('live')}` : ''}</button>`;
   }
   function prefsUI() {
-    return `<div class="mx-prefs">${seg('zoom', 'zoom', [[1, 'A'], [1.15, 'A+'], [1.3, 'A++']], st.zoom).replace('role="group"', `role="group" aria-label="${t('size')}"`)}${seg('lang', 'lang', [['ru', 'Рус'], ['kk', 'Қаз']], st.lang).replace('role="group"', `role="group" aria-label="${t('lang')}"`)}</div>`;
+    // Language is chosen with the global «Қаз | Рус» switch in the top bar (JazI18n).
+    return `<div class="mx-prefs">${seg('zoom', 'zoom', [[1, 'A'], [1.15, 'A+'], [1.3, 'A++']], st.zoom).replace('role="group"', `role="group" aria-label="${t('size')}"`)}</div>`;
   }
   function renderNav() {
     if (!navHost) return;
@@ -1005,6 +1006,12 @@
   }
   function unmount() { if (doc && doc.body) doc.body.classList.remove('mx-lock'); drawer = null; }
 
-  global.JazMetodist = { mount, unmount, renderStudentContext, recordAnswer, localTasks, selection: () => selection, _state: () => ({ st, rows, liveRows, pending }) };
+  function setLang(lang) {
+    const next = lang === 'kk' ? 'kk' : 'ru';
+    if (st.lang === next) return;
+    st.lang = next; save();
+    if (host) render('enter');
+  }
+  global.JazMetodist = { mount, unmount, renderStudentContext, recordAnswer, localTasks, setLang, selection: () => selection, _state: () => ({ st, rows, liveRows, pending }) };
   if (C()) restore();
 })(window);
