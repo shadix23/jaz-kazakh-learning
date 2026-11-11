@@ -20,16 +20,17 @@ function harness(saved) {
 test('methodist workspace renders every section with demo data', () => {
   const h = harness();
   h.api.mount(h.host);
-  assert.match(h.host.innerHTML, /Сводка для решения/);
-  assert.match(h.host.innerHTML, /Решения для педсовета/);
+  assert.match(h.host.innerHTML, /Что нужно сделать/);
+  assert.match(h.host.innerHTML, /Загрузить результаты СОР\/СОЧ/);
   assert.match(h.host.innerHTML, /Демо-данные \(синтетика\)/);
-  const expectations = { topics: /Тема × класс/, books: /Кто по какому учебнику работает[\s\S]*Учебник × тема/, hours: /План по темам[\s\S]*Скачать план/, report: /Отчёт методиста[\s\S]*План часов/, data: /Загрузить CSV[\s\S]*Формат CSV/ };
+  const expectations = { overview: /Успеваемость[\s\S]*Качество знаний[\s\S]*Итоги по классам[\s\S]*Решения для педсовета/, students: /Группы поддержки/, topics: /Тема × класс/, books: /Кто по какому учебнику работает[\s\S]*Учебник × тема/, hours: /План по темам[\s\S]*Скачать план/, report: /АНАЛИТИЧЕСКАЯ СПРАВКА[\s\S]*Итоги по классам[\s\S]*Выводы и рекомендации/, data: /Вставьте таблицу результатов[\s\S]*Формат CSV/ };
   for (const [tab, re] of Object.entries(expectations)) { h.click({ mxTab: tab }); assert.match(h.host.innerHTML, re, tab); }
 });
 
 test('topic drawer shows items, typical errors and actions', () => {
   const h = harness();
   h.api.mount(h.host);
+  h.click({ mxTab: 'topics' });
   h.click({ mxTopic: 'Сложение и вычитание рациональных чисел', class: '' });
   assert.match(h.host.innerHTML, /role="dialog"/);
   assert.match(h.host.innerHTML, /−13/);
@@ -53,6 +54,7 @@ test('hours steppers change the plan and persist the program', () => {
 test('subject switch and confounded scenario', () => {
   const h = harness();
   h.api.mount(h.host);
+  h.click({ mxTab: 'topics' });
   h.click({ mxSet: 'subject', value: 'Казахский язык' });
   assert.match(h.host.innerHTML, /Звуки Н и Ң/);
   h.click({ mxTab: 'data' });
@@ -65,8 +67,9 @@ test('subject switch and confounded scenario', () => {
 test('an imported empty CSV stays empty after reload instead of becoming demo data', () => {
   const h = harness({ st: { source: 'csv', tab: 'overview' }, csv: C.templateCSV(), live: [] });
   h.api.mount(h.host);
+  h.click({ mxTab: 'overview' });
   assert.match(h.host.innerHTML, /Начните с данных/);
-  assert.match(h.host.innerHTML, /Ваши данные \(CSV\)/);
+  assert.match(h.host.innerHTML, /Ваши данные/);
 });
 
 test('trainer answer is linked to the selected student and reaches the analytics', () => {
@@ -87,4 +90,17 @@ test('trainer answer is linked to the selected student and reaches the analytics
   const restored = harness(saved);
   restored.api.mount(restored.host);
   assert.match(restored.host.innerHTML, /\+1 живых/);
+});
+
+test('Kazakh interface, text size and the Kazakh report', () => {
+  const h = harness();
+  h.api.mount(h.host);
+  h.click({ mxSet: 'lang', value: 'kk' });
+  assert.match(h.host.innerHTML, /Не істейміз/);
+  h.click({ mxSet: 'zoom', value: '1.3' });
+  assert.equal(h.saved().st.zoom, 1.3);
+  h.click({ mxTab: 'report' });
+  assert.match(h.host.innerHTML, /ТАЛДАУ АНЫҚТАМАСЫ/);
+  h.click({ mxSet: 'docLang', value: 'ru' });
+  assert.match(h.host.innerHTML, /АНАЛИТИЧЕСКАЯ СПРАВКА/);
 });

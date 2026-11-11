@@ -69,8 +69,9 @@
 
   function topicPool(subject, topicId) {
     if (topicId) return [topicId];
-    if (subject === 'mixed') return P.TOPICS.map(t => t.id);
-    return P.topicsFor(subject).map(t => t.id);
+    // Long reading passages do not fit a runner: those topics stay in lessons.
+    if (subject === 'mixed') return P.TOPICS.filter(t => !t.noGame).map(t => t.id);
+    return P.topicsFor(subject).filter(t => !t.noGame).map(t => t.id);
   }
 
   function newGame(config) {
@@ -360,9 +361,9 @@
     screen = 'start'; game = null;
     const st = stats();
     const subj = st.subject && (st.subject === 'mixed' || P.SUBJECTS.some(s => s.id === st.subject)) ? st.subject : (opts.subject || P.KAZ);
-    const forced = opts.topicId && P.TOPICS.find(t => t.id === opts.topicId);
+    const forced = opts.topicId && P.TOPICS.find(t => t.id === opts.topicId && !t.noGame);
     const subject = forced ? forced.subject : subj;
-    const topics = subject === 'mixed' ? [] : P.topicsFor(subject);
+    const topics = subject === 'mixed' ? [] : P.topicsFor(subject).filter(t => !t.noGame);
     const topic = forced ? forced.id : (topics.some(t => t.id === st.topic) ? st.topic : '');
     host.querySelector('.g-overlay').innerHTML = `<div class="g-panel g-start">
       <div class="g-start-head"><img src="./assets/mascot-kit/04-wave.png" alt="" width="120" height="110"><div><h1>Барыс жолы</h1><p>Дұрыс жауаптың жолымен жүгір, кедергіден секір, тиын жина.</p></div></div>

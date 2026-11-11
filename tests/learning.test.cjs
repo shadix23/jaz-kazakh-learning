@@ -2,10 +2,10 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const engine = require('../dist/learning.js');
 
-test('four scenarios and twelve curriculum lessons with generated questions', () => {
+test('four scenarios and fifteen curriculum lessons with generated questions', () => {
   const practice = require('../dist/practice.js');
   assert.equal(engine.scenarios.length, 4);
-  assert.equal(engine.lessons.length, 12);
+  assert.equal(engine.lessons.length, 15);
   assert.deepEqual([...new Set(engine.lessons.map((l) => l.subject))].sort(), ['Казахский язык', 'Математика']);
   for (const lesson of engine.lessons) {
     const items = practice.set(lesson.id, lesson.size);
@@ -101,9 +101,9 @@ test('lesson completion earns 20 XP only once and increments level honestly', ()
   for (const lesson of engine.lessons.slice(1)) state = engine.reduceProgress(state, { ...event, lessonId: lesson.id });
   state = engine.reduceProgress(state, { type: 'message', scenarioId: 'cinema', text: 'Сәлем!', day: '2026-11-11' });
   state = engine.reduceProgress(state, { type: 'message', scenarioId: 'cinema', text: 'Киноға барайық!', day: '2026-11-11' });
-  // 12 lessons × 20 XP + 2 messages × 10 XP = 260 XP → level 3.
-  assert.equal(state.xp, 260);
-  assert.equal(state.level, 3);
+  // 15 lessons × 20 XP + 2 messages × 10 XP = 320 XP → level 4.
+  assert.equal(state.xp, 320);
+  assert.equal(state.level, 4);
 });
 
 test('game runs earn bounded XP once per run id', () => {

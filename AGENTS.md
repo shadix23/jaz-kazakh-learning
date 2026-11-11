@@ -2,7 +2,7 @@
 
 Jaz! is a hackathon project for **Case 1 «Data-Driven Curriculum»**: an EdTech platform for school methodists that analyses test results by curriculum topic, finds hard topics, compares textbooks and recommends teaching hours. A learner trainer (Kazakh + Mathematics, 6th grade) produces live answers for the analytics.
 
-Read `docs/CASE-ANALYSIS.md` first: it states the user, the jury criteria and the methodology. Every change must keep the product oriented to that case.
+Read `docs/CASE-ANALYSIS.md` and `docs/METHODIST-RESEARCH.md` first: it states the user, the jury criteria and the methodology. Every change must keep the product oriented to that case.
 
 ## Run and test
 
@@ -35,7 +35,9 @@ Optional AI mentor for the chat: set `ANTHROPIC_API_KEY` (or log in with `ant au
 
 ### Data contract
 
-CSV / row schema (one row = one answer): `student_id, class, teacher, subject, textbook, topic, question_id, correct(0|1), pretest(0–100), date(YYYY-MM-DD)` + optional `question_text, answer, correct_answer`.
+CSV / row schema (one row = one answer): `student_id, class, teacher, subject, textbook, topic, question_id, correct(0|1), date(YYYY-MM-DD)` + optional `pretest(0–100), question_text, answer, correct_answer`. Without `pretest` textbooks are compared on final scores with a caveat.
+
+Journal import (what schools actually have): one row per student × section with `Ученик, Класс, Раздел, Балл, Макс. балл` (+ optional `Учитель, Предмет, Учебник, Вид, Дата`), Russian or Kazakh headers, CSV/TSV or Excel paste → `parseJournal()` turns each point into an answer row; names are replaced by codes `У-xxxxx`. Journal point-items (`question_id` contains `·`) are excluded from item analysis.
 
 Learner answers reach analytics through:
 
@@ -50,13 +52,15 @@ They are linked to the student selected in the learner's «Оқу деректе
 - Mastery: student's share correct per topic ≥ threshold (60/70/80, default 70). Low data: < 10 students or < 30 answers.
 - Textbook comparison only within teachers; blocked when the teacher–textbook graph is disconnected; wording is association, never causation; "better/worse" needs CI excluding 0 **and** |diff| ≥ 5 pp.
 - Hours: program total is preserved; extra hours = reserve + up to 20% from topics mastered by ≥ 85%; proportional to share not mastered × hours × weight; cap +50% per topic; integer largest remainders.
+- School indicators: mark from percent of points 40/65/85 → 3/4/5; успеваемость = share ≥ «3», качество = share ≥ «4»; levels низкий < 40, средний 40–84, высокий ≥ 85.
 - Students: risk high ≥ 2/3 topics not mastered, medium ≥ 1/3; support-group "core" = ≤ 40% correct. Risk is a signal for the methodist, not a grade.
 - Typical errors and "hard" flags need ≥ 10 answers per item, so single live answers never dominate.
 - Demo data is synthetic and labelled as such everywhere.
 
 ## Conventions
 
-- Languages: methodist UI **Russian**, learner UI **Kazakh**, code/comments **English**.
+- Languages: methodist UI **Russian or Kazakh** (`st.lang`; strings in `KK`/`RU`/`tabText`, report in `spravkaHTML(lang)`), learner UI **Kazakh**, code/comments **English**.
+- Methodist UX targets older users: start screen `homeUI()` with task cards, text size `st.zoom` (CSS `zoom` 1/1.15/1.3), `helpBtn(key)` + `HELP` glossary for every term. Keep labels in plain school language (СОР/СОЧ, раздел, успеваемость, качество, КТП).
 - Vanilla JS, no dependencies in `dist/`. Engines are UMD (`module.exports` + `window.X`) so tests can `require` them.
 - Escape every dynamic string with `esc()` before putting it in HTML.
 - Persist only in `localStorage` keys: `jaz.methodist.v2`, `jaz.progress.v1`, `jaz.chats.v1`, `jaz.game.v1`, `jaz.subject.v1`, `jaz.mode.v1`, `jaz.theme.v1`. Wrap storage in try/catch.
