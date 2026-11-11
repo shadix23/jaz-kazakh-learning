@@ -153,6 +153,8 @@ main{position:relative;z-index:2;overflow-x:clip}
 .person p{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-d);margin-top:6px}
 .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
 .links a{font-size:15px;font-weight:700;padding:12px 18px;border-radius:999px;background:var(--paper);border:1px solid var(--line);text-decoration:none;min-height:44px;display:inline-flex;align-items:center;gap:8px;transition:transform .16s var(--ease),background .2s var(--ease)}
+.site{margin-top:18px;font-size:clamp(16px,1.3vw,20px);font-weight:700;color:var(--ink2)}
+.site a{color:var(--accent-d)}
 .links a.main{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 10px 26px rgba(63,112,247,.28)}
 .links a:active{transform:scale(.97)}
 
@@ -439,12 +441,13 @@ footer{position:relative;z-index:2;padding:26px 20px 40px;text-align:center;font
         <div class="card person"><span class="av" aria-hidden="true">AK</span><div><h3>Amangeldiev Kaisar</h3><p>Co-founder</p></div></div>
       </div>
       <div class="links r" style="--d:.16s">
-        <a class="main" href="./?mode=method">Әдіскер кабинеті</a>
-        <a href="./?mode=student">Оқушы режимі</a>
+        <a class="main" href="https://jaz-kazakh-learning.vercel.app/?mode=method">Әдіскер кабинеті</a>
+        <a href="https://jaz-kazakh-learning.vercel.app/?mode=student">Оқушы режимі</a>
         <a href="https://github.com/shadix23/jaz-kazakh-learning" target="_blank" rel="noopener">GitHub</a>
         <a class="no-print" href="downloads/Jaz-pitch.pdf" download>PDF жүктеу</a>
         <a class="no-print" href="downloads/Jaz-pitch.pptx" download>PPTX жүктеу</a>
       </div>
+      <p class="site r" style="--d:.22s">Сайт: <a href="https://jaz-kazakh-learning.vercel.app">jaz-kazakh-learning.vercel.app</a> · Питч: <a href="https://jaz-kazakh-learning.vercel.app/pitch.html">/pitch.html</a></p>
     </div>
   </section>
 </main>

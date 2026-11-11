@@ -1,5 +1,7 @@
 # Деплой Jaz! на Vercel
 
+Текущий сайт: **https://jaz-kazakh-learning.vercel.app**. Проект `reforest2/jaz-kazakh-learning` связан с веткой `main`. Upstash Redis `jaz-school-data` подключён к production; бесплатный тариф, автоматическое повышение тарифа отключено. Проверка `npm run smoke -- https://jaz-kazakh-learning.vercel.app` прошла, `/api/status` возвращает `store: redis`, `ai: false`.
+
 Проект готов к Vercel без сборки: статические файлы из `dist/`, бэкенд — одна серверная функция `api/index.js` (все `/api/*` переписываются на неё в `vercel.json`).
 
 ## 1. Импорт (2 минуты)

@@ -82,13 +82,21 @@ body[data-mode="method"] .mx-nav{display:flex;flex-direction:column}
 @media (hover:hover) and (pointer:fine){.mx-source:hover{border-color:var(--mx-line-strong)}}
 .mx-filters{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:10px 0;margin:0 0 18px;background:var(--mx-bg);border-bottom:1px solid transparent}
 .mx-chip{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:var(--mx-r-sm);background:var(--mx-surface-2);border:1px solid var(--mx-line);font-size:13px;color:var(--mx-muted)}
-.mx-select{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 6px 0 12px;border-radius:var(--mx-r-sm);background:var(--mx-surface);border:1px solid var(--mx-line);font-size:13px;color:var(--mx-muted);transition:border-color 150ms ease,box-shadow 150ms ease}
+.mx-select{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 6px 0 12px;border-radius:var(--mx-r-sm);background:var(--mx-surface);border:1px solid var(--mx-line);font-size:13px;color:var(--mx-muted);transition:border-color 150ms ease,box-shadow 150ms ease}
+.mx-select:has(select){padding-right:34px;cursor:pointer}
+.mx-select:has(select)::after{content:"";position:absolute;right:13px;top:50%;width:12px;height:8px;transform:translateY(-50%);pointer-events:none;background-color:var(--mx-muted);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat}
+.mx-select>span{min-width:0;flex-shrink:0}
 .mx-select:focus-within{border-color:var(--mx-blue);box-shadow:0 0 0 3px var(--mx-blue-ring)}
+.mx-select:focus-within::after{background-color:var(--mx-blue)}
+@media (hover:hover) and (pointer:fine){.mx-select:has(select):not(.is-disabled):hover{border-color:var(--mx-line-strong);background-color:var(--mx-surface-2)}}
 .mx-select.is-disabled{opacity:.55}
 .mx-select{max-width:100%;min-width:0}.mx-select select{min-width:0;text-overflow:ellipsis}
-.mx-select select{border:0;background:transparent;color:var(--mx-ink);font:600 14px var(--mx-font);padding:0 4px;min-height:38px;max-width:300px;outline:none;cursor:pointer}
+.mx-select select{-webkit-appearance:none;appearance:none;flex:1 1 auto;border:0;border-radius:0;background:transparent;color:var(--mx-ink);font:600 14px/1.4 var(--mx-font);padding:0 0 0 3px;min-height:38px;max-width:300px;width:auto;outline:none;cursor:pointer}
+.mx-select select:disabled{cursor:default}
+.mx-select select option{background:var(--mx-surface);color:var(--mx-ink)}
 .mx-select select:focus-visible{outline:none}
 :root[data-theme="dark"] .mx-select select{background:transparent;border:0}
+@media (forced-colors:active){.mx-select select{-webkit-appearance:auto;appearance:auto}.mx-select:has(select){padding-right:6px}.mx-select:has(select)::after{display:none}}
 /* Segmented control: active state is a clipped copy of the row (no colour cross-fade). */
 .mx-seg{position:relative;display:inline-grid;border-radius:var(--mx-r-sm);background:var(--mx-surface);border:1px solid var(--mx-line);max-width:100%}
 .mx-seg-row{grid-area:1/1;display:flex;padding:3px;gap:2px}

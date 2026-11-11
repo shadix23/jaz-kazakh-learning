@@ -37,7 +37,7 @@ test('pitch screenshots and downloads exist', () => {
 });
 
 test('links from the pitch open the right app mode', () => {
-  assert.match(html, /href="\.\/\?mode=method"/);
-  assert.match(html, /href="\.\/\?mode=student"/);
+  assert.match(html, /href="(?:\.|https:\/\/jaz-kazakh-learning\.vercel\.app)\/\?mode=method"/);
+  assert.match(html, /href="(?:\.|https:\/\/jaz-kazakh-learning\.vercel\.app)\/\?mode=student"/);
   assert.match(fs.readFileSync(path.join(dist, 'app.js'), 'utf8'), /get\('mode'\)/);
 });
