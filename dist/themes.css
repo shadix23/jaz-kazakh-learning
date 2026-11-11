@@ -8,7 +8,6 @@ body{background:var(--cloud);color:var(--ink)}
 .topbar{gap:12px;flex-wrap:wrap;min-width:0}.top-stats{margin-left:0}.workspace,.student-context,#main{min-width:0}
 .student-context{margin:0 38px}.student-context:empty{display:none}
 body[data-mode="method"] .sidebar .nav-list,body[data-mode="method"] .sidebar-bottom,body[data-mode="method"] .mobile-nav,body[data-mode="method"] .top-stats,body[data-mode="method"] .app-footer{display:none}
-body[data-mode="method"] .sidebar:after{content:'Данные → решение';font-size:12px;color:var(--muted);padding:10px 14px;line-height:1.8}
 body[data-mode="method"] #main{padding-top:12px}
 :root[data-theme="dark"] :is(.sidebar,.topbar,.panel,.lesson-card,.scenario-card,.progress-stat,.chat-window,.scenario-list,.stat-pill,.level-pill,.mobile-nav,.goal-card,.deck-card,.chat-input-wrap,.dialog-top,dialog,.answer-option,.correction-history,.correction-card,.word-chip,.chat-empty,.chat-header,.chat-form){background:var(--surface);color:var(--ink);border-color:var(--line)}
 :root[data-theme="dark"] :is(.workspace,.chat-messages,.week-day,.badge-item,.info-body,.dialog-content,.answer-feedback,.chat-notice,.saved-correction,.empty-history){background:var(--surface-soft);color:var(--ink)}

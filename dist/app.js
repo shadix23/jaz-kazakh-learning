@@ -34,7 +34,7 @@
   function readStorage(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
   function saveStorage(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch { storageWarning = true; } }
   let progress = L.sanitizeState(readStorage('jaz.progress.v1', null));
-  let appMode = readStorage('jaz.mode.v1', 'student') === 'method' ? 'method' : 'student';
+  let appMode = readStorage('jaz.mode.v1', 'method') === 'student' ? 'student' : 'method';
   let theme = readStorage('jaz.theme.v1', 'light') === 'dark' ? 'dark' : 'light';
   function applyTheme() {
     document.documentElement.dataset.theme = theme;
@@ -207,6 +207,7 @@
       return;
     }
     $('#main').classList.remove('metodist');
+    window.JazMetodist.unmount?.();
     window.JazMetodist.renderStudentContext($('#student-context'));
     document.body.dataset.page = route;
     document.title = `${nav.find((item) => item.id === route).label} · Jaz!`;
