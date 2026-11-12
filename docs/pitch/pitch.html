@@ -2,872 +2,354 @@
 <html lang="kk">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Jaz! - питч</title>
-<meta name="description" content="Jaz! - мектеп әдіскеріне арналған БЖБ/ТЖБ аналитикасы: мәселе, дәлелдер, құны, шешім, масштабтау, команда.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jaz! питч</title>
+<!-- Pitch deck source (Kazakh, 12 slides of 1920×1080). Kept in the repo only, not served by the site.
+     Build: print this file to PDF (one slide per page), flatten every page to an image, make the PPTX
+     from the same images. See docs/dev/HANDOFF.md. Every statistic cites a source; estimates say «болжам». -->
 <style>
-/* Pitch deck as a scroll-story. Based on the scroll-story-3d template (MIT, © 2026 Aly Danner, github.com/DannerAly/scroll-story-3d); characters are Jaz! own snow leopards. */
-:root{
-  --font:'Nunito';--disp:'Oswald';
-  --accent:#3f70f7;--accent-d:#2550c9;--accent-s:#e9efff;
-  --grad:linear-gradient(95deg,#2550c9 0%,#3f70f7 50%,#7aa2ff 100%);
-  --bg:#f6f7f9;--paper:#ffffff;--ink:#16181d;--ink2:#565c69;--ink3:#8d93a0;--line:#e3e6ec;--soft:#eef1f6;
-  --good:#1f9d55;--bad:#d64545;--warn:#d98a0b;
-  --ease:cubic-bezier(.16,1,.3,1);
-  --gridc:rgba(22,24,29,.055);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{background:var(--bg);-webkit-text-size-adjust:100%}
-html.lenis,html.lenis body{height:auto}
-.lenis.lenis-smooth{scroll-behavior:auto!important}
-body{color:var(--ink);font-family:var(--font),ui-sans-serif,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;
-  background-color:var(--bg);background-image:linear-gradient(var(--gridc) 1px,transparent 1px),linear-gradient(90deg,var(--gridc) 1px,transparent 1px);background-size:32px 32px;background-attachment:fixed}
-a{color:inherit}
+@font-face { font-family: Nunito; src: url('../../dist/fonts/Nunito.ttf'); font-weight: 300 900; }
+@font-face { font-family: Comfortaa; src: url('../../dist/fonts/Comfortaa.ttf'); font-weight: 300 700; }
+@page { size: 1920px 1080px; margin: 0; }
+:root { --blue: #2858e0; --deep: #1a3bb3; --soft: #5b84f5; --sky: #e6edff; --page: #f5f7fb; --ink: #0f1b33; --muted: #56657e; --sun: #ffd23f; --coral: #ff6b6b; --mint: #34d399; --line: #e2e8f0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #dfe5f0; font-family: Nunito, system-ui, sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.slide { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--page); page-break-after: always; break-after: page; margin: 0 auto 24px; padding: 84px 104px 76px; }
+@media print { html, body { background: none; } .slide { margin: 0; } }
+.slide.blue { background: linear-gradient(125deg, var(--deep) 0%, var(--blue) 52%, var(--soft) 100%); color: #fff; }
+.blob { position: absolute; border-radius: 50%; background: rgba(40,88,224,.06); }
+.blue .blob { background: rgba(255,255,255,.09); }
+.blob.sq { border-radius: 26%; transform: rotate(18deg); }
+.blob.sun { background: rgba(255,210,63,.2); }
+a { color: inherit; }
 
-#stage{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none}
-#tags{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
-.tag{position:absolute;left:0;top:0;opacity:0}
+/* header */
+.head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 44px; position: relative; z-index: 2; }
+h2 { font-size: 92px; font-weight: 900; line-height: 1; letter-spacing: -.02em; }
+h2 em { font-style: normal; color: var(--blue); }
+.blue h2 em { color: var(--sun); }
+.pg { font-size: 26px; font-weight: 800; color: var(--muted); display: flex; align-items: center; gap: 12px; letter-spacing: .04em; text-transform: uppercase; }
+.pg b { display: inline-block; padding: 8px 20px; border-radius: 999px; background: var(--blue); color: #fff; font-size: 30px; letter-spacing: 0; }
+.blue .pg { color: rgba(255,255,255,.8); } .blue .pg b { background: #fff; color: var(--blue); }
+.lead { font-size: 60px; font-weight: 900; line-height: 1.1; letter-spacing: -.015em; }
+.lead em { font-style: normal; color: var(--blue); }
+.blue .lead em { color: var(--sun); }
+.sub { font-size: 32px; line-height: 1.4; color: var(--muted); font-weight: 600; }
+.blue .sub { color: rgba(255,255,255,.88); }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 30px; padding: 32px 36px; box-shadow: 0 26px 50px -30px rgba(15,27,51,.35); position: relative; z-index: 2; }
+.num { flex: none; width: 60px; height: 60px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 900; font-size: 32px; display: flex; align-items: center; justify-content: center; }
+.mascot { position: absolute; z-index: 3; filter: drop-shadow(0 22px 30px rgba(15,27,51,.25)); }
+.src { display: block; font-size: 21px; color: var(--muted); margin-top: 14px; font-weight: 600; }
+.src a { color: var(--blue); }
+.chip { display: inline-flex; align-items: center; gap: 10px; padding: 12px 26px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: 27px; font-weight: 800; }
+.blue .chip { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.3); color: #fff; }
+.note { font-size: 23px; color: var(--muted); font-weight: 600; line-height: 1.4; }
+.shot { border-radius: 22px; border: 1px solid var(--line); box-shadow: 0 30px 60px -30px rgba(15,27,51,.45); display: block; width: 100%; background: #fff; }
 
-.bar{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:14px max(16px,3vw);pointer-events:none}
-.bar a{pointer-events:auto;text-decoration:none}
-.brand{font-weight:800;font-size:22px;letter-spacing:-.03em}
-.brand b{color:var(--accent)}
-.demo{font-size:14px;font-weight:700;color:var(--accent-d);background:rgba(255,255,255,.9);border:1px solid var(--line);padding:9px 16px;border-radius:999px;transition:background .2s var(--ease),transform .16s var(--ease)}
-.demo:active{transform:scale(.97)}
-.progress{position:fixed;left:0;top:0;height:3px;background:var(--accent);z-index:6;width:0;transform-origin:left}
+/* cover */
+.cover .kick { font-size: 30px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--sun); }
+.cover h1 { font-family: Comfortaa, Nunito; font-size: 300px; font-weight: 700; line-height: 1; letter-spacing: -.02em; margin: 26px 0 30px -10px; }
+.cover .tag { font-size: 44px; font-weight: 800; line-height: 1.25; max-width: 900px; }
+.cover .tag em { font-style: normal; color: var(--sun); }
+.cover .frame { position: absolute; right: -90px; top: 150px; width: 1010px; border-radius: 26px; overflow: hidden; transform: rotate(-5deg); box-shadow: 0 60px 100px -30px rgba(8,20,70,.7); border: 8px solid rgba(255,255,255,.9); }
+.cover .frame img { display: block; width: 100%; }
 
-main{position:relative;z-index:2;overflow-x:clip}
-.slide{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center;padding:84px max(20px,4.5vw) 56px}
-.frame{width:100%;max-width:1320px}
+/* lists */
+.steps { display: grid; gap: 18px; }
+.step { display: flex; gap: 24px; align-items: center; padding: 22px 30px; }
+.step p { font-size: 31px; line-height: 1.3; font-weight: 600; color: var(--muted); }
+.step b { color: var(--ink); font-weight: 900; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; position: relative; z-index: 2; }
 
-/* slide header: page number + big condensed title */
-.sl-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:clamp(20px,3.4vh,36px)}
-.big{font-family:var(--disp),Impact,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;line-height:.9;font-size:clamp(46px,7.4vw,118px)}
-.pg{font-family:var(--disp),Impact,sans-serif;font-weight:600;text-transform:uppercase;line-height:.85;color:var(--ink);font-size:13px;letter-spacing:.06em;text-align:right;white-space:nowrap}
-.pg b{display:block;font-size:clamp(34px,4.4vw,64px);font-weight:700;letter-spacing:-.02em;margin-top:4px}
-.kicker{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-d);margin-bottom:12px}
-.lead{font-size:clamp(17px,1.45vw,22px);color:var(--ink2);line-height:1.45;font-weight:600}
-.statement{font-family:var(--disp),Impact,sans-serif;font-weight:600;text-transform:uppercase;font-size:clamp(30px,3.4vw,52px);line-height:1.06;letter-spacing:-.005em}
-.hl{color:var(--accent)}
-.src{font-size:12px;color:var(--ink3);line-height:1.45;margin-top:10px;font-weight:600}
-.src a{color:var(--ink3);text-decoration:underline;text-underline-offset:2px}
-.note{font-size:13px;color:var(--ink2);background:var(--paper);border:1px dashed var(--line);border-radius:12px;padding:10px 14px;line-height:1.45;font-weight:600}
-
-.cols{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,3.4vw,56px);align-items:start}
-.cols.even{grid-template-columns:1fr 1fr}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,1.6vw,24px);box-shadow:0 1px 0 rgba(0,0,0,.02)}
-
-/* problem */
-.pains{list-style:none;display:grid;gap:10px}
-.pains li{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:13px 16px 13px 50px;position:relative;font-size:clamp(15px,1.2vw,18px);line-height:1.4;color:var(--ink2);font-weight:600}
-.pains li b{color:var(--ink)}
-.pains li i{position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:7px;background:#fdecec;color:var(--bad);font-style:normal;font-weight:800;font-size:14px;display:grid;place-items:center}
-.persona{display:flex;gap:14px;align-items:center;margin-top:22px}
-.persona .av{width:56px;height:56px;border-radius:16px;background:var(--accent-s);color:var(--accent-d);display:grid;place-items:center;font-weight:800;font-size:22px;flex-shrink:0}
-.persona p{font-size:14px;color:var(--ink2);line-height:1.45;font-weight:600}
-.persona strong{color:var(--ink);display:block;font-size:16px}
-
-/* evidence */
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.stat .num{font-family:var(--disp),Impact,sans-serif;font-weight:700;font-size:clamp(40px,4.4vw,68px);line-height:.95;letter-spacing:-.01em}
-.stat .num small{font-size:.45em;letter-spacing:0}
-.stat p{font-size:clamp(14px,1.05vw,16px);color:var(--ink2);margin-top:10px;line-height:1.4;font-weight:600}
-.stat.red .num{color:var(--bad)}
-.stat.blue .num{color:var(--accent)}
-.quote{margin-top:16px;display:flex;gap:18px;align-items:center}
-.quote blockquote{font-family:var(--disp),Impact,sans-serif;font-weight:500;font-size:clamp(22px,2.2vw,34px);line-height:1.1;text-transform:uppercase}
-.quote .claim{font-family:var(--disp),Impact,sans-serif;font-weight:500;font-size:clamp(22px,2.1vw,32px);line-height:1.12;text-transform:uppercase}
-.quote .mark{font-family:var(--disp);font-size:80px;line-height:.6;color:var(--accent);font-weight:700}
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; }
+.stat .big { display: block; font-size: 108px; font-weight: 900; line-height: 1; letter-spacing: -.03em; color: var(--blue); }
+.stat .big small { font-size: 44px; font-weight: 800; letter-spacing: 0; }
+.stat.r .big { color: var(--coral); } .stat.g .big { color: #12a36b; } .stat.y .big { color: #d99700; }
+.stat p { font-size: 27px; line-height: 1.32; font-weight: 600; margin-top: 16px; }
+.quote { margin-top: 30px; display: flex; gap: 30px; align-items: center; padding: 30px 40px; border-radius: 30px; background: linear-gradient(120deg, var(--deep), var(--blue)); color: #fff; position: relative; z-index: 2; }
+.quote .bang { flex: none; width: 76px; height: 76px; border-radius: 50%; background: var(--sun); color: var(--ink); font-size: 50px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.quote p { font-size: 38px; font-weight: 900; line-height: 1.18; }
+.quote .src { color: rgba(255,255,255,.85); margin-top: 8px; } .quote .src a { color: #fff; }
 
 /* cost */
-.calc{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:6px 0 18px}
-.calc span{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-weight:800;font-size:clamp(15px,1.2vw,19px)}
-.calc em{font-style:normal;color:var(--ink3);font-weight:800;font-size:20px}
-.calc span.res{background:var(--ink);color:#fff;border-color:var(--ink)}
-.mega{font-family:var(--disp),Impact,sans-serif;font-weight:700;line-height:.9;font-size:clamp(64px,9vw,150px);letter-spacing:-.02em}
-.mega small{font-family:var(--font),sans-serif;font-size:clamp(16px,1.4vw,21px);letter-spacing:0;display:block;margin-top:12px;color:var(--ink2);font-weight:700;line-height:1.3}
-.costs{display:grid;gap:12px}
-.costs .card b{font-family:var(--disp),Impact,sans-serif;font-size:clamp(28px,2.6vw,40px);font-weight:700;display:block;line-height:1}
-.costs .card p{font-size:15px;color:var(--ink2);margin-top:6px;line-height:1.4;font-weight:600}
+.formula { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; font-size: 34px; font-weight: 900; }
+.formula i { font-style: normal; opacity: .75; }
+.huge { font-size: 250px; font-weight: 900; line-height: .95; letter-spacing: -.04em; color: var(--sun); margin: 26px 0 8px; }
+.huge small { font-size: 110px; letter-spacing: -.02em; }
+.costs { display: grid; gap: 18px; }
+.cost { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.28); border-radius: 26px; padding: 22px 30px; }
+.cost b { display: block; font-size: 40px; font-weight: 900; }
+.cost span { display: block; font-size: 25px; line-height: 1.3; font-weight: 600; color: rgba(255,255,255,.88); margin-top: 4px; }
 
-/* screenshots */
-.shot{border-radius:14px;overflow:hidden;background:var(--paper);border:1px solid var(--line);box-shadow:0 18px 40px rgba(20,40,90,.10)}
-.shot .chrome{height:26px;background:#eef1f6;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px;padding:0 10px}
-.shot .chrome i{width:9px;height:9px;border-radius:50%;background:#d5dae3}
-.shot img{display:block;width:100%;height:auto}
-.feat{list-style:none;display:grid;gap:10px;margin-top:20px}
-.feat li{display:flex;gap:12px;align-items:flex-start;font-size:clamp(15px,1.15vw,18px);line-height:1.4;color:var(--ink2);font-weight:600}
-.feat li b{color:var(--ink)}
-.feat li i{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:var(--accent-s);color:var(--accent-d);font-style:normal;font-weight:800;font-size:13px;display:grid;place-items:center;margin-top:1px}
-.gallery{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.gallery figure{margin:0}
-.gallery .shot{aspect-ratio:16/6.6}
-.gallery .shot img{height:100%;object-fit:cover;object-position:top left}
-.gallery figcaption{font-size:14px;font-weight:700;margin-top:8px;color:var(--ink2)}
-.gallery figcaption b{color:var(--ink)}
-.phones{display:flex;gap:16px;justify-content:center;align-items:flex-start}
-.phone{width:min(240px,42%);border-radius:28px;border:6px solid #1b1e24;overflow:hidden;background:#000;box-shadow:0 18px 40px rgba(20,40,90,.16)}
-.phone img{display:block;width:100%;height:auto}
+/* solution */
+.six { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.six .card { padding: 28px 30px; min-height: 226px; }
+.six .top { display: flex; align-items: center; gap: 18px; margin-bottom: 14px; }
+.six h3 { font-size: 40px; font-weight: 900; line-height: 1.05; }
+.six p { font-size: 27px; line-height: 1.3; font-weight: 600; color: var(--muted); }
 
-/* before / after */
-.ba{width:100%;border-collapse:separate;border-spacing:0;background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden;font-size:clamp(14px,1.1vw,17px)}
-.ba th,.ba td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.35;font-weight:600}
-.ba tr:last-child td{border-bottom:0}
-.ba th{font-family:var(--disp),Impact,sans-serif;text-transform:uppercase;font-size:clamp(18px,1.6vw,24px);font-weight:600;background:var(--soft)}
-.ba td:first-child{color:var(--ink);font-weight:800;width:20%}
-.ba td:nth-child(2){color:var(--ink2)}
-.ba td:nth-child(3){color:var(--ink)}
-.ba th:nth-child(3){background:var(--accent);color:#fff}
-.ba tr.time td{background:#fbfcff}
-.ba tr.time td:nth-child(2){color:var(--bad);font-weight:800}
-.ba tr.time td:nth-child(3){color:var(--good);font-weight:800}
+/* screens */
+.shots { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 34px; position: relative; z-index: 2; }
+.shots figure { position: relative; }
+.shots img { height: 372px; object-fit: cover; object-position: top left; }
+.shots figcaption { position: absolute; left: 20px; bottom: 18px; padding: 12px 24px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 26px; font-weight: 700; }
+.shots figcaption b { color: var(--sun); font-weight: 900; }
 
-/* guarantees */
-.guards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.guards .card h3{font-family:var(--disp),Impact,sans-serif;text-transform:uppercase;font-size:clamp(24px,2.2vw,34px);line-height:1;font-weight:600}
-.guards .card p{font-size:15px;color:var(--ink2);margin-top:10px;line-height:1.45;font-weight:600}
-.guards .card .n{font-family:var(--disp);font-weight:700;color:var(--accent);font-size:16px;letter-spacing:.06em;display:block;margin-bottom:10px}
+/* phones */
+.phones { display: flex; gap: 40px; justify-content: center; align-items: center; position: relative; z-index: 2; }
+.phone { width: 356px; border-radius: 52px; padding: 12px; background: #10141f; box-shadow: 0 50px 80px -30px rgba(15,27,51,.6); }
+.phone img { display: block; width: 100%; border-radius: 42px; height: 716px; object-fit: cover; object-position: top; }
+.phone:nth-child(2) { transform: translateY(40px) rotate(3deg); } .phone:nth-child(1) { transform: rotate(-3deg); }
+
+/* cycle */
+.cycle { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 70px; position: relative; z-index: 2; }
+.node { width: 300px; height: 300px; border-radius: 50%; background: #fff; color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: 0 40px 70px -30px rgba(8,20,70,.7); }
+.node b { font-size: 68px; font-weight: 900; line-height: 1; }
+.node span { font-size: 25px; font-weight: 700; color: var(--muted); margin-top: 10px; padding: 0 30px; line-height: 1.2; }
+.node.hot { background: var(--sun); }
+.arrow { font-size: 90px; font-weight: 900; color: #fff; }
+
+/* table */
+table { width: 100%; border-collapse: separate; border-spacing: 0 10px; position: relative; z-index: 2; }
+th { text-align: left; font-size: 27px; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; padding: 4px 28px 8px; color: var(--muted); }
+th.now { color: var(--blue); }
+td { font-size: 29px; font-weight: 600; padding: 18px 28px; background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); line-height: 1.25; }
+td:first-child { font-weight: 900; border-left: 1px solid var(--line); border-radius: 20px 0 0 20px; width: 290px; }
+td:nth-child(2) { color: var(--muted); width: 620px; }
+td:last-child { border-right: 1px solid var(--line); border-radius: 0 20px 20px 0; background: var(--sky); color: var(--ink); font-weight: 800; }
+td .bad { color: var(--coral); font-weight: 900; } td .ok { color: #0d8a5a; font-weight: 900; }
+
+/* honest */
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.three .card { padding: 38px 40px; min-height: 420px; }
+.three .n { font-size: 34px; font-weight: 900; color: var(--blue); }
+.three h3 { font-size: 46px; font-weight: 900; line-height: 1.08; margin: 12px 0 18px; }
+.three p { font-size: 29px; line-height: 1.36; font-weight: 600; color: var(--muted); }
+.strip { margin-top: 30px; padding: 26px 36px; border-radius: 26px; background: var(--ink); color: #fff; font-size: 28px; font-weight: 700; line-height: 1.35; position: relative; z-index: 2; }
+.strip b { color: var(--sun); }
 
 /* roadmap */
-.road{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;position:relative}
-.road .card{position:relative}
-.road .card .when{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-d)}
-.road .card h3{font-family:var(--disp),Impact,sans-serif;text-transform:uppercase;font-size:clamp(24px,2.1vw,32px);line-height:1;font-weight:600;margin:6px 0 10px}
-.road .card ul{list-style:none;display:grid;gap:7px}
-.road .card li{font-size:14.5px;color:var(--ink2);line-height:1.35;font-weight:600;padding-left:14px;position:relative}
-.road .card li:before{content:'';position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
-.road .card.now{background:var(--ink);color:#fff;border-color:var(--ink)}
-.road .card.now li{color:#c9ced8}
-.road .card.now .when{color:#9db6ff}
-.model{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
-.model span{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:700}
+.road { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; align-items: end; }
+.road .card { padding: 30px 32px; }
+.road .card:nth-child(1) { min-height: 400px; background: var(--ink); color: #fff; border-color: var(--ink); }
+.road .card:nth-child(2) { min-height: 450px; } .road .card:nth-child(3) { min-height: 500px; } .road .card:nth-child(4) { min-height: 550px; background: var(--blue); color: #fff; border-color: var(--blue); }
+.road .when { font-size: 24px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--blue); }
+.road .card:nth-child(1) .when, .road .card:nth-child(4) .when { color: var(--sun); }
+.road h3 { font-size: 46px; font-weight: 900; line-height: 1.05; margin: 8px 0 16px; }
+.road li { font-size: 26px; line-height: 1.3; font-weight: 600; margin: 0 0 10px 26px; }
+.chips { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 28px; position: relative; z-index: 2; }
 
 /* team */
-.team{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:860px}
-.person{display:flex;gap:18px;align-items:center}
-.person .av{width:84px;height:84px;border-radius:24px;background:var(--grad);color:#fff;display:grid;place-items:center;font-family:var(--disp);font-weight:700;font-size:34px;flex-shrink:0}
-.person h3{font-size:clamp(20px,1.7vw,26px);font-weight:800;letter-spacing:-.01em;line-height:1.15}
-.person p{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-d);margin-top:6px}
-.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
-.links a{font-size:15px;font-weight:700;padding:12px 18px;border-radius:999px;background:var(--paper);border:1px solid var(--line);text-decoration:none;min-height:44px;display:inline-flex;align-items:center;gap:8px;transition:transform .16s var(--ease),background .2s var(--ease)}
-.site{margin-top:18px;font-size:clamp(16px,1.3vw,20px);font-weight:700;color:var(--ink2)}
-.site a{color:var(--accent-d)}
-.note.any{border-style:solid;border-color:#cddcff;background:#f3f7ff;color:var(--ink)}
-.note.any b{color:var(--accent-d)}
-.links a.main{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 10px 26px rgba(63,112,247,.28)}
-.links a:active{transform:scale(.97)}
-
-.top-slide{align-items:flex-start;padding-top:max(100px,13vh)}
-/* cover + interstitial */
-.cover{text-align:center}
-.cover .big{font-size:clamp(72px,13vw,210px)}
-.cover .lead{max-width:34em;margin:20px auto 0}
-.cover .kicker{margin-bottom:18px}
-.hero-in{margin-top:-10vh}
-.loop{text-align:center}
-.loop .big{font-size:clamp(44px,6.6vw,104px)}
-.loop .big .arr{color:var(--accent)}
-.loop .lead{margin:16px auto 0;max-width:30em}
-.cue{position:absolute;bottom:22px;left:max(20px,4vw);display:flex;align-items:center;gap:12px;font-size:11px;font-weight:800;color:var(--ink3);letter-spacing:.2em;text-transform:uppercase}
-.cue i{display:block;width:1px;height:34px;background:linear-gradient(var(--ink3),transparent);animation:cue 2.2s var(--ease) infinite;transform-origin:top}
-@keyframes cue{0%{transform:scaleY(0)}60%{transform:scaleY(1);opacity:1}100%{opacity:0}}
-footer{position:relative;z-index:2;padding:26px 20px 40px;text-align:center;font-size:12px;color:var(--ink3);letter-spacing:.04em;font-weight:600}
-
-.r{opacity:0;transform:translate3d(0,34px,0);filter:blur(8px);transition:opacity 1s var(--ease) var(--d,0s),transform 1.1s var(--ease) var(--d,0s),filter 1s var(--ease) var(--d,0s)}
-.r.in{opacity:1;transform:none;filter:none}
-
-@media (max-width:1100px){
-  .stats{grid-template-columns:1fr 1fr}
-  .road{grid-template-columns:1fr 1fr}
-}
-@media (max-width:820px){
-  .cols,.cols.even,.guards,.team{grid-template-columns:1fr}
-  .slide{align-items:flex-start;padding-top:76px}
-  .sl-head{align-items:flex-start;flex-direction:column-reverse;gap:6px}
-  .pg{text-align:left}
-  .pg b{display:inline;font-size:20px;margin-left:6px}
-  .ba td:first-child{width:auto}
-  .ba th,.ba td{padding:10px 10px}
-  .cue{left:50%;transform:translateX(-50%);bottom:16px}
-  .cue span{display:none}
-  .hero-in{margin-top:-18vh}
-  .cover,.loop{align-items:center}
-}
-@media (max-width:520px){
-  .gallery .shot{aspect-ratio:auto}
-  .gallery .shot img{height:auto}
-  .stats,.road,.gallery{grid-template-columns:1fr}
-  .phone{width:46%;border-width:4px;border-radius:20px}
-  .ba{font-size:13.5px}
-}
-@media (prefers-reduced-motion:reduce){.r{transition:none;opacity:1;transform:none;filter:none}.cue i{animation:none}}
-
-/* ---------- print / PDF: one slide per 16:9 page, static 3D images ---------- */
-@page{size:1600px 900px;margin:0}
-@media print{
-  html,body{background:#f6f7f9!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body{background-attachment:scroll}
-  #stage,#tags,.bar,.cue,footer,.progress,.no-print{display:none!important}
-  .r{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
-  [data-hero]{transform:none!important;opacity:1!important}
-  .slide{height:900px!important;min-height:0!important;break-after:page;page-break-after:always;overflow:hidden;padding:56px 72px 40px;align-items:center}
-  .cover{background:url(assets/pitch/cover-3d.jpg) center/cover no-repeat}
-  .loop{background:url(assets/pitch/ring-3d.jpg) center/cover no-repeat}
-  #team{background:url(assets/pitch/team-3d.jpg) center/cover no-repeat}
-  /* print always uses the desktop layout, whatever width Chrome reports */
-  .cols{grid-template-columns:minmax(0,5fr) minmax(0,7fr)!important}
-  .cols.even,.team,.gallery{grid-template-columns:1fr 1fr!important}
-  .stats,.road{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-  .guards{grid-template-columns:repeat(3,minmax(0,1fr))!important}
-  .sl-head{flex-direction:row!important;align-items:flex-end!important;gap:24px!important}
-  .pg{text-align:right!important}
-  .pg b{display:block!important;font-size:60px!important;margin-left:0!important}
-  .big{font-size:104px}
-  .cover .big{font-size:190px}
-  .loop .big{font-size:96px}
-  .statement{font-size:46px}
-  .mega{font-size:132px}
-  .gallery .shot{aspect-ratio:16/6.6!important}
-  .gallery .shot img{height:100%!important}
-  .phone{width:230px!important;border-width:6px!important;border-radius:28px!important}
-  .slide,.top-slide{align-items:center!important}
-  .top-slide{align-items:flex-start!important;padding-top:90px!important}
-  .hero-in{margin-top:-14vh}
-  .top-slide{padding-top:90px;align-items:flex-start}
-}
+.team { display: flex; gap: 26px; margin-top: 36px; }
+.person { display: flex; align-items: center; gap: 24px; padding: 26px 40px 26px 28px; border-radius: 30px; background: #fff; color: var(--ink); box-shadow: 0 40px 70px -34px rgba(8,20,70,.7); }
+.person .av { width: 96px; height: 96px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 38px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.person b { display: block; font-size: 38px; font-weight: 900; line-height: 1.1; }
+.person span { font-size: 24px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); }
+.qrs { display: flex; gap: 34px; margin-top: 44px; position: relative; z-index: 2; }
+.qr { background: #fff; color: var(--ink); border-radius: 30px; padding: 24px 24px 20px; text-align: center; width: 330px; box-shadow: 0 40px 70px -34px rgba(8,20,70,.7); text-decoration: none; display: block; }
+.qr img { display: block; width: 282px; height: 282px; image-rendering: pixelated; }
+.qr b { display: block; font-size: 34px; font-weight: 900; margin-top: 10px; }
+.qr span { display: block; font-size: 21px; font-weight: 700; color: var(--muted); }
 </style>
 </head>
 <body>
-<div class="progress" aria-hidden="true"></div>
-<canvas id="stage" aria-hidden="true"></canvas>
-<div id="tags" aria-hidden="true"></div>
-<header class="bar">
-  <a class="brand" href="./">Jaz<b>!</b></a>
-  <a class="demo" href="./?mode=method">Демоны ашу →</a>
-</header>
 
-<main>
-  <!-- COVER -->
-  <section class="slide cover" data-f="hero">
-    <div data-hero class="hero-in">
-      <p class="kicker r">1-кейс: Data-Driven Curriculum</p>
-      <h1 class="big r" style="--d:.1s">Jaz<span class="hl">!</span></h1>
-      <p class="lead r" style="--d:.25s">Әдіскерге арналған платформа: кез келген пән бойынша БЖБ/ТЖБ нәтижесін талдайды, кімге көмек керегін көрсетеді, анықтаманы өзі жазады. Оқушыны оқуға бейімдейді, ал әдіскерге бақылауды жеңілдетеді.</p>
-    </div>
-    <div class="cue"><i></i><span>Айналдырыңыз немесе → басыңыз</span></div>
-  </section>
+<!-- 0. cover -->
+<section class="slide blue cover">
+  <i class="blob" style="left:-120px;top:-140px;width:520px;height:520px"></i><i class="blob sq" style="left:620px;top:700px;width:420px;height:420px"></i><i class="blob sun" style="left:880px;top:60px;width:260px;height:260px"></i>
+  <div class="frame"><img src="assets/pitch/k-home.jpg" alt=""></div>
+  <div style="position:relative;z-index:2">
+    <p class="kick">1-кейс: Data-Driven Curriculum</p>
+    <h1>jaz!</h1>
+    <p class="tag">Әдіскерге арналған платформа:<br><em>деректен шешімге</em> бірнеше минутта.</p>
+    <p class="sub" style="max-width:860px;margin-top:26px">Кез келген пән бойынша БЖБ/ТЖБ нәтижесін талдайды, кімге көмек керегін көрсетеді, анықтаманы өзі жазады.</p>
+    <p class="sub" style="margin-top:44px;font-weight:800;color:#fff">Shadil Nurmukhammed, Amangeldiev Kaisar</p>
+  </div>
+  <img class="mascot" src="assets/pitch/mascot/celebrate.png" alt="" style="right:560px;bottom:20px;width:400px">
+</section>
 
-  <!-- 01 PROBLEM -->
-  <section class="slide" data-f="rest" id="problem">
-    <div class="frame">
-      <div class="sl-head r"><h2 class="big">Мәселе</h2><span class="pg">Бет<b>01/10</b></span></div>
-      <div class="cols">
-        <div class="r" style="--d:.08s">
-          <p class="kicker">Әдіскер неге тап болады</p>
-          <p class="statement">БЖБ мен ТЖБ деректері бар.<br><span class="hl">Бірақ соларға сүйенген шешім жоқ.</span></p>
-          <div class="persona">
-            <span class="av" aria-hidden="true">Ә</span>
-            <p><strong>Әдіскер / директордың оқу ісі жөніндегі орынбасары</strong>Тәжірибелі педагог. Аналитикалық жүйелерде емес, Excel пен Word-та жұмыс істейді. Әр тоқсан сайын БЖБ/ТЖБ талдауына және түзету жұмысына жауап береді.</p>
-          </div>
-        </div>
-        <ul class="pains r" style="--d:.16s">
-          <li><i>1</i><b>Қолмен жинайды</b> әр мұғалімнен және электрондық журналдан БЖБ/ТЖБ кестелерін.</li>
-          <li><i>2</i><b>Excel-де есептейді</b> үлгерімді, білім сапасын, деңгейлерді, ал көшіргенде қате кетеді.</li>
-          <li><i>3</i><b>Анықтама жазады</b> әр сынып пен пән бойынша бір үлгімен.</li>
-          <li><i>4</i><b>Көрмейді</b>, қай тақырып кімде меңгерілмегенін, сондықтан көмек «жадқа сүйеніп» беріледі.</li>
-          <li><i>5</i><b>Сағаттар мен оқулықтарды</b> цифрмен негіздемей, болжаммен бөледі.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- 02 EVIDENCE -->
-  <section class="slide" data-f="rest" id="evidence">
-    <div class="frame">
-      <div class="sl-head r"><h2 class="big">Дәлелдер</h2><span class="pg">Бет<b>02/10</b></span></div>
-      <div class="stats r" style="--d:.08s">
-        <div class="card stat"><div class="num">6,9 <small>мың</small></div><p>мемлекеттік мектеп және 371,3 мың педагог. Әр мектепте біреу БЖБ/ТЖБ-ны қолмен жинайды.</p><p class="src">2024/25, <a href="https://24.kz/ru/news/obrazovanie-i-nauka/729851-kak-obstoyat-dela-v-sfere-obrazovaniya-v-rk" target="_blank" rel="noopener">24.kz, 15.09.2025</a></p></div>
-        <div class="card stat red"><div class="num">13 <small>/ 36 сағ</small></div><p>мұғалім аптасының сабақ емес бөлігі: дайындық, тексеру, есеп. Kundelik күніне 1,5 сағатқа дейін алады.</p><p class="src">Мәжіліс депутатының есебі, <a href="https://informburo.kz/novosti/kolicestvo-otcetov-ne-umensilos-peresmotret-funkcional-kundelik-predlagaet-deputat" target="_blank" rel="noopener">Informburo, 01.04.2026</a></p></div>
-        <div class="card stat red"><div class="num">≈25%</div><p>педагог артық әкімшілік жүктемені стресс көзі деп санайды.</p><p class="src">Сонда, <a href="https://informburo.kz/novosti/kolicestvo-otcetov-ne-umensilos-peresmotret-funkcional-kundelik-predlagaet-deputat" target="_blank" rel="noopener">Informburo, 01.04.2026</a></p></div>
-        <div class="card stat blue"><div class="num">44%</div><p>оқушы ғана PISA-2025 математикасында базалық деңгейге жетті. Орташа балл 414, ал 2022 жылы 425 болған.</p><p class="src"><a href="https://bes.media/amp/pisa-2025-pokazalo-silnye-i-slabye-storony-kazahstanskih-shkolnikov/" target="_blank" rel="noopener">Bes.media, 08.09.2026</a>; <a href="https://digitalbusiness.kz/2023-12-06/kazahstan-voshel-v-top-50-stran-po-matematike-v-reytinge-pisa/" target="_blank" rel="noopener">Digital Business, 2023</a></p></div>
-      </div>
-      <div class="quote card r" style="--d:.16s">
-        <span class="mark" aria-hidden="true">!</span>
-        <div><p class="claim">Мемлекет басшысы педагогтарды қағазбастылықтан және шексіз есептерден арылтуды тапсырды.</p><p class="src">ҚР Президенті Қ.-Ж. Тоқаев, <a href="https://bes.media/news/tokaev-poruchil-izbavit-uchiteley-ot-otchetov-attestatsiy-i-lishnih-proverok/" target="_blank" rel="noopener">Bes.media</a></p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 03 COST -->
-  <section class="slide" data-f="rest" id="cost">
-    <div class="frame">
-      <div class="sl-head r"><h2 class="big">Мәселенің құны</h2><span class="pg">Бет<b>03/10</b></span></div>
-      <div class="cols even">
-        <div class="r" style="--d:.08s">
-          <p class="kicker">Бір мектеп, тек ТЖБ-ны жинау</p>
-          <div class="calc"><span>24 сынып</span><em>×</em><span>8 пән</span><em>=</em><span>192 кесте</span><em>×</em><span>15 мин</span><em>=</em><span class="res">тоқсанына 48 сағ</span></div>
-          <div class="mega">≈ 190 сағ<small>бір әдіскерге жылына, шамамен 24 жұмыс күні</small></div>
-          <p class="note" style="margin-top:18px">Біздің болжамға негізделген есеп: 24 сыныпты мектеп, ТЖБ өтетін 8 пән, бір кестені жинауға, есептеуге және мәтінге 15 минут. «Дейін» және «кейін» уақытын пилотта өлшейміз.</p>
-        </div>
-        <div class="costs r" style="--d:.16s">
-          <div class="card"><b>≈ 1,3 млн сағ/жыл</b><p>ел көлемінде: 192 сағ × 6,9 мың мектеп. Бұл уақыт оқушыға емес, кестеге кетеді.</p></div>
-          <div class="card"><b>Қосымша жұмыс</b><p>Есептер сабақтан кейін жасалады: мұғалім аптасының 36 сағатының тек 23-і сабаққа кетеді.</p></div>
-          <div class="card"><b>56% базадан төмен</b><p>математика бойынша (PISA-2025). Тақырып олқылықтары уақытында көрінбесе, жинала береді.</p></div>
-          <div class="card"><b>Цифрсыз шешім</b><p>Вариативті сағаттар мен оқулық таңдауы нәтижеге емес, пікірге сүйенеді: оқулық пен мұғалімнің әсері шатасады.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 04 SOLUTION -->
-  <section class="slide" data-f="rest" id="solution">
-    <div class="frame">
-      <div class="sl-head r"><h2 class="big">Шешім</h2><span class="pg">Бет<b>04/10</b></span></div>
-      <div class="cols">
-        <div class="r" style="--d:.08s">
-          <p class="statement">Бір кесте жүктейсіз, <span class="hl">алты дайын жауап аласыз.</span></p>
-          <ul class="feat">
-            <li><i>1</i><span><b>Жүктеу:</b> Excel-ден қою немесе файл, орысша және қазақша бағандар, аты-жөні кодқа ауысады.</span></li>
-            <li><i>2</i><span><b>Қорытынды:</b> әр сынып бойынша үлгерім, сапа, деңгейлер.</span></li>
-            <li><i>3</i><span><b>Қиын тақырыптар:</b> «тақырып × сынып» картасы және жиі қателер.</span></li>
-            <li><i>4</i><span><b>Қолдау топтары:</b> кімге және қай тақырып бойынша көмек керек.</span></li>
-            <li><i>5</i><span><b>Сағаттар мен КТЖ:</b> тақырып қажеттілігіне қарай түзету сағаттары.</span></li>
-            <li><i>6</i><span><b>Анықтама:</b> қазақша немесе орысша, бірден Word-қа.</span></li>
-          </ul>
-          <p class="note any" style="margin-top:14px"><b>Кез келген пән:</b> математика, қазақ тілі, биология, тарих. Кесте бірдей: оқушы, сынып, бөлім, балл.</p>
-        </div>
-        <div class="shot r" style="--d:.16s"><div class="chrome"><i></i><i></i><i></i></div><img src="assets/pitch/m-home.jpg" alt="Әдіскердің басты беті: алты міндет үлкен карточкалармен" loading="lazy"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 05 DEMO -->
-  <section class="slide" data-f="rest" id="demo">
-    <div class="frame">
-      <div class="sl-head r"><h2 class="big">Қалай көрінеді</h2><span class="pg">Бет<b>05/10</b></span></div>
-      <div class="gallery r" style="--d:.08s">
-        <figure><div class="shot"><img src="assets/pitch/m-overview.jpg" alt="Қорытынды: сыныптар бойынша үлгерім мен сапа" loading="lazy"></div><figcaption><b>Қорытынды.</b> Үлгерім, сапа, деңгейлер анықтамадағыдай.</figcaption></figure>
-        <figure><div class="shot"><img src="assets/pitch/m-topics.jpg" alt="Тақырыптар: тақырып × сынып картасы" loading="lazy"></div><figcaption><b>Тақырыптар.</b> Қиындық қай жерде және қай сыныпта.</figcaption></figure>
-        <figure><div class="shot"><img src="assets/pitch/m-students.jpg" alt="Оқушылар: тақырыптар бойынша қолдау топтары" loading="lazy"></div><figcaption><b>Оқушылар.</b> Тақырыптар бойынша дайын қолдау топтары.</figcaption></figure>
-        <figure><div class="shot"><img src="assets/pitch/m-report.jpg" alt="Анықтама: талдау анықтамасы қазақ тілінде" loading="lazy"></div><figcaption><b>Анықтама.</b> Педкеңеске арналған талдау анықтамасы, Word.</figcaption></figure>
-      </div>
-      <p class="src r">Жұмыс істейтін прототиптің демо-деректердегі (синтетика) скриншоттары. A/A+/A++ қаріп өлшемі мен «?» кеңестері аға буынға ыңғайлы болу үшін жасалған.</p>
-    </div>
-  </section>
-
-  <!-- 06 GAMIFICATION -->
-  <section class="slide" data-f="rest" id="game">
-    <div class="frame">
-      <div class="sl-head r"><h2 class="big">Геймификация</h2><span class="pg">Бет<b>06/10</b></span></div>
-      <div class="cols even">
-        <div class="r" style="--d:.08s">
-          <p class="statement">Оқушыны оқуға бейімдейді, <span class="hl">әдіскерге бақылауды жеңілдетеді.</span></p>
-          <ul class="feat">
-            <li><i>1</i><span><b>«Барыс жолы»</b> 3D-жүгіріс ойыны: қар барысы жүгіреді, оқушы бағдарлама тақырыбы бойынша жауап таңдайды.</span></li>
-            <li><i>2</i><span><b>Қазақша чат</b> қатені табады, ережені түсіндіреді және өзі түзетуге мүмкіндік береді.</span></li>
-            <li><i>3</i><span><b>Барыс-көмекші</b> (чиби) сабақ бойынша кеңес береді: ереже, мысал, неден бастау. Бірақ жауапты айтпайды.</span></li>
-            <li><i>4</i><span><b>Топқа бір басумен тапсырма:</b> оқушы сынып кодымен кіріп, тапсырманы телефонынан көреді, жауаптар әдіскерге келеді.</span></li>
-            <li><i>5</i><span><b>Жаттықтырғыштағы өсім БЖБ-дан бөлек.</b> Ойын ресми бағаға әсер етпейді. XP, серия, белгілер ынталандырады.</span></li>
-          </ul>
-        </div>
-        <div class="phones r" style="--d:.16s">
-          <div class="phone"><img src="assets/pitch/s-game.jpg" alt="«Барыс жолы» ойыны: қазақ тілі бойынша сұрақ" loading="lazy"></div>
-          <div class="phone"><img src="assets/pitch/s-helper.jpg" alt="Барыс-көмекші сабақ бойынша ережені түсіндіреді" loading="lazy"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- LOOP (interstitial) -->
-  <section class="slide loop" data-f="ring">
+<!-- 1. problem -->
+<section class="slide">
+  <i class="blob" style="right:-160px;top:-180px;width:560px;height:560px"></i><i class="blob sun" style="left:40px;bottom:-120px;width:320px;height:320px"></i>
+  <div class="head"><h2>Мәселе</h2><span class="pg">Бет<b>01/10</b></span></div>
+  <div class="grid2" style="grid-template-columns: 800px 1fr">
     <div>
-      <h2 class="big r">БЖБ <span class="arr">→</span> көмек <span class="arr">→</span><br>өсім <span class="arr">→</span> БЖБ</h2>
-      <p class="lead r" style="--d:.12s">Цикл мектеп ішінде тұйықталады: тақырыпты көреміз, көмек тағайындаймыз, келесі БЖБ-мен тексереміз.</p>
-    </div>
-  </section>
-
-  <!-- 07 BEFORE / AFTER -->
-  <section class="slide" data-f="rest" id="before-after">
-    <div class="frame">
-      <div class="sl-head r"><h2 class="big">Бұрын және қазір</h2><span class="pg">Бет<b>07/10</b></span></div>
-      <table class="ba r" style="--d:.08s">
-        <thead><tr><th>Міндет</th><th>Бұрын</th><th>Jaz!-пен</th></tr></thead>
-        <tbody>
-          <tr><td>Жинау</td><td>Әр мұғалімнің кестесі, қолмен көшіру</td><td>Excel-ден бір рет қою</td></tr>
-          <tr><td>Көрсеткіштер</td><td>Excel формулалары, көшіргенде қате</td><td>Үлгерім, сапа, деңгейлер автоматты түрде есептеледі</td></tr>
-          <tr><td>Қиын тақырыптар</td><td>Жұмыстарды қарап шығу, субъективті</td><td>«Тақырып × сынып» картасы, жиі қателер</td></tr>
-          <tr><td>Түзету жұмысы</td><td>«Жадқа сүйенген» тізімдер</td><td>Қолдау топтары + жаттықтырғышқа тапсырма</td></tr>
-          <tr><td>Сағат, оқулық</td><td>Болжам</td><td>Тақырып қажеттілігі бойынша есеп; оқулық мұғалімді ескеріп салыстырылады</td></tr>
-          <tr><td>Анықтама</td><td>Word-тағы біркелкі мәтін</td><td>Word-та дайын анықтама, kk/ru</td></tr>
-          <tr class="time"><td>Уақыт</td><td>Тоқсанына ≈ 48 сағ (болжам)</td><td>Жүктеуге бірнеше минут + қорытындыны тексеру</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- 08 HONEST ANALYTICS -->
-  <section class="slide" data-f="rest" id="validity">
-    <div class="frame">
-      <div class="sl-head r"><h2 class="big">Адал аналитика</h2><span class="pg">Бет<b>08/10</b></span></div>
-      <div class="guards r" style="--d:.08s">
-        <div class="card"><span class="n">01</span><h3>Оқулықты мұғалім ішінде салыстырамыз</h3><p>Оқулықтарды мұғалімнің әсерін ескеріп, сенімділік аралығымен салыстырамыз. Салыстыру мүмкін болмаса, қорытынды бұғатталады.</p></div>
-        <div class="card"><span class="n">02</span><h3>Дерек аз болса, солай жазамыз</h3><p>10 оқушыдан немесе 30 жауаптан аз болса, «дерек аз» белгісі қойылады. Жиі қате тапсырмаға кемінде 10 жауап болғанда ғана көрсетіледі.</p></div>
-        <div class="card"><span class="n">03</span><h3>Екі деректер қабаты</h3><p>БЖБ/ТЖБ ресми көрсеткіштер мен анықтамаға кіреді. Жаттықтырғыш тек өсімді көрсетеді. Қабаттар араласпайды.</p></div>
+      <p class="lead">БЖБ мен ТЖБ деректері бар. <em>Бірақ соларға сүйенген шешім жоқ.</em></p>
+      <div class="card" style="margin-top:40px;display:flex;gap:24px;align-items:center;padding-right:230px">
+        <span class="num" style="background:var(--ink)">Ә</span>
+        <p class="note" style="font-size:27px"><b style="color:var(--ink);font-weight:900">Әдіскер, директордың оқу ісі жөніндегі орынбасары.</b> Excel мен Word-та жұмыс істейді. Әр тоқсан сайын БЖБ/ТЖБ талдауына және түзету жұмысына жауап береді.</p>
       </div>
-      <p class="note r" style="margin-top:18px;--d:.16s">Дербес деректерсіз: аты-жөні кодқа ауыстырылады. ЖИ тек жиынтық сандарды алады және қорытынды мәтінін жазуға көмектеседі; шешімдер тексерілетін статистикаға сүйенеді.</p>
     </div>
-  </section>
-
-  <!-- 09 SCALING -->
-  <section class="slide" data-f="rest" id="scale">
-    <div class="frame">
-      <div class="sl-head r"><h2 class="big">Масштабтау</h2><span class="pg">Бет<b>09/10</b></span></div>
-      <div class="road r" style="--d:.08s">
-        <div class="card now"><span class="when">Қазір</span><h3>Прототип</h3><ul><li>6-сынып: қазақ тілі және математика, 15 тақырып</li><li>Әдіскер кабинеті, анықтама kk/ru</li><li>Бэкенд: сынып кодтары, тапсырмалар</li></ul></div>
-        <div class="card"><span class="when">Пилот, 1 тоқсан</span><h3>1-3 мектеп</h3><ul><li>Нақты ТЖБ (аты-жөнісіз)</li><li>Әдіскер уақытын «дейін/кейін» өлшеу</li><li>Шектерді білім бөлімімен тексеру</li></ul></div>
-        <div class="card"><span class="when">1-жыл</span><h3>Бүкіл мектеп</h3><ul><li>5-11-сыныптардың барлық пәні (аналитика дайын, жаттықтырғышқа сұрақтар банкі керек)</li><li>МЖМБС оқу мақсаттары</li><li>Рөлдер: мұғалім, әдіскер, оқу ісінің меңгерушісі</li></ul></div>
-        <div class="card"><span class="when">2-жыл</span><h3>Аудан мен облыс</h3><ul><li>Білім бөліміне мектептер бойынша жиынтық</li><li>Электрондық журналдардан импорт (серіктестік арқылы)</li><li>Тоқсандарды салыстыру, динамика</li></ul></div>
-      </div>
-      <div class="model r" style="--d:.16s"><span>Модель: мектепке жазылым</span><span>Білім бөліміне лицензия</span><span>Браузерде, орнатусыз</span><span>Бұлт: Vercel + Redis</span></div>
+    <div class="steps">
+      <div class="card step"><span class="num">1</span><p><b>Қолмен жинайды</b> әр мұғалімнен және журналдан БЖБ/ТЖБ кестелерін.</p></div>
+      <div class="card step"><span class="num">2</span><p><b>Excel-де есептейді</b> үлгерімді, сапаны, деңгейлерді. Көшіргенде қате кетеді.</p></div>
+      <div class="card step"><span class="num">3</span><p><b>Анықтама жазады</b> әр сынып пен пән бойынша бір үлгімен.</p></div>
+      <div class="card step"><span class="num" style="background:var(--coral)">4</span><p><b>Көрмейді,</b> қай тақырып кімде меңгерілмегенін. Көмек «жадқа сүйеніп» беріледі.</p></div>
+      <div class="card step"><span class="num" style="background:var(--coral)">5</span><p><b>Сағаттар мен оқулықтарды</b> цифрмен емес, болжаммен бөледі.</p></div>
     </div>
-  </section>
+  </div>
+  <img class="mascot" src="assets/pitch/mascot/thinking.png" alt="" style="left:650px;bottom:36px;width:300px">
+</section>
 
-  <!-- 10 TEAM -->
-  <section class="slide top-slide" data-f="party" id="team">
-    <div class="frame">
-      <div class="sl-head r"><h2 class="big">Команда</h2><span class="pg">Бет<b>10/10</b></span></div>
-      <div class="team r" style="--d:.08s">
-        <div class="card person"><span class="av" aria-hidden="true">SN</span><div><h3>Shadil Nurmukhammed</h3><p>Founder</p></div></div>
-        <div class="card person"><span class="av" aria-hidden="true">AK</span><div><h3>Amangeldiev Kaisar</h3><p>Co-founder</p></div></div>
-      </div>
-      <div class="links r" style="--d:.16s">
-        <a class="main" href="https://jaz-kazakh-learning.vercel.app/?mode=method">Әдіскер кабинеті</a>
-        <a href="https://jaz-kazakh-learning.vercel.app/?mode=student">Оқушы режимі</a>
-        <a href="https://github.com/shadix23/jaz-kazakh-learning" target="_blank" rel="noopener">GitHub</a>
-        <a class="no-print" href="downloads/Jaz-pitch.pdf" download>PDF жүктеу</a>
-        <a class="no-print" href="downloads/Jaz-pitch.pptx" download>PPTX жүктеу</a>
-      </div>
-      <p class="site r" style="--d:.22s">Сайт: <a href="https://jaz-kazakh-learning.vercel.app">jaz-kazakh-learning.vercel.app</a></p>
+<!-- 2. evidence -->
+<section class="slide">
+  <i class="blob sq" style="right:-120px;bottom:-160px;width:480px;height:480px"></i>
+  <div class="head"><h2>Дәлелдер</h2><span class="pg">Бет<b>02/10</b></span></div>
+  <div class="stats">
+    <div class="card stat"><span class="big">6,9 <small>мың</small></span><p>мемлекеттік мектеп және 371,3 мың педагог. Әр мектепте біреу БЖБ/ТЖБ-ны қолмен жинайды.</p><span class="src">2024/25, <a href="https://24.kz/ru/news/obrazovanie-i-nauka/729851-kak-obstoyat-dela-v-sfere-obrazovaniya-v-rk">24.kz, 15.09.2025</a></span></div>
+    <div class="card stat y"><span class="big">13 <small>/ 36 сағ</small></span><p>мұғалім аптасының сабақ емес бөлігі: дайындық, тексеру, есеп. Kundelik күніне 1,5 сағатқа дейін алады.</p><span class="src">Мәжіліс депутатының есебі, <a href="https://informburo.kz/novosti/kolicestvo-otcetov-ne-umensilos-peresmotret-funkcional-kundelik-predlagaet-deputat">Informburo, 01.04.2026</a></span></div>
+    <div class="card stat r"><span class="big">≈25%</span><p>педагог артық әкімшілік жүктемені стресс көзі деп санайды.</p><span class="src">Сонда, <a href="https://informburo.kz/novosti/kolicestvo-otcetov-ne-umensilos-peresmotret-funkcional-kundelik-predlagaet-deputat">Informburo, 01.04.2026</a></span></div>
+    <div class="card stat"><span class="big">44%</span><p>оқушы ғана PISA-2025 математикасында базалық деңгейге жетті. Орташа балл 414, ал 2022 жылы 425 болған.</p><span class="src"><a href="https://bes.media/amp/pisa-2025-pokazalo-silnye-i-slabye-storony-kazahstanskih-shkolnikov/">Bes.media, 08.09.2026</a>; <a href="https://digitalbusiness.kz/2023-12-06/kazahstan-voshel-v-top-50-stran-po-matematike-v-reytinge-pisa/">Digital Business, 2023</a></span></div>
+  </div>
+  <div class="quote"><span class="bang">!</span><p>Мемлекет басшысы педагогтарды қағазбастылықтан және шексіз есептерден арылтуды тапсырды.<span class="src">ҚР Президенті Қ.-Ж. Тоқаев, <a href="https://bes.media/news/tokaev-poruchil-izbavit-uchiteley-ot-otchetov-attestatsiy-i-lishnih-proverok/">Bes.media</a></span></p></div>
+</section>
+
+<!-- 3. cost -->
+<section class="slide blue">
+  <i class="blob" style="left:-140px;bottom:-200px;width:600px;height:600px"></i><i class="blob sq" style="right:90px;top:-150px;width:400px;height:400px"></i>
+  <div class="head"><h2>Мәселенің <em>құны</em></h2><span class="pg">Бет<b>03/10</b></span></div>
+  <div class="grid2" style="grid-template-columns: 1fr 640px">
+    <div>
+      <p class="sub" style="font-weight:800;color:#fff;margin-bottom:18px">Бір мектеп, тек ТЖБ-ны жинау:</p>
+      <div class="formula"><span class="chip">24 сынып</span><i>×</i><span class="chip">8 пән</span><i>=</i><span class="chip">192 кесте</span><i>×</i><span class="chip">15 мин</span><i>=</i><span class="chip" style="background:#fff;color:var(--blue)">тоқсанына 48 сағ</span></div>
+      <p class="huge">≈ 190 <small>сағ</small></p>
+      <p class="lead" style="font-size:46px">бір әдіскерге жылына, <em>шамамен 24 жұмыс күні</em></p>
+      <p class="note" style="color:rgba(255,255,255,.82);margin-top:22px;max-width:900px">Біздің болжамға негізделген есеп: 24 сыныпты мектеп, ТЖБ өтетін 8 пән, бір кестені жинауға, есептеуге және мәтінге 15 минут. «Дейін» және «кейін» уақытын пилотта өлшейміз.</p>
     </div>
-  </section>
-</main>
-<footer>Jaz! · 1-кейс «Data-Driven Curriculum» · демо-деректер синтетикалық · дереккөздер слайдтарда көрсетілген</footer>
+    <div class="costs">
+      <div class="cost"><b>≈ 1,3 млн сағ/жыл</b><span>ел көлемінде: 192 сағ × 6,9 мың мектеп. Бұл уақыт оқушыға емес, кестеге кетеді.</span></div>
+      <div class="cost"><b>Қосымша жұмыс</b><span>Есептер сабақтан кейін жасалады: мұғалім аптасының 36 сағатының тек 23-і сабаққа кетеді.</span></div>
+      <div class="cost"><b>56% базадан төмен</b><span>математика бойынша (PISA-2025). Тақырып олқылықтары уақытында көрінбесе, жинала береді.</span></div>
+      <div class="cost"><b>Цифрсыз шешім</b><span>Вариативті сағаттар мен оқулық таңдауы нәтижеге емес, пікірге сүйенеді.</span></div>
+    </div>
+  </div>
+</section>
 
-<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-<script>
-/* Scroll engine (scroll-story-3d template): smooth scroll, text reveals, arrow-key stops, tells the 3D scene which formation to show. */
-(() => {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const lenis = (window.Lenis && !reduce) ? new Lenis({ lerp: 0.09, smoothWheel: true }) : null;
-  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-  const sstep = (a, b, v) => { const x = clamp((v - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); };
+<!-- 4. solution -->
+<section class="slide">
+  <i class="blob" style="left:-180px;top:-200px;width:560px;height:560px"></i>
+  <div class="head"><h2>Шешім</h2><span class="pg">Бет<b>04/10</b></span></div>
+  <p class="lead" style="margin-bottom:34px;position:relative;z-index:2">Бір кесте жүктейсіз, <em>алты дайын жауап аласыз.</em></p>
+  <div class="six">
+    <div class="card"><div class="top"><span class="num">1</span><h3>Жүктеу</h3></div><p>Excel-ден қою немесе файл, орысша және қазақша бағандар, аты-жөні кодқа ауысады.</p></div>
+    <div class="card"><div class="top"><span class="num">2</span><h3>Қорытынды</h3></div><p>Әр сынып бойынша үлгерім, сапа, деңгейлер.</p></div>
+    <div class="card"><div class="top"><span class="num" style="background:var(--coral)">3</span><h3>Қиын тақырыптар</h3></div><p>«Тақырып × сынып» картасы және жиі қателер.</p></div>
+    <div class="card"><div class="top"><span class="num">4</span><h3>Қолдау топтары</h3></div><p>Кімге және қай тақырып бойынша көмек керек.</p></div>
+    <div class="card"><div class="top"><span class="num">5</span><h3>Сағаттар мен КТЖ</h3></div><p>Тақырып қажеттілігіне қарай түзету сағаттары.</p></div>
+    <div class="card"><div class="top"><span class="num" style="background:#12a36b">6</span><h3>Анықтама</h3></div><p>Қазақша немесе орысша, бірден Word-қа.</p></div>
+  </div>
+  <div class="strip" style="margin-right:330px"><b>Кез келген пән:</b> математика, қазақ тілі, биология, тарих. Кесте бірдей: оқушы, сынып, бөлім, балл.</div>
+  <img class="mascot" src="assets/pitch/mascot/wink.png" alt="" style="right:60px;bottom:10px;width:300px">
+</section>
 
-  document.querySelectorAll('[data-words]').forEach(el => {
-    el.innerHTML = el.textContent.trim().split(/\s+/).map(w => '<span class="w">' + w + '</span>').join(' ');
-  });
-  const words = [...document.querySelectorAll('[data-words] .w')];
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('in');
-    else if (e.boundingClientRect.top > 0) e.target.classList.remove('in');
-  }), { threshold: 0.15 });
-  document.querySelectorAll('.r').forEach(el => io.observe(el));
+<!-- 5. screens -->
+<section class="slide">
+  <div class="head" style="margin-bottom:30px"><h2>Қалай көрінеді</h2><span class="pg">Бет<b>05/10</b></span></div>
+  <div class="shots">
+    <figure><img class="shot" src="assets/pitch/k-home.jpg" alt="" style="object-position:62% 12%"><figcaption><b>Басты бет.</b> Алты міндет бір бетте</figcaption></figure>
+    <figure><img class="shot" src="assets/pitch/k-topics.jpg" alt=""><figcaption><b>Тақырыптар.</b> Қиындық қай жерде, қай сыныпта</figcaption></figure>
+    <figure><img class="shot" src="assets/pitch/k-students.jpg" alt=""><figcaption><b>Оқушылар.</b> Дайын қолдау топтары</figcaption></figure>
+    <figure><img class="shot" src="assets/pitch/k-report.jpg" alt=""><figcaption><b>Анықтама.</b> Педкеңеске, Word форматында</figcaption></figure>
+  </div>
+  <p class="note" style="margin-top:22px">Жұмыс істейтін прототиптің демо-деректердегі (синтетика) скриншоттары. A/A+/A++ қаріп өлшемі мен «?» кеңестері аға буынға ыңғайлы болу үшін жасалған.</p>
+</section>
 
-  const secs = [...document.querySelectorAll('[data-f]')];
-  let geo = [], vh = innerHeight;
-  function measure() {
-    vh = innerHeight;
-    geo = secs.map(el => {
-      const top = el.getBoundingClientRect().top + scrollY, h = el.offsetHeight;
-      if (el.hasAttribute('data-pin')) return { f: el.dataset.f, start: top, end: Math.max(top + 1, top + h - vh) };
-      const c = top + h / 2 - vh / 2;
-      return { f: el.dataset.f, start: c - vh * 0.12, end: c + vh * 0.12 };
-    });
-  }
-  function stateAt(S) {
-    const n = geo.length;
-    if (S <= geo[0].end) return { a: 0, b: 0, t: 0 };
-    for (let k = 0; k < n; k++) {
-      const g = geo[k];
-      if (S >= g.start && S <= g.end) return { a: k, b: k, t: 0 };
-      if (k < n - 1 && S > g.end && S < geo[k + 1].start) return { a: k, b: k + 1, t: (S - g.end) / (geo[k + 1].start - g.end) };
-    }
-    return { a: n - 1, b: n - 1, t: 0 };
-  }
-  const stepTo = (list, act) => list.forEach((s, i) => { s.classList.toggle('on', i === act); s.classList.toggle('past', i < act); });
+<!-- 6. gamification -->
+<section class="slide">
+  <i class="blob" style="right:160px;top:120px;width:760px;height:760px;background:rgba(40,88,224,.08)"></i><i class="blob" style="right:300px;top:260px;width:480px;height:480px;background:rgba(40,88,224,.09)"></i>
+  <div class="head"><h2>Геймификация</h2><span class="pg">Бет<b>06/10</b></span></div>
+  <div class="grid2" style="grid-template-columns: 900px 1fr">
+    <div>
+      <p class="lead" style="font-size:52px;margin-bottom:28px">Оқушыны оқуға бейімдейді, <em>әдіскерге бақылауды жеңілдетеді.</em></p>
+      <div class="steps" style="gap:14px">
+        <div class="card step" style="padding:18px 26px"><span class="num">1</span><p style="font-size:27px"><b>«Барыс жолы»</b> 3D-жүгіріс ойыны: қар барысы жүгіреді, оқушы тақырып бойынша жауап таңдайды.</p></div>
+        <div class="card step" style="padding:18px 26px"><span class="num">2</span><p style="font-size:27px"><b>Қазақша чат</b> қатені табады, ережені түсіндіреді, өзі түзетуге мүмкіндік береді.</p></div>
+        <div class="card step" style="padding:18px 26px"><span class="num">3</span><p style="font-size:27px"><b>Барыс-көмекші</b> кеңес береді: ереже, мысал, неден бастау. Бірақ жауапты айтпайды.</p></div>
+        <div class="card step" style="padding:18px 26px"><span class="num">4</span><p style="font-size:27px"><b>Топқа бір басумен тапсырма:</b> оқушы сынып кодымен кіреді, жауаптар әдіскерге келеді.</p></div>
+        <div class="card step" style="padding:18px 26px"><span class="num" style="background:#12a36b">5</span><p style="font-size:27px"><b>Өсім БЖБ-дан бөлек.</b> Ойын ресми бағаға әсер етпейді. XP, серия, белгілер ынталандырады.</p></div>
+      </div>
+    </div>
+    <div class="phones">
+      <div class="phone"><img src="assets/pitch/k-game.jpg" alt=""></div>
+      <div class="phone"><img src="assets/pitch/k-helper.jpg" alt=""></div>
+    </div>
+  </div>
+</section>
 
-  const pinned = secs.map(el => ({ el, stages: [...el.querySelectorAll('.stage')], ticks: [...el.querySelectorAll('.ticks i')], act: 0 }));
-  const hero = document.querySelector('[data-hero]');
-  const bar = document.querySelector('.progress'); if (bar) bar.style.width = '100%', bar.style.transform = 'scaleX(0)';
-  const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
-  addEventListener('pointermove', e => { mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = -(e.clientY / innerHeight * 2 - 1); }, { passive: true });
-  let S = scrollY, last = performance.now(), stepA = 0;
+<!-- 7. cycle -->
+<section class="slide blue">
+  <i class="blob" style="left:-160px;top:-160px;width:520px;height:520px"></i><i class="blob sq" style="right:-100px;bottom:-140px;width:460px;height:460px"></i><i class="blob sun" style="right:420px;top:70px;width:200px;height:200px"></i>
+  <div style="text-align:center;position:relative;z-index:2;margin-top:30px">
+    <h2 style="font-size:104px">Цикл мектеп ішінде <em>тұйықталады</em></h2>
+    <p class="sub" style="margin-top:20px;font-size:36px">Тақырыпты көреміз, көмек тағайындаймыз, келесі БЖБ-мен тексереміз.</p>
+  </div>
+  <div class="cycle">
+    <div class="node"><b>БЖБ</b><span>нәтижені жүктейміз</span></div><span class="arrow">→</span>
+    <div class="node"><b>Көмек</b><span>қолдау тобы, тапсырма</span></div><span class="arrow">→</span>
+    <div class="node hot"><b>Өсім</b><span style="color:var(--ink)">жаттықтырғышта көрінеді</span></div><span class="arrow">→</span>
+    <div class="node"><b>БЖБ</b><span>келесі тоқсанда тексереміз</span></div>
+  </div>
+  <img class="mascot" src="assets/pitch/mascot/primary.png" alt="" style="left:810px;bottom:-6px;width:300px">
+</section>
 
-  function frame(now) {
-    const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000)); last = now;
-    if (lenis) lenis.raf(now);
-    const y = scrollY;
-    S = reduce ? y : S + (y - S) * (1 - Math.exp(-dt * (lenis ? 22 : 10)));
-    if (Math.abs(y - S) < 0.1) S = y;
-    mouse.x += (mouse.tx - mouse.x) * (1 - Math.exp(-dt * 3.5));
-    mouse.y += (mouse.ty - mouse.y) * (1 - Math.exp(-dt * 3.5));
+<!-- 8. before / after -->
+<section class="slide">
+  <div class="head" style="margin-bottom:22px"><h2>Бұрын және <em>қазір</em></h2><span class="pg">Бет<b>07/10</b></span></div>
+  <table>
+    <tr><th>Міндет</th><th>Бұрын</th><th class="now">Jaz!-пен</th></tr>
+    <tr><td>Жинау</td><td>Әр мұғалімнің кестесі, қолмен көшіру</td><td>Excel-ден бір рет қою</td></tr>
+    <tr><td>Көрсеткіштер</td><td>Excel формулалары, көшіргенде қате</td><td>Үлгерім, сапа, деңгейлер автоматты түрде есептеледі</td></tr>
+    <tr><td>Қиын тақырыптар</td><td>Жұмыстарды қарап шығу, субъективті</td><td>«Тақырып × сынып» картасы, жиі қателер</td></tr>
+    <tr><td>Түзету жұмысы</td><td>«Жадқа сүйенген» тізімдер</td><td>Қолдау топтары + жаттықтырғышқа тапсырма</td></tr>
+    <tr><td>Сағат, оқулық</td><td>Болжам</td><td>Тақырып қажеттілігі бойынша есеп; оқулық мұғалімді ескеріп салыстырылады</td></tr>
+    <tr><td>Анықтама</td><td>Word-тағы біркелкі мәтін</td><td>Word-та дайын анықтама, қазақша немесе орысша</td></tr>
+    <tr><td>Уақыт</td><td><span class="bad">Тоқсанына ≈ 48 сағ (болжам)</span></td><td><span class="ok">Жүктеуге бірнеше минут + қорытындыны тексеру</span></td></tr>
+  </table>
+</section>
 
-    if (hero) {
-      const he = clamp(S / vh, 0, 1);
-      hero.style.transform = 'translate3d(0,' + (S * 0.3).toFixed(1) + 'px,0) scale(' + (1 - he * 0.08).toFixed(4) + ')';
-      hero.style.opacity = clamp(1 - he * 1.5, 0, 1).toFixed(3);
-    }
-    const ps = geo.map(g => clamp((S - g.start) / (g.end - g.start), 0, 1));
-    secs.forEach((el, k) => {
-      if (el.dataset.f === 'parade') {
-        const n = words.length;
-        words.forEach((w, i) => { w.style.opacity = (0.13 + 0.87 * clamp(ps[k] * (n + 3) - i - 1, 0, 1)).toFixed(2); });
-      }
-      const P = pinned[k];
-      if (!P.stages.length) return;
-      let act;
-      if (el.dataset.f === 'steps') {
-        const x = ps[k] * (P.stages.length - 1), j = Math.min(P.stages.length - 1, Math.floor(x));
-        stepA = j + sstep(0.3, 0.7, x - j); act = Math.round(stepA);
-      } else act = Math.min(P.stages.length - 1, Math.floor(ps[k] * P.stages.length));
-      if (act !== P.act) {
-        P.act = act; stepTo(P.stages, act);
-        P.ticks.forEach((t, i) => { t.classList.toggle('on', i === act); t.classList.toggle('done', i < act); });
-      }
-    });
+<!-- 9. honest analytics -->
+<section class="slide">
+  <i class="blob" style="right:-140px;top:-160px;width:500px;height:500px"></i>
+  <div class="head"><h2>Адал <em>аналитика</em></h2><span class="pg">Бет<b>08/10</b></span></div>
+  <div class="three">
+    <div class="card"><span class="n">01</span><h3>Оқулықты мұғалім ішінде салыстырамыз</h3><p>Оқулықтарды мұғалімнің әсерін ескеріп, сенімділік аралығымен салыстырамыз. Салыстыру мүмкін болмаса, қорытынды бұғатталады.</p></div>
+    <div class="card"><span class="n">02</span><h3>Дерек аз болса, солай жазамыз</h3><p>10 оқушыдан немесе 30 жауаптан аз болса, «дерек аз» белгісі қойылады. Жиі қате тапсырмаға кемінде 10 жауап болғанда ғана көрсетіледі.</p></div>
+    <div class="card"><span class="n">03</span><h3>Екі деректер қабаты</h3><p>БЖБ/ТЖБ ресми көрсеткіштер мен анықтамаға кіреді. Жаттықтырғыш тек өсімді көрсетеді. Қабаттар араласпайды.</p></div>
+  </div>
+  <div class="strip" style="margin-right:300px"><b>Дербес деректерсіз:</b> аты-жөні кодқа ауыстырылады. ЖИ тек жиынтық сандарды алады және қорытынды мәтінін жазуға көмектеседі; шешімдер тексерілетін статистикаға сүйенеді.</div>
+  <img class="mascot" src="assets/pitch/mascot/reading.png" alt="" style="right:40px;bottom:6px;width:290px">
+</section>
 
-    if (bar) bar.style.transform = 'scaleX(' + clamp(S / Math.max(1, document.documentElement.scrollHeight - vh), 0, 1).toFixed(4) + ')';
-    const st = stateAt(S);
-    if (window.__render) window.__render({ fa: geo[st.a].f, fb: geo[st.b].f, t: st.t, pa: ps[st.a], pb: ps[st.b], step: stepA, sv: S / vh, mouse, dt, time: now / 1000, reduce });
-    requestAnimationFrame(frame);
-  }
+<!-- 10. scaling -->
+<section class="slide">
+  <div class="head" style="margin-bottom:14px"><h2>Масштабтау</h2><span class="pg">Бет<b>09/10</b></span></div>
+  <div class="road">
+    <div class="card"><span class="when">Қазір</span><h3>Прототип</h3><ul><li>6-сынып: қазақ тілі және математика, 15 тақырып</li><li>Әдіскер кабинеті, анықтама қазақша және орысша</li><li>Бэкенд: сынып кодтары, тапсырмалар</li></ul></div>
+    <div class="card"><span class="when">Пилот, 1 тоқсан</span><h3>1-3 мектеп</h3><ul><li>Нақты ТЖБ (аты-жөнісіз)</li><li>Әдіскер уақытын «дейін/кейін» өлшеу</li><li>Шектерді білім бөлімімен тексеру</li></ul></div>
+    <div class="card"><span class="when">1-жыл</span><h3>Бүкіл мектеп</h3><ul><li>5-11-сыныптардың барлық пәні (аналитика дайын, жаттықтырғышқа сұрақтар банкі керек)</li><li>МЖМБС оқу мақсаттары</li><li>Рөлдер: мұғалім, әдіскер, оқу ісінің меңгерушісі</li></ul></div>
+    <div class="card"><span class="when">2-жыл</span><h3>Аудан мен облыс</h3><ul><li>Білім бөліміне мектептер бойынша жиынтық</li><li>Электрондық журналдардан импорт (серіктестік арқылы)</li><li>Тоқсандарды салыстыру, динамика</li></ul></div>
+  </div>
+  <div class="chips"><span class="chip">Модель: мектепке жазылым</span><span class="chip">Білім бөліміне лицензия</span><span class="chip">Браузерде, орнатусыз</span><span class="chip">Бұлт: Vercel + Redis</span></div>
+</section>
 
-  function stops() {
-    const out = [];
-    geo.forEach((g, k) => {
-      const el = secs[k];
-      if (!el.hasAttribute('data-pin')) { out.push((g.start + g.end) / 2); return; }
-      const n = pinned[k].stages.length, span = g.end - g.start;
-      const qs = el.dataset.f === 'steps' ? pinned[k].stages.map((_, i) => i / (n - 1)) : n ? Array.from({ length: n }, (_, i) => (i + 0.5) / n) : [1];
-      qs.forEach(q => out.push(g.start + q * span));
-    });
-    return out.map(Math.round);
-  }
-  let nav = { y: 0, t: -1e9 };
-  function go(dir) {
-    const y = performance.now() - nav.t < 1200 ? nav.y : scrollY, list = stops();
-    const target = dir > 0 ? list.find(v => v > y + 4) : [...list].reverse().find(v => v < y - 4);
-    if (target === undefined) return;
-    nav = { y: target, t: performance.now() };
-    if (lenis) lenis.scrollTo(target, { duration: 1.1 }); else scrollTo({ top: target, behavior: reduce ? 'auto' : 'smooth' });
-  }
-  addEventListener('keydown', e => {
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
-    if (['ArrowDown', 'ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(e.shiftKey && e.key === ' ' ? -1 : 1); }
-    else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(-1); }
-  });
+<!-- 11. team + links -->
+<section class="slide blue">
+  <i class="blob" style="right:-160px;top:-180px;width:560px;height:560px"></i><i class="blob sq" style="left:-120px;bottom:-160px;width:440px;height:440px"></i><i class="blob sun" style="left:820px;top:90px;width:220px;height:220px"></i>
+  <div class="head" style="margin-bottom:0"><h2>Команда</h2><span class="pg">Бет<b>10/10</b></span></div>
+  <div class="team">
+    <div class="person"><span class="av">SN</span><div><b>Shadil Nurmukhammed</b><span>Founder</span></div></div>
+    <div class="person"><span class="av">AK</span><div><b>Amangeldiev Kaisar</b><span>Co-founder</span></div></div>
+  </div>
+  <p class="lead" style="font-size:50px;margin-top:50px;position:relative;z-index:2">Өзіңіз көріңіз: <em>камераны бағыттаңыз</em></p>
+  <div class="qrs">
+    <a class="qr" href="https://youtu.be/wE2EH2xU6ZE"><img src="assets/pitch/qr/video.png" alt=""><b>Видео, 35 сек</b><span>youtu.be/wE2EH2xU6ZE</span></a>
+    <a class="qr" href="https://jaz-kazakh-learning.vercel.app"><img src="assets/pitch/qr/demo.png" alt=""><b>Жұмыс істейтін сайт</b><span>jaz-kazakh-learning.vercel.app</span></a>
+    <a class="qr" href="https://github.com/shadix23/jaz-kazakh-learning"><img src="assets/pitch/qr/github.png" alt=""><b>GitHub</b><span>shadix23/jaz-kazakh-learning</span></a>
+  </div>
+  <p class="note" style="color:rgba(255,255,255,.8);position:absolute;left:104px;bottom:40px;z-index:2">Jaz!, 1-кейс «Data-Driven Curriculum». Демо-деректер синтетикалық, дереккөздер слайдтарда көрсетілген.</p>
+  <img class="mascot" src="assets/pitch/mascot/wave.png" alt="" style="right:110px;bottom:40px;width:560px">
+</section>
 
-  measure();
-  addEventListener('resize', measure);
-  addEventListener('load', measure);
-  if ('ResizeObserver' in window) new ResizeObserver(measure).observe(document.body);
-  requestAnimationFrame(frame);
-})();
-</script>
-
-<script type="importmap">
-{ "imports": {
-  "three": "./vendor/three.module.min.js",
-  "three/addons/": "./vendor/addons/"
-} }
-</script>
-<script type="module">
-/* 3D scene: Jaz! snow-leopard cubs change formation per section; the big Barys from «Барыс жолы» leads them. */
-import * as THREE from 'three';
-import { RoundedBoxGeometry } from 'three/addons/RoundedBoxGeometry.js';
-import { RoomEnvironment } from 'three/addons/RoomEnvironment.js';
-import { buildLeopard, pose } from './barys3d.js';
-
-const CONFIG = {
-  roles: ['СОР/СОЧ', 'Итоги', 'Темы', 'Группы', 'Тренажёр', 'Справка'],
-  extras: 6,
-};
-
-const css = getComputedStyle(document.documentElement);
-const ACCENT = new THREE.Color(css.getPropertyValue('--accent').trim() || '#3f70f7');
-const canvas = document.getElementById('stage'), tagsEl = document.getElementById('tags');
-let renderer;
-try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: true }); }
-catch (_) { canvas.remove(); throw new Error('WebGL unavailable - the page still works as text.'); }
-renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-renderer.setClearColor(0x000000, 0);
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-const scene = new THREE.Scene(), CAM_Z = 12;
-const camera = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, 0.1, 120);
-camera.position.set(0, 0, CAM_Z);
-scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
-scene.add(new THREE.HemisphereLight(0xffffff, 0xe6ebf5, 0.5));
-const key = new THREE.DirectionalLight(0xffffff, 1.3); key.position.set(4, 9, 5); scene.add(key);
-
-const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-const lerp = (a, b, t) => a + (b - a) * t;
-const ease = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-const outBounce = x => { const n1 = 7.5625, d1 = 2.75; if (x < 1 / d1) return n1 * x * x; if (x < 2 / d1) return n1 * (x -= 1.5 / d1) * x + 0.75; if (x < 2.5 / d1) return n1 * (x -= 2.25 / d1) * x + 0.9375; return n1 * (x -= 2.625 / d1) * x + 0.984375; };
-const wrapPi = a => Math.atan2(Math.sin(a), Math.cos(a));
-const lerpAngle = (a, b, t) => a + wrapPi(b - a) * t;
-const hash = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
-
-const ROLES = CONFIG.roles, N = ROLES.length + CONFIG.extras;
-const R = Array.from({ length: N }, (_, i) => hash(i + 1)), R2 = Array.from({ length: N }, (_, i) => hash(i + 101));
-
-// ---------- Barys cub: rounded snow-leopard block with spots, ears, a blue taqiya with a gold band ----------
-const fur = new THREE.MeshPhysicalMaterial({ color: 0xe4e9f2, roughness: 0.55, clearcoat: 0.25, clearcoatRoughness: 0.5, envMapIntensity: 0.7 });
-const white = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.5, envMapIntensity: 0.6 });
-const spotM = new THREE.MeshStandardMaterial({ color: 0x4b5466, roughness: 0.7 });
-const pinkM = new THREE.MeshStandardMaterial({ color: 0xe9849b, roughness: 0.5 });
-const hatM = new THREE.MeshPhysicalMaterial({ color: ACCENT, roughness: 0.45, clearcoat: 0.45, clearcoatRoughness: 0.35 });
-const goldM = new THREE.MeshStandardMaterial({ color: 0xf2c14e, roughness: 0.35, metalness: 0.3 });
-const eyeM = new THREE.MeshPhysicalMaterial({ color: 0x141a2a, roughness: 0.15, clearcoat: 1 });
-const glintM = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
-const gBody = new RoundedBoxGeometry(1, 0.95, 0.85, 5, 0.24);
-const gSph = new THREE.SphereGeometry(1, 16, 12);
-const gEar = new THREE.ConeGeometry(0.13, 0.22, 14);
-const gHat = new THREE.CylinderGeometry(0.25, 0.28, 0.15, 28);
-const gBand = new THREE.TorusGeometry(0.278, 0.026, 8, 32);
-const gArm = new RoundedBoxGeometry(0.16, 0.34, 0.2, 3, 0.07);
-const gLeg = new RoundedBoxGeometry(0.2, 0.2, 0.24, 3, 0.07);
-const gTail = new THREE.CapsuleGeometry(0.085, 0.34, 4, 10);
-const gShadow = new THREE.PlaneGeometry(1.6, 0.42);
-const shTex = (() => {
-  const c = document.createElement('canvas'); c.width = c.height = 128;
-  const g = c.getContext('2d'), grd = g.createRadialGradient(64, 64, 0, 64, 64, 64);
-  grd.addColorStop(0, 'rgba(30,40,70,.5)'); grd.addColorStop(0.45, 'rgba(30,40,70,.18)'); grd.addColorStop(1, 'rgba(30,40,70,0)');
-  g.fillStyle = grd; g.fillRect(0, 0, 128, 128);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
-})();
-const blob = (parent, mat, x, y, z, sx, sy, sz) => { const m = new THREE.Mesh(gSph, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); parent.add(m); return m; };
-
-function makeCharacter(i) {
-  const root = new THREE.Group(), b = new THREE.Group(); root.add(b);
-  b.add(new THREE.Mesh(gBody, fur));
-  // face
-  blob(b, white, 0, -0.07, 0.4, 0.2, 0.14, 0.07);
-  blob(b, pinkM, 0, 0.0, 0.46, 0.055, 0.035, 0.03);
-  const eyes = [-1, 1].map(sx => {
-    const e = new THREE.Group(); e.position.set(sx * 0.2, 0.13, 0.43); b.add(e);
-    blob(e, eyeM, 0, 0, 0, 0.068, 0.078, 0.035);
-    blob(e, glintM, -0.022, 0.026, 0.03, 0.02, 0.02, 0.01);
-    return e;
-  });
-  // spots (sides, front corners, back)
-  for (const sx of [-1, 1]) {
-    for (const [y, z, r] of [[0.16, 0.14, 0.07], [-0.1, -0.12, 0.06], [0.05, -0.3, 0.05], [-0.26, 0.18, 0.05]]) blob(b, spotM, sx * 0.5, y, z, 0.02, r, r);
-    blob(b, spotM, sx * 0.37, -0.27, 0.425, 0.05, 0.05, 0.02);
-    blob(b, spotM, sx * 0.2, 0.08, -0.425, 0.06, 0.06, 0.02);
-  }
-  blob(b, spotM, 0, -0.22, -0.425, 0.05, 0.05, 0.02);
-  // ears + taqiya
-  for (const sx of [-1, 1]) {
-    const ear = new THREE.Mesh(gEar, fur); ear.position.set(sx * 0.33, 0.55, -0.06); ear.rotation.z = -sx * 0.38; b.add(ear);
-    blob(ear, pinkM, 0, -0.03, 0.06, 0.06, 0.08, 0.02);
-  }
-  const hat = new THREE.Group(); hat.position.set(0, 0.53, -0.02); hat.rotation.x = -0.08; b.add(hat);
-  hat.add(new THREE.Mesh(gHat, hatM));
-  const band = new THREE.Mesh(gBand, goldM); band.position.y = -0.05; band.rotation.x = Math.PI / 2; hat.add(band);
-  blob(hat, goldM, 0, 0.085, 0, 0.04, 0.04, 0.04);
-  // limbs + tail
-  const arms = [-1, 1].map(sx => { const p = new THREE.Group(); p.position.set(sx * 0.5, -0.05, 0); const m = new THREE.Mesh(gArm, fur); m.position.set(sx * 0.06, -0.14, 0); p.add(m); b.add(p); return p; });
-  const legs = [-1, 1].map(sx => { const p = new THREE.Group(); p.position.set(sx * 0.22, -0.45, 0); const m = new THREE.Mesh(gLeg, fur); m.position.y = -0.1; p.add(m); b.add(p); return p; });
-  const tail = new THREE.Group(); tail.position.set(0.12, -0.22, -0.4); b.add(tail);
-  const tm = new THREE.Mesh(gTail, fur); tm.position.set(0, 0.17, -0.06); tm.rotation.x = -0.5; tail.add(tm);
-  blob(tail, spotM, 0, 0.36, -0.16, 0.09, 0.09, 0.09);
-  scene.add(root);
-  const shadow = new THREE.Mesh(gShadow, new THREE.MeshBasicMaterial({ map: shTex, transparent: true, depthWrite: false, toneMapped: false, opacity: 0 }));
-  scene.add(shadow);
-  let tag = null;
-  if (i < ROLES.length) { tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = ROLES[i]; tagsEl.appendChild(tag); }
-  return { root, b, eyes, arms, legs, tail, shadow, tag, tagOn: false, phase: R[i] * 6.283, blinkAt: 1 + R2[i] * 4, blinkEnd: 0, yaw: 0, pitch: 0 };
-}
-const chars = Array.from({ length: N }, (_, i) => makeCharacter(i));
-const FOOT = 0.66;
-
-// ---------- the big Barys (same model as the game) ----------
-const lead = buildLeopard(); scene.add(lead.root);
-const leadShadow = new THREE.Mesh(gShadow, new THREE.MeshBasicMaterial({ map: shTex, transparent: true, depthWrite: false, toneMapped: false, opacity: 0 }));
-scene.add(leadShadow);
-const leadState = { yaw: 0.5 };
-
-// ---------- dot field ----------
-const FX = 150, FZ = 56, fpos = new Float32Array(FX * FZ * 3);
-for (let z = 0, p = 0; z < FZ; z++) for (let x = 0; x < FX; x++) { fpos[p++] = (x / (FX - 1) - 0.5) * 34; fpos[p++] = 0; fpos[p++] = -20 + z / (FZ - 1) * 24; }
-const fieldGeo = new THREE.BufferGeometry(); fieldGeo.setAttribute('position', new THREE.BufferAttribute(fpos, 3));
-const fieldMat = new THREE.ShaderMaterial({
-  transparent: true, depthWrite: false,
-  uniforms: { uTime: { value: 0 }, uOpacity: { value: 1 }, uPR: { value: renderer.getPixelRatio() }, uColor: { value: new THREE.Color(0xb6bccb) }, uAccent: { value: ACCENT.clone() } },
-  vertexShader: `uniform float uTime; uniform float uPR; varying float vFade; varying float vH;
-    void main(){ vec3 p = position;
-      float w = sin(p.x*0.35 + uTime*0.6)*0.35 + cos(p.z*0.45 + uTime*0.4)*0.35 + sin((p.x+p.z)*0.2 + uTime*0.3)*0.25;
-      p.y += w; vH = w; vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
-      gl_PointSize = uPR * 2.1 * (13.0 / -mv.z); vFade = smoothstep(34.0, 14.0, -mv.z) * smoothstep(17.0, 9.0, abs(p.x)); }`,
-  fragmentShader: `uniform vec3 uColor; uniform vec3 uAccent; uniform float uOpacity; varying float vFade; varying float vH;
-    void main(){ vec2 c = gl_PointCoord - 0.5; if (dot(c, c) > 0.25) discard;
-      gl_FragColor = vec4(mix(uColor, uAccent, smoothstep(0.5, 0.95, vH)), vFade * uOpacity * 0.85);
-      #include <colorspace_fragment>
-    }`
-});
-const field = new THREE.Points(fieldGeo, fieldMat); field.position.y = -3.4; scene.add(field);
-const FIELD = { hero: 0.9, rest: 0, parade: 0.5, steps: 0.55, grid: 0.3, ring: 0.5, party: 0.8 };
-
-// ---------- viewport ----------
-const V = { w: 1, h: 1, portrait: false }; let U = 1;
-function resize() {
-  renderer.setSize(innerWidth, innerHeight, false);
-  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
-  V.h = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * CAM_Z; V.w = V.h * camera.aspect; V.portrait = camera.aspect < 0.9;
-  U = V.portrait ? Math.min(V.w / 4.4, V.h / 5) : Math.min(V.w / 9, V.h / 4.6);
-}
-resize(); addEventListener('resize', resize);
-
-// ---------- formations ----------
-const F = {
-  rest(i, c) { // content slides: the cubs step out below the screen
-    return { x: (i / (N - 1) - 0.5) * c.V.w * 0.9, y: -c.V.h * 0.95, z: -1, s: c.u * 0.2, yaw: 0 };
-  },
-  hero(i, c) { // around the title; bottom-centre gap is the big Barys's spot
-    if (c.V.portrait) { // phone: two rows under the text, the big Barys in the middle of the front row
-      const back = i % 2 === 0, k = i >> 1, n = N / 2;
-      const side = k < n / 2 ? -1 : 1, kk = side < 0 ? k : k - n / 2, f = (kk + 0.5) / (n / 2);
-      const x = back ? (-0.42 + 0.84 * (k + 0.5) / n) * c.V.w : side * (0.25 + 0.2 * f) * c.V.w;
-      const y = back ? -0.17 : -0.36 + (kk % 2) * 0.05;
-      return { x, y: c.V.h * y + Math.sin(c.t * 0.9 + i) * 0.04 * c.u, z: back ? -1.2 : 0.4 - (kk % 2) * 0.6, s: c.u * (back ? 0.3 : 0.32), yaw: -x * 0.15, look: 1 };
-    }
-    const P = c.V.portrait, top = i % 2 === 1, k = i >> 1, n = top ? Math.floor(N / 2) : Math.ceil(N / 2), m = P ? 0.32 : 0.42;
-    // two arcs per half (left/right) so the title and the big Barys stay clear
-    const half = Math.ceil(n / 2), g = top ? (P ? 0.75 : 0.62) : (P ? 0.55 : 0.5), left = k < half, kk = left ? k : k - half;
-    const mid = top ? 0.5 * Math.PI : 1.5 * Math.PI, lo = top ? m : Math.PI + m, hi = top ? Math.PI - m : 2 * Math.PI - m;
-    const a0 = left === top ? mid + g : lo, a1 = left === top ? hi : mid - g;
-    let ang = a0 + (a1 - a0) * ((kk + 0.5) / half);
-    ang += (R[i] - 0.5) * 0.08;
-    return { x: Math.cos(ang) * c.V.w * 0.41, y: Math.sin(ang) * c.V.h * 0.37 - c.V.h * 0.04 + Math.sin(c.t * 0.9 + i) * 0.06 * c.u, z: (R2[i] - 0.55) * 3, s: c.u * (0.32 + R2[i] * 0.18), yaw: -Math.cos(ang) * 0.4, look: 1 };
-  },
-  parade(i, c) { // walk in a line, the big Barys runs in front
-    const span = c.V.w * (c.V.portrait ? 1.0 : 0.84);
-    return { x: -span / 2 + (i + 0.5) * span * 0.8 / N + (c.p - 0.5) * c.V.w * 0.14, y: -c.V.h * 0.37, z: 0.3, s: c.u * (c.V.portrait ? 0.2 : 0.26), yaw: 0.9, walk: 1 };
-  },
-  steps(i, c) { // carousel: the active step's cub in front
-    if (i >= ROLES.length) return { x: (R[i] - 0.5) * c.V.w * 0.8, y: -c.V.h * 0.42, z: -6, s: c.u * 0.25, yaw: 0, walk: 0.3 };
-    const d = i - c.step, ad = Math.abs(d), focus = Math.max(0, 1 - ad);
-    return { x: d * c.V.w * (c.V.portrait ? 0.6 : 0.24), y: -c.V.h * (c.V.portrait ? 0.12 : 0.2) - ad * ad * 0.05 * c.u, z: -Math.min(ad, 4) * 1.4 + focus * 0.5,
-      s: c.u * (0.34 + 0.3 * focus) * (1 - Math.min(ad, 3) * 0.06), yaw: -clamp(d, -1, 1) * 0.5, look: focus * 0.7, label: clamp(1 - ad * 1.8, 0, 1), active: focus * focus };
-  },
-  grid(i, c) { // three groups, one per guarantee; the current one jumps
-    const P = c.V.portrait, k = i % 3, j = Math.floor(i / 3), act = Math.min(2, Math.floor(c.p * 3)), on = k === act ? 1 : 0;
-    const cx = (k - 1) * c.V.w * (P ? 0.33 : 0.25), off = c.u * (P ? 0.26 : 0.36);
-    return { x: cx + ((j % 2) - 0.5) * off * 1.5, y: -c.V.h * (P ? 0.27 : 0.25) - (Math.floor(j / 2) - 0.5) * off * 1.3, z: on * 0.7 - (j >= 2 ? 0.5 : 0),
-      s: c.u * (P ? 0.2 : 0.28) * (1 + on * 0.2), yaw: -(k - 1) * 0.3 + ((j % 2) - 0.5) * 0.3, look: 1, active: on * 0.8 };
-  },
-  ring(i, c) { // run around the text
-    const P = c.V.portrait, R0 = P ? c.V.w * 0.44 : Math.min(c.V.w * 0.36, c.V.h * 0.7), tilt = P ? 0.32 : 0.42;
-    const ang = (i / (N + 1)) * Math.PI * 2 + c.t * 0.22 + c.sv * 0.5, lx = Math.cos(ang) * R0, lz = Math.sin(ang) * R0;
-    return { x: lx, y: c.V.h * (P ? -0.27 : 0.04) - lz * Math.sin(tilt), z: lz * Math.cos(tilt), s: c.u * (P ? 0.28 : 0.32), yaw: wrapPi(-ang), walk: 1 };
-  },
-  party(i, c) { // arc at the bottom, jumping in a wave
-    const k = i / (N - 1) - 0.5, span = c.V.portrait ? c.V.w * 0.96 : Math.min(c.V.w * 0.8, c.u * 14);
-    return { x: k * span, y: -c.V.h * (c.V.portrait ? 0.36 : 0.25) + (0.25 - k * k) * c.u * 0.9, z: -Math.abs(k) * 1.6 - 0.6, s: c.u * (c.V.portrait ? 0.17 : 0.25), yaw: -k * 0.9, look: 1, wave: 0.6, hopL: Math.max(0, Math.sin(c.t * 4.2 - i * 0.55)) * 0.55 };
-  }
-};
-// The big Barys: one spot per section. mode drives the gallop from barys3d.js.
-const LEAD = {
-  rest: c => ({ x: c.V.w * 0.3, y: -c.V.h * 0.95, z: 0, s: c.u * 0.3, yaw: 0.6, mode: 'idle' }),
-  hero: c => ({ x: 0, y: -c.V.h * (c.V.portrait ? 0.33 : 0.36), z: 1.2, s: c.u * (c.V.portrait ? 0.62 : 0.5), yaw: 0.55, look: 1, mode: 'idle' }),
-  parade: c => { const span = c.V.w * (c.V.portrait ? 1.0 : 0.84);
-    return { x: -span / 2 + span * (c.V.portrait ? 0.88 : 0.9) + (c.p - 0.5) * c.V.w * 0.14, y: -c.V.h * 0.37, z: 0.6, s: c.u * (c.V.portrait ? 0.3 : 0.4), yaw: Math.PI / 2, mode: 'run', rate: 2.2 }; },
-  steps: c => ({ x: -c.V.w * (c.V.portrait ? 0.28 : 0.35), y: -c.V.h * 0.43, z: 0.8, s: c.u * (c.V.portrait ? 0.3 : 0.36), yaw: 0.7, look: 1, mode: 'idle' }),
-  grid: c => ({ x: c.V.w * (c.V.portrait ? 0.28 : 0.36), y: -c.V.h * 0.42, z: 0.8, s: c.u * (c.V.portrait ? 0.28 : 0.34), yaw: -0.7, look: 1, mode: 'idle' }),
-  ring: c => { const P = c.V.portrait, R0 = P ? c.V.w * 0.44 : Math.min(c.V.w * 0.36, c.V.h * 0.7), tilt = P ? 0.32 : 0.42;
-    const ang = (N / (N + 1)) * Math.PI * 2 + c.t * 0.22 + c.sv * 0.5, lx = Math.cos(ang) * R0, lz = Math.sin(ang) * R0;
-    return { x: lx, y: c.V.h * (P ? -0.27 : 0.04) - lz * Math.sin(tilt), z: lz * Math.cos(tilt), s: c.u * (P ? 0.3 : 0.38), yaw: wrapPi(-ang - Math.PI / 2), mode: 'run', rate: 2.4 }; },
-  party: c => ({ x: 0, y: -c.V.h * (c.V.portrait ? 0.44 : 0.35), z: 1.4, s: c.u * (c.V.portrait ? 0.46 : 0.44), yaw: 0.35 + Math.sin(c.t * 1.4) * 0.35, look: 0.5, mode: 'run', rate: 1.6, hop: Math.max(0, Math.sin(c.t * 4.2)) * 0.45 })
-};
-
-// ---------- render ----------
-const KEYS = ['x', 'y', 'z', 's', 'pitch', 'look', 'label', 'walk', 'active', 'wave', 'hopL'];
-const LKEYS = ['x', 'y', 'z', 's', 'look', 'hop'];
-const cur = {}, lc = {}, tmp = new THREE.Vector3();
-let t0 = null;
-window.__render = st => {
-  const t = st.time; if (t0 === null) t0 = t;
-  const base = { V, u: U, t, step: st.step, sv: st.sv };
-  const ca = Object.assign({}, base, { p: st.pa }), cb = Object.assign({}, base, { p: st.pb });
-  const FA = F[st.fa] || F.hero, FB = F[st.fb] || F.hero, same = st.fa === st.fb;
-  camera.position.set(st.mouse.x * 0.4, st.mouse.y * 0.22, CAM_Z); camera.lookAt(0, 0, 0);
-  const mwx = st.mouse.x * V.w / 2, mwy = st.mouse.y * V.h / 2, kS = 1 - Math.exp(-st.dt * 7);
-
-  for (let i = 0; i < N; i++) {
-    const a = chars[i], A = FA(i, ca), B = same ? A : FB(i, cb);
-    const e = same ? 0 : ease(clamp(st.t * 1.5 - R[i] * 0.5, 0, 1));
-    for (const k of KEYS) cur[k] = lerp(A[k] || 0, B[k] || 0, e);
-    const travel = same ? 0 : Math.sin(Math.PI * e);
-    const ki = st.reduce ? 1 : clamp((t - t0 - 0.2 - R[i] * 0.8) / 1.2, 0, 1);
-    const lift = travel * U * 0.9 + (1 - outBounce(ki)) * V.h;
-    const sc = Math.max(1e-4, cur.s * Math.min(1, ki * 4));
-    a.root.position.set(cur.x, cur.y + lift, cur.z); a.root.scale.setScalar(sc);
-    const ly = clamp((mwx - cur.x) * 0.12, -0.55, 0.55) * cur.look, lp = clamp(-(mwy - cur.y) * 0.1, -0.3, 0.3) * cur.look;
-    a.yaw += wrapPi(lerpAngle(A.yaw || 0, B.yaw || 0, e) + ly + travel * (R2[i] > 0.5 ? 0.7 : -0.7) - a.yaw) * kS;
-    a.pitch += (cur.pitch + lp - a.pitch) * kS;
-    a.root.rotation.set(a.pitch, a.yaw, 0);
-
-    const ph = a.phase, ws = Math.sin(t * 10 + ph);
-    a.b.position.y = Math.sin(t * 1.7 + ph) * 0.035 + Math.abs(ws) * 0.05 * cur.walk + cur.active * Math.max(0, Math.sin(t * 5.2 + ph)) * 0.32 + cur.hopL;
-    a.b.rotation.z = ws * 0.06 * cur.walk;
-    a.legs[0].rotation.x = ws * 0.6 * cur.walk; a.legs[1].rotation.x = -ws * 0.6 * cur.walk;
-    const wave = Math.max(cur.wave, cur.active * 0.8);
-    a.arms[1].rotation.z = wave * (1.4 + Math.sin(t * 9 + ph) * 0.4) + travel * 0.8;
-    a.arms[0].rotation.z = -cur.active * 0.6 - travel * 0.8;
-    a.tail.rotation.y = Math.sin(t * 2.4 + ph) * 0.45; a.tail.rotation.x = Math.sin(t * 1.6 + ph) * 0.15 - cur.walk * 0.1;
-    if (t > a.blinkAt) { a.blinkEnd = t + 0.13; a.blinkAt = t + 2.2 + Math.random() * 3.5; }
-    a.eyes[0].scale.y = a.eyes[1].scale.y = t < a.blinkEnd ? 0.15 : 1;
-
-    const f = clamp(1 - lift / (U * 1.4), 0, 1) * Math.min(1, ki * 4);
-    a.shadow.position.set(cur.x, cur.y - FOOT * sc, cur.z - 0.02); a.shadow.quaternion.copy(camera.quaternion);
-    a.shadow.scale.set(sc * (0.55 + 0.45 * f), sc * (0.55 + 0.45 * f), 1); a.shadow.material.opacity = sc > 0.01 ? 0.5 * f : 0;
-
-    if (a.tag) {
-      if (cur.label > 0.01 && sc > 0.01) {
-        tmp.set(cur.x, cur.y + lift - 0.78 * sc, cur.z).project(camera);
-        a.tag.style.transform = 'translate3d(' + ((tmp.x * 0.5 + 0.5) * innerWidth).toFixed(1) + 'px,' + ((-tmp.y * 0.5 + 0.5) * innerHeight + 6).toFixed(1) + 'px,0) translate(-50%,0)';
-        a.tag.style.opacity = cur.label.toFixed(3); a.tagOn = true;
-      } else if (a.tagOn) { a.tag.style.opacity = 0; a.tagOn = false; }
-    }
-  }
-
-  // big Barys
-  {
-    const A = (LEAD[st.fa] || LEAD.hero)(ca), B = same ? A : (LEAD[st.fb] || LEAD.hero)(cb);
-    const e = same ? 0 : ease(clamp(st.t * 1.3, 0, 1)), travel = same ? 0 : Math.sin(Math.PI * e);
-    for (const k of LKEYS) lc[k] = lerp(A[k] || 0, B[k] || 0, e);
-    const ki = st.reduce ? 1 : clamp((t - t0 - 0.6) / 1.2, 0, 1);
-    const lift = travel * U * 0.25 + (1 - outBounce(ki)) * V.h + lc.hop * U;
-    const sc = Math.max(1e-4, lc.s * Math.min(1, ki * 4));
-    lead.root.position.set(lc.x, lc.y + lift, lc.z); lead.root.scale.setScalar(sc);
-    const ly = clamp((mwx - lc.x) * 0.1, -0.5, 0.5) * lc.look;
-    const toward = travel > 0.2 ? Math.atan2(B.x - A.x, 1.2) : null;
-    const yawT = toward !== null ? toward : lerpAngle(A.yaw, B.yaw, e) + ly;
-    leadState.yaw += wrapPi(yawT - leadState.yaw) * kS;
-    lead.root.rotation.set(0.1, leadState.yaw, 0);
-    const mode = travel > 0.2 ? 'run' : (e < 0.5 ? A : B).mode;
-    pose(lead, { t, mode, rate: travel > 0.2 ? 3 : ((e < 0.5 ? A : B).rate || 2.4), reduced: st.reduce });
-    const f = clamp(1 - (lift - (1 - outBounce(ki)) * V.h) / (U * 1.2), 0, 1) * Math.min(1, ki * 4);
-    leadShadow.position.set(lc.x, lc.y - 0.02 * sc, lc.z - 0.05); leadShadow.quaternion.copy(camera.quaternion);
-    leadShadow.scale.set(sc * 1.25 * (0.6 + 0.4 * f), sc * 1.1 * (0.6 + 0.4 * f), 1); leadShadow.material.opacity = ki > 0.5 ? 0.5 * f : 0;
-  }
-
-  fieldMat.uniforms.uTime.value = t;
-  fieldMat.uniforms.uOpacity.value = lerp(FIELD[st.fa] ?? 0.4, FIELD[st.fb] ?? 0.4, same ? 0 : ease(clamp(st.t, 0, 1)));
-  renderer.render(scene, camera);
-};
-</script>
 </body>
 </html>
